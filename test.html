@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>12 Bubbles Ultimate</title>
+<style>
+/* ================== Reset & Basic ================== */
+html, body { margin:0; padding:0; height:100vh; overflow:hidden; font-family: monospace; background-color:#0a0a0a; color:#fff; }
+/* ================== LOADING SCREEN ================== */
+#loadingScreen { position: fixed; top:0; left:0; width:100%; height:100%; background:#000; display:flex; justify-content:center; align-items:center; color:#fff; font-size:50px; font-weight:bold; z-index:3000; text-align:center; animation:eyeGlow 2s ease-in-out forwards;}
+@keyframes eyeGlow { 0% { opacity:0.2; text-shadow:none; } 50% { opacity:1; text-shadow:0 0 25px #fff,0 0 50px #fff,0 0 75px #fff; } 100% { opacity:0.2; text-shadow:none; } }
+/* ================== BUTTONS ================== */
+#startBtn, #indexBtn { display:none; margin:0 auto; font-size:28px; padding:15px 35px; background: linear-gradient(45deg,#a044ff,#6a00f4,#d166ff); border:none; border-radius:12px; color:#fff; font-weight:bold; text-transform:uppercase; cursor:pointer; box-shadow:0 0 10px #d166ff,0 0 20px #a044ff; z-index:1000; transition: transform 0.2s; }
+#startBtn:hover, #indexBtn:hover { transform: scale(1.05); }
+#startBtn { margin-top:30vh; }
+#indexBtn { margin-top:20px; }
+/* ================== COUNTDOWN & SCORE ================== */
+#countdown { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); font-size:80px; color:#d166ff; text-shadow:0 0 20px #d166ff,0 0 40px #a044ff; z-index:1001; display:none; }
+#scoreContainer { position:fixed; top:20px; left:50%; transform:translateX(-50%); z-index:1001; text-align:center; display:none; }
+#highscore { font-size:20px; color:#ff0; margin-bottom:5px; }
+#score { font-size:28px; color:#d166ff; }
+#lives { font-size:20px; color:#f00; margin-top:5px; }
+/* ================== BUBBLES ================== */
+.bubble { width:80px; height:80px; border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:24px; font-weight:bold; color:#fff; background:linear-gradient(135deg,#a044ff,#6a00f4); border:2px solid #d166ff; box-shadow:0 0 10px #d166ff,0 0 20px #a044ff inset; position:absolute; cursor:pointer; animation:floatY 3s infinite alternate ease-in-out; transition: transform 0.2s; }
+.bubble:hover { transform: scale(1.1); }
+.bubble.rare2x { background: linear-gradient(135deg,#ffff00,#a044ff); color:#000; font-size:28px; animation:floatY 2.5s infinite alternate ease-in-out; }
+.bubble.rare144 { background: linear-gradient(135deg,#0f0,#0a0); color:#000; font-size:28px; animation:floatY 2s infinite alternate ease-in-out; }
+.bubble.triple { background: linear-gradient(135deg,#f0f,#a0a); color:#fff; font-size:24px; animation:floatY 3s infinite alternate ease-in-out; }
+.bubble.gravity { background: linear-gradient(135deg,#fff,#d166ff); color:#000; font-size:28px; animation:floatY 3s infinite alternate ease-in-out; }
+.bubble.invert { background: linear-gradient(135deg,#fff,#000); color:#0ff; font-size:26px; animation:floatY 2.8s infinite alternate ease-in-out; }
+.bubble.instawin { background: linear-gradient(135deg,#ff0000,#ffff00); color:#000; font-size:32px; box-shadow:0 0 30px #ff0, 0 0 60px #f00; animation:floatY 1.8s infinite alternate ease-in-out; }
+.bubble.selected { border: 4px solid #00ff00; box-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00; animation: selectedPulse 0.8s infinite alternate; }
+@keyframes floatY { 0% { transform: translateY(0);} 100% { transform: translateY(-15px);} }
+@keyframes selectedPulse { 0% { transform: scale(1.1); } 100% { transform: scale(1.3); } }
+/* ================== DIFFICULTY SELECTION PANEL ================== */
+#difficultyPanel { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(10,10,10,0.95); padding: 30px; border-radius: 15px; box-shadow: 0 0 30px #d166ff; z-index: 2000; display: none; text-align: center; max-width: 80%; max-height: 80%; overflow-y: auto; }
+#difficultyPanel h2 { margin-bottom: 20px; color: #d166ff; text-transform: uppercase; }
+.difficultyOption { margin: 15px 0; padding: 15px; background: linear-gradient(45deg,#a044ff,#6a00f4); border-radius: 10px; cursor: pointer; transition: transform 0.2s; border: 2px solid #d166ff; font-size: 20px; }
+.difficultyOption:hover { transform: scale(1.05); background: linear-gradient(45deg,#d166ff,#a044ff); }
+.difficultyOption.selected { background: linear-gradient(45deg,#00ff00,#00cc00); border-color: #00ff00; box-shadow: 0 0 15px #00ff00; }
+#backBtn { margin-top: 20px; padding: 12px 30px; font-size: 20px; background: linear-gradient(45deg,#ff4444,#cc0000); border: none; border-radius: 8px; color: #fff; font-weight: bold; cursor: pointer; }
+/* ================== INDEX PANEL ================== */
+#indexPanel { position:fixed; top:100%; left:0; width:100%; max-height:70%; background:rgba(10,10,10,0.95); overflow-y:auto; transition:top 0.5s ease; padding:20px; z-index:999; box-shadow:0 -5px 30px #d166ff; }
+#indexPanel h2 { text-transform:uppercase; }
+#indexPanel .closeBtn { position:absolute; top:15px; right:15px; font-size:28px; cursor:pointer; color:#fff; font-weight:bold; z-index:1001; }
+.indexItem { display:flex; align-items:center; margin:10px 0; }
+.indexItem .bubbleImg { width:60px; height:60px; margin-right:15px; border-radius:50%; display:flex; justify-content:center; align-items:center; font-weight:bold; color:#fff; border:2px solid #d166ff; box-shadow:0 0 15px #d166ff inset; animation:float 1s infinite alternate; }
+.indexItem .desc { flex:1; }
+.indexItem .rarity { font-weight:bold; }
+@keyframes float { 0%{transform:translateY(0);} 100%{transform:translateY(-10px);} }
+/* ================== END SCREEN ================== */
+#endScreen { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); display:none; flex-direction:column; justify-content:center; align-items:center; color:#fff; font-size:40px; z-index:1500; text-align:center; }
+#continueBtn { margin-top:30px; font-size:26px; padding:15px 40px; border:none; border-radius:10px; cursor:pointer; color:#fff; background: linear-gradient(45deg,#a044ff,#6a00f4,#d166ff); box-shadow:0 0 10px #d166ff,0 0 20px #a044ff; }
+/* ================== VERSION LABEL ================== */
+#versionLabel { position:fixed; top:10px; right:10px; font-size:16px; color:rgba(255,255,255,0.3); font-weight:bold; z-index:1002; pointer-events:none; }
+/* ================== EASTER EGG ================== */
+#easterEgg { position: fixed; top: 0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); color:red; font-size:150px; font-weight:bold; display:flex; justify-content:center; align-items:center; z-index:2000; display:none; text-transform:uppercase; opacity:0; animation:fadeShake 5s forwards; }
+@keyframes fadeShake { 0%{opacity:0; transform:translateX(0);} 10%{opacity:1; transform:translateX(-5px);} 20%{transform:translateX(5px);} 30%{transform:translateX(-5px);} 40%{transform:translateX(5px);} 50%{transform:translateX(-5px);} 60%{transform:translateX(5px);} 70%{transform:translateX(-5px);} 80%{transform:translateX(5px);} 90%{transform:translateX(-5px);} 100%{opacity:0; transform:translateX(0);} }
+/* ================== PAUSE SCREEN ================== */
+#pauseScreen { position: fixed; top: 0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); color:#fff; display: none; flex-direction: column; justify-content: center; align-items: center; z-index:2000; text-align:center; opacity:0; backdrop-filter: blur(5px); animation-fill-mode: forwards; }
+#pauseScreen.fadeIn { animation: fadeIn 0.5s forwards; }
+#pauseScreen.fadeOut { animation: fadeOut 0.5s forwards; }
+@keyframes fadeIn { 0% { opacity:0; transform:scale(0.9);} 100%{ opacity:1; transform:scale(1);} }
+@keyframes fadeOut { 0% { opacity:1; transform:scale(1);} 100%{ opacity:0; transform:scale(0.9);} }
+#pauseText { font-size:60px; font-weight:bold; margin-bottom:30px; text-shadow:0 0 20px #fff; }
+#continueGameBtn, #endGameBtn { font-size:28px; padding:15px 40px; margin:10px; border:none; border-radius:10px; cursor:pointer; color:#fff; background:linear-gradient(45deg,#a044ff,#6a00f4,#d166ff); box-shadow:0 0 10px #d166ff,0 0 20px #a044ff; }
+/* ================== PAUSE BUTTON ================== */
+#pauseBtn { position: fixed; top:10px; left:10px; font-size:28px; padding:10px 18px; border:none; border-radius:8px; background: linear-gradient(45deg,#a044ff,#6a00f4); color:#fff; cursor:pointer; z-index:1001; display:none; text-shadow:0 0 10px #fff; }
+
+</style>
+</head>
+<body>
+
+<div id="loadingScreen">Level 12 studio</div>
+<div id="versionLabel">Released 1.2.3</div>
+<button id="startBtn">START</button>
+<button id="indexBtn">INDEX</button>
+
+<!-- Difficulty Selection Panel -->
+<div id="difficultyPanel">
+  <h2>Výběr Obtížnosti</h2>
+  <div class="difficultyOption" data-difficulty="easy">EASY - Nejlehčí</div>
+  <div class="difficultyOption" data-difficulty="normal">NORMAL - Vyvážená</div>
+  <div class="difficultyOption" data-difficulty="hard">HARD - Těžší než současná</div>
+  <button id="backBtn">ZPĚT</button>
+</div>
+
+<div id="indexPanel">
+  <div class="closeBtn">✖</div>
+  <h2>BUBBLES INDEX</h2>
+  <div class="indexItem"><div class="bubbleImg">12</div><div class="desc"><span class="rarity">Běžná:</span> +1 skóre</div></div>
+  <div class="indexItem"><div class="bubbleImg" style="background: linear-gradient(135deg,#ffff00,#a044ff); color:#000;">12×2</div><div class="desc"><span class="rarity">Vzácná 0,25%:</span> Zdvojnásobí skóre</div></div>
+  <div class="indexItem"><div class="bubbleImg" style="background: linear-gradient(135deg,#0f0,#0a0); color:#000;">12²</div><div class="desc"><span class="rarity">Vzácná 1%:</span> +144 skóre</div></div>
+  <div class="indexItem"><div class="bubbleImg" style="background: linear-gradient(135deg,#f0f,#a0a);">3×12</div><div class="desc"><span class="rarity">Vzácná 2%:</span> Spawnuje 3 bubliny</div></div>
+  <div class="indexItem"><div class="bubbleImg" style="background: linear-gradient(135deg,#fff,#d166ff); color:#000;">&lt;12&gt;</div><div class="desc"><span class="rarity">Vzácná 3%:</span> Gravitační bublina teleportuje všechny bubliny k ní</div></div>
+  <div class="indexItem"><div class="bubbleImg" style="background: linear-gradient(135deg,#fff,#000); color:#0ff;">!12!</div><div class="desc"><span class="rarity">Vzácná 1,5%:</span> Obrátí barvy obrazovky na 5 sekund a dá +10 skóre</div></div>
+  <div class="indexItem"><div class="bubbleImg" style="background: linear-gradient(135deg,#ff0000,#ffff00); color:#000; box-shadow:0 0 30px #ff0,0 0 60px #f00;">?12?</div><div class="desc"><span class="rarity">Vzácná 0,1%:</span> Okamžité vítězství (+999 999 999 skóre)</div></div>
+</div>
+
+<div id="countdown"></div>
+<div id="scoreContainer">
+  <div id="highscore">Nejvyšší skóre: 0</div>
+  <div id="score">Skóre: 0</div>
+  <div id="lives">Životy: 3</div>
+</div>
+
+<div id="pauseBtn">|  |</div>
+
+<div id="pauseScreen">
+  <div id="pauseText">PAUZA</div>
+  <button id="continueGameBtn">Pokračovat</button>
+  <button id="endGameBtn">Konec</button>
+</div>
+
+<div id="endScreen">
+  <div id="finalScoreText"></div>
+  <button id="continueBtn">POKRAČOVAT</button>
+</div>
+
+<div id="easterEgg"></div>
+
+<audio id="popSound" src="https://www.soundjay.com/button/sounds/button-16.mp3"></audio>
+
+<script>
+// ================== ELEMENTS ==================
+const startBtn=document.getElementById('startBtn');
+const indexBtn=document.getElementById('indexBtn');
+const indexPanel=document.getElementById('indexPanel');
+const countdownEl=document.getElementById('countdown');
+const scoreContainer=document.getElementById('scoreContainer');
+const scoreEl=document.getElementById('score');
+const highscoreEl=document.getElementById('highscore');
+const livesEl=document.getElementById('lives');
+const popSound=document.getElementById('popSound');
+const endScreen=document.getElementById('endScreen');
+const finalScoreText=document.getElementById('finalScoreText');
+const versionLabel=document.getElementById('versionLabel');
+const easterEl=document.getElementById('easterEgg');
+const closeBtn=document.querySelector('#indexPanel .closeBtn');
+
+const pauseBtn=document.getElementById('pauseBtn');
+const pauseScreen=document.getElementById('pauseScreen');
+const continueGameBtn=document.getElementById('continueGameBtn');
+const endGameBtn=document.getElementById('endGameBtn');
+const continueBtn=document.getElementById('continueBtn');
+
+// Difficulty selection elements
+const difficultyPanel = document.getElementById('difficultyPanel');
+const difficultyOptions = document.querySelectorAll('.difficultyOption');
+const backBtn = document.getElementById('backBtn');
+
+let score=0, highscore=0, lives=3, bubbles=[], gameRunning=false, gamePaused=false, startTime;
+let selectedDifficulty = 'normal'; // Default difficulty
+
+// Difficulty settings
+const difficultySettings = {
+  easy: {
+    bubbleSpeed: 0.8,      // Pomalejší bubliny
+    spawnRate: 700,        // Méně časté spawnování
+    lives: 5               // Více životů
+  },
+  normal: {
+    bubbleSpeed: 1.2,      // Mírně pomalejší než současná
+    spawnRate: 500,        // Současná rychlost
+    lives: 3               // Současný počet životů
+  },
+  hard: {
+    bubbleSpeed: 1.8,      // Rychlejší než současná
+    spawnRate: 400,        // Častější spawnování
+    lives: 2               // Méně životů
+  }
+};
+
+// ================== LOADING SCREEN ==================
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    loadingScreen.style.display='none';
+    startBtn.style.display='block';
+    indexBtn.style.display='block';
+    attachButtonEvents();
+  },2000);
+});
+
+// ================== BUTTON LOGIC ==================
+function attachButtonEvents(){
+  startBtn.addEventListener('click', showDifficultySelection);
+  indexBtn.addEventListener('click',(e)=>{
+    e.stopPropagation();
+    if(indexPanel.style.top==='30%'){ indexPanel.style.top='100%'; startBtn.style.display='block'; indexBtn.style.display='block'; }
+    else { indexPanel.style.top='30%'; startBtn.style.display='none'; indexBtn.style.display='none'; }
+  });
+  closeBtn.addEventListener('click',(e)=>{ e.stopPropagation(); indexPanel.style.top='100%'; startBtn.style.display='block'; indexBtn.style.display='block'; });
+  document.body.addEventListener('click',()=>{
+    if(indexPanel.style.top==='30%'){ indexPanel.style.top='100%'; startBtn.style.display='block'; indexBtn.style.display='block'; }
+  });
+  continueBtn.addEventListener('click',()=>{
+    endScreen.style.display='none'; startBtn.style.display='block'; indexBtn.style.display='block'; versionLabel.style.display='block';
+  });
+  pauseBtn.addEventListener('click', togglePause);
+  continueGameBtn.addEventListener('click', togglePause);
+  endGameBtn.addEventListener('click', endGame);
+  
+  // Difficulty selection events
+  difficultyOptions.forEach(option => {
+    option.addEventListener('click', () => {
+      difficultyOptions.forEach(opt => opt.classList.remove('selected'));
+      option.classList.add('selected');
+      selectedDifficulty = option.dataset.difficulty;
+      startCountdown();
+    });
+  });
+  
+  backBtn.addEventListener('click', () => {
+    difficultyPanel.style.display = 'none';
+    startBtn.style.display = 'block';
+    indexBtn.style.display = 'block';
+    versionLabel.style.display = 'block';
+  });
+}
+
+// ================== DIFFICULTY SELECTION ==================
+function showDifficultySelection() {
+  startBtn.style.display = 'none';
+  indexBtn.style.display = 'none';
+  versionLabel.style.display = 'none';
+  difficultyPanel.style.display = 'block';
+  
+  // Reset selection
+  difficultyOptions.forEach(opt => opt.classList.remove('selected'));
+  difficultyOptions[1].classList.add('selected'); // Select Normal by default
+  selectedDifficulty = 'normal';
+}
+
+// ================== COUNTDOWN ==================
+function startCountdown(){
+  difficultyPanel.style.display = 'none';
+  countdownEl.style.display='block';
+  let count=3;
+  countdownEl.textContent=count;
+  const interval=setInterval(()=>{
+    count--;
+    if(count>0) countdownEl.textContent=count;
+    else{
+      clearInterval(interval);
+      countdownEl.style.display='none';
+      scoreContainer.style.display='block';
+      pauseBtn.style.display='block';
+      startGame();
+    }
+  },1000);
+}
+
+// ================== GAME LOGIC ==================
+function startGame(){
+  score=0; 
+  
+  // Set game parameters based on selected difficulty
+  const settings = difficultySettings[selectedDifficulty];
+  lives = settings.lives;
+  
+  bubbles=[]; 
+  gameRunning=true; 
+  gamePaused=false; 
+  startTime=Date.now();
+  
+  scoreEl.textContent="Skóre: "+score; 
+  livesEl.textContent="Životy: "+lives;
+  
+  spawnBubble();
+  requestAnimationFrame(updateBubbles);
+}
+
+function togglePause(){
+  if(!gameRunning) return;
+  gamePaused = !gamePaused;
+  if(gamePaused){
+    pauseScreen.classList.remove('fadeOut'); pauseScreen.classList.add('fadeIn'); pauseScreen.style.display='flex';
+  } else{
+    pauseScreen.classList.remove('fadeIn'); pauseScreen.classList.add('fadeOut'); setTimeout(()=> pauseScreen.style.display='none',500);
+  }
+}
+
+// ================== UPDATE BUBBLES ==================
+function updateBubbles(){
+  if(!gameRunning) return;
+  if(!gamePaused){
+    bubbles.forEach(bubble=>{
+      const top=parseFloat(bubble.style.top);
+      const settings = difficultySettings[selectedDifficulty];
+      bubble.style.top=top-parseFloat(bubble.dataset.speed)+'px';
+      if(top<=0){  
+        lives--; 
+        livesEl.textContent="Životy: "+lives;
+        bubble.remove(); 
+        bubbles=bubbles.filter(b=>b!==bubble);  
+        if(lives<=0) endGame();
+      }
+    });
+  }
+  requestAnimationFrame(updateBubbles);
+}
+
+// ================== SPAWN BUBBLES ==================
+function spawnBubble(){ 
+  if(!gameRunning || gamePaused) { 
+    const settings = difficultySettings[selectedDifficulty];
+    setTimeout(spawnBubble, settings.spawnRate); 
+    return; 
+  }
+  
+  const elapsed=(Date.now()-startTime)/1000; 
+  const settings = difficultySettings[selectedDifficulty];
+  const speedMultiplier=settings.bubbleSpeed + elapsed/120; 
+  const chance=Math.random();
+  
+  const bubble=document.createElement('div'); 
+  bubble.classList.add('bubble');
+  
+  if(chance<=0.001){ bubble.classList.add('instawin'); bubble.textContent="?12?"; bubble.dataset.type="instawin"; }
+  else if(chance<=0.016){ bubble.classList.add('invert'); bubble.textContent="!12!"; bubble.dataset.type="invert"; }
+  else if(chance<=0.0185){ bubble.classList.add('rare2x'); bubble.textContent="12×2"; bubble.dataset.type="2x"; }
+  else if(chance<=0.0285){ bubble.classList.add('rare144'); bubble.textContent="12²"; bubble.dataset.type="144"; }
+  else if(chance<=0.0485){ bubble.classList.add('triple'); bubble.textContent="3×12"; bubble.dataset.type="triple"; }
+  else if(chance<=0.0785){ bubble.classList.add('gravity'); bubble.textContent="<12>"; bubble.dataset.type="gravity"; }
+  else { bubble.textContent="12"; bubble.dataset.type="normal"; }
+
+  const size=Math.random()*60+60; 
+  bubble.style.width=size+'px'; 
+  bubble.style.height=size+'px';
+  bubble.style.fontSize=(bubble.dataset.type==="144"?size/2.5:size/3)+'px';
+  bubble.style.left=Math.random()*(window.innerWidth-size)+'px';
+  bubble.style.top=(window.innerHeight-size)+'px';
+  bubble.dataset.speed=(Math.random()*1.5+1)*speedMultiplier;
+  document.body.appendChild(bubble);
+
+  const pop=()=>{
+    if(!gameRunning) return;
+    if(['2x','144','triple','gravity','invert','instawin'].includes(bubble.dataset.type)) popSound.currentTime=0, popSound.play();
+    bubble.remove(); bubbles=bubbles.filter(b=>b!==bubble);
+    if(bubble.dataset.type==="2x") score*=2;
+    else if(bubble.dataset.type==="144") score+=144;
+    else if(bubble.dataset.type==="triple") for(let i=0;i<3;i++) spawnSingleBubble();
+    else if(bubble.dataset.type==="gravity"){
+      const bx=parseFloat(bubble.style.left)+parseFloat(b
