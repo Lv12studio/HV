@@ -1,345 +1,603 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>12 Bubbles Ultimate</title>
-<style>
-/* ================== Reset & Basic ================== */
-html, body { margin:0; padding:0; height:100vh; overflow:hidden; font-family: monospace; background-color:#0a0a0a; color:#fff; }
-/* ================== LOADING SCREEN ================== */
-#loadingScreen { position: fixed; top:0; left:0; width:100%; height:100%; background:#000; display:flex; justify-content:center; align-items:center; color:#fff; font-size:50px; font-weight:bold; z-index:3000; text-align:center; animation:eyeGlow 2s ease-in-out forwards;}
-@keyframes eyeGlow { 0% { opacity:0.2; text-shadow:none; } 50% { opacity:1; text-shadow:0 0 25px #fff,0 0 50px #fff,0 0 75px #fff; } 100% { opacity:0.2; text-shadow:none; } }
-/* ================== BUTTONS ================== */
-#startBtn, #indexBtn { display:none; margin:0 auto; font-size:28px; padding:15px 35px; background: linear-gradient(45deg,#a044ff,#6a00f4,#d166ff); border:none; border-radius:12px; color:#fff; font-weight:bold; text-transform:uppercase; cursor:pointer; box-shadow:0 0 10px #d166ff,0 0 20px #a044ff; z-index:1000; transition: transform 0.2s; }
-#startBtn:hover, #indexBtn:hover { transform: scale(1.05); }
-#startBtn { margin-top:30vh; }
-#indexBtn { margin-top:20px; }
-/* ================== COUNTDOWN & SCORE ================== */
-#countdown { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); font-size:80px; color:#d166ff; text-shadow:0 0 20px #d166ff,0 0 40px #a044ff; z-index:1001; display:none; }
-#scoreContainer { position:fixed; top:20px; left:50%; transform:translateX(-50%); z-index:1001; text-align:center; display:none; }
-#highscore { font-size:20px; color:#ff0; margin-bottom:5px; }
-#score { font-size:28px; color:#d166ff; }
-#lives { font-size:20px; color:#f00; margin-top:5px; }
-/* ================== BUBBLES ================== */
-.bubble { width:80px; height:80px; border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:24px; font-weight:bold; color:#fff; background:linear-gradient(135deg,#a044ff,#6a00f4); border:2px solid #d166ff; box-shadow:0 0 10px #d166ff,0 0 20px #a044ff inset; position:absolute; cursor:pointer; animation:floatY 3s infinite alternate ease-in-out; transition: transform 0.2s; }
-.bubble:hover { transform: scale(1.1); }
-.bubble.rare2x { background: linear-gradient(135deg,#ffff00,#a044ff); color:#000; font-size:28px; animation:floatY 2.5s infinite alternate ease-in-out; }
-.bubble.rare144 { background: linear-gradient(135deg,#0f0,#0a0); color:#000; font-size:28px; animation:floatY 2s infinite alternate ease-in-out; }
-.bubble.triple { background: linear-gradient(135deg,#f0f,#a0a); color:#fff; font-size:24px; animation:floatY 3s infinite alternate ease-in-out; }
-.bubble.gravity { background: linear-gradient(135deg,#fff,#d166ff); color:#000; font-size:28px; animation:floatY 3s infinite alternate ease-in-out; }
-.bubble.invert { background: linear-gradient(135deg,#fff,#000); color:#0ff; font-size:26px; animation:floatY 2.8s infinite alternate ease-in-out; }
-.bubble.instawin { background: linear-gradient(135deg,#ff0000,#ffff00); color:#000; font-size:32px; box-shadow:0 0 30px #ff0, 0 0 60px #f00; animation:floatY 1.8s infinite alternate ease-in-out; }
-.bubble.selected { border: 4px solid #00ff00; box-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00; animation: selectedPulse 0.8s infinite alternate; }
-@keyframes floatY { 0% { transform: translateY(0);} 100% { transform: translateY(-15px);} }
-@keyframes selectedPulse { 0% { transform: scale(1.1); } 100% { transform: scale(1.3); } }
-/* ================== DIFFICULTY SELECTION PANEL ================== */
-#difficultyPanel { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(10,10,10,0.95); padding: 30px; border-radius: 15px; box-shadow: 0 0 30px #d166ff; z-index: 2000; display: none; text-align: center; max-width: 80%; max-height: 80%; overflow-y: auto; }
-#difficultyPanel h2 { margin-bottom: 20px; color: #d166ff; text-transform: uppercase; }
-.difficultyOption { margin: 15px 0; padding: 15px; background: linear-gradient(45deg,#a044ff,#6a00f4); border-radius: 10px; cursor: pointer; transition: transform 0.2s; border: 2px solid #d166ff; font-size: 20px; }
-.difficultyOption:hover { transform: scale(1.05); background: linear-gradient(45deg,#d166ff,#a044ff); }
-.difficultyOption.selected { background: linear-gradient(45deg,#00ff00,#00cc00); border-color: #00ff00; box-shadow: 0 0 15px #00ff00; }
-#backBtn { margin-top: 20px; padding: 12px 30px; font-size: 20px; background: linear-gradient(45deg,#ff4444,#cc0000); border: none; border-radius: 8px; color: #fff; font-weight: bold; cursor: pointer; }
-/* ================== INDEX PANEL ================== */
-#indexPanel { position:fixed; top:100%; left:0; width:100%; max-height:70%; background:rgba(10,10,10,0.95); overflow-y:auto; transition:top 0.5s ease; padding:20px; z-index:999; box-shadow:0 -5px 30px #d166ff; }
-#indexPanel h2 { text-transform:uppercase; }
-#indexPanel .closeBtn { position:absolute; top:15px; right:15px; font-size:28px; cursor:pointer; color:#fff; font-weight:bold; z-index:1001; }
-.indexItem { display:flex; align-items:center; margin:10px 0; }
-.indexItem .bubbleImg { width:60px; height:60px; margin-right:15px; border-radius:50%; display:flex; justify-content:center; align-items:center; font-weight:bold; color:#fff; border:2px solid #d166ff; box-shadow:0 0 15px #d166ff inset; animation:float 1s infinite alternate; }
-.indexItem .desc { flex:1; }
-.indexItem .rarity { font-weight:bold; }
-@keyframes float { 0%{transform:translateY(0);} 100%{transform:translateY(-10px);} }
-/* ================== END SCREEN ================== */
-#endScreen { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); display:none; flex-direction:column; justify-content:center; align-items:center; color:#fff; font-size:40px; z-index:1500; text-align:center; }
-#continueBtn { margin-top:30px; font-size:26px; padding:15px 40px; border:none; border-radius:10px; cursor:pointer; color:#fff; background: linear-gradient(45deg,#a044ff,#6a00f4,#d166ff); box-shadow:0 0 10px #d166ff,0 0 20px #a044ff; }
-/* ================== VERSION LABEL ================== */
-#versionLabel { position:fixed; top:10px; right:10px; font-size:16px; color:rgba(255,255,255,0.3); font-weight:bold; z-index:1002; pointer-events:none; }
-/* ================== EASTER EGG ================== */
-#easterEgg { position: fixed; top: 0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); color:red; font-size:150px; font-weight:bold; display:flex; justify-content:center; align-items:center; z-index:2000; display:none; text-transform:uppercase; opacity:0; animation:fadeShake 5s forwards; }
-@keyframes fadeShake { 0%{opacity:0; transform:translateX(0);} 10%{opacity:1; transform:translateX(-5px);} 20%{transform:translateX(5px);} 30%{transform:translateX(-5px);} 40%{transform:translateX(5px);} 50%{transform:translateX(-5px);} 60%{transform:translateX(5px);} 70%{transform:translateX(-5px);} 80%{transform:translateX(5px);} 90%{transform:translateX(-5px);} 100%{opacity:0; transform:translateX(0);} }
-/* ================== PAUSE SCREEN ================== */
-#pauseScreen { position: fixed; top: 0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); color:#fff; display: none; flex-direction: column; justify-content: center; align-items: center; z-index:2000; text-align:center; opacity:0; backdrop-filter: blur(5px); animation-fill-mode: forwards; }
-#pauseScreen.fadeIn { animation: fadeIn 0.5s forwards; }
-#pauseScreen.fadeOut { animation: fadeOut 0.5s forwards; }
-@keyframes fadeIn { 0% { opacity:0; transform:scale(0.9);} 100%{ opacity:1; transform:scale(1);} }
-@keyframes fadeOut { 0% { opacity:1; transform:scale(1);} 100%{ opacity:0; transform:scale(0.9);} }
-#pauseText { font-size:60px; font-weight:bold; margin-bottom:30px; text-shadow:0 0 20px #fff; }
-#continueGameBtn, #endGameBtn { font-size:28px; padding:15px 40px; margin:10px; border:none; border-radius:10px; cursor:pointer; color:#fff; background:linear-gradient(45deg,#a044ff,#6a00f4,#d166ff); box-shadow:0 0 10px #d166ff,0 0 20px #a044ff; }
-/* ================== PAUSE BUTTON ================== */
-#pauseBtn { position: fixed; top:10px; left:10px; font-size:28px; padding:10px 18px; border:none; border-radius:8px; background: linear-gradient(45deg,#a044ff,#6a00f4); color:#fff; cursor:pointer; z-index:1001; display:none; text-shadow:0 0 10px #fff; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gravity Race</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        body {
+            background: #0a0a2a;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            touch-action: none;
+            height: 100vh;
+            width: 100vw;
+        }
+        
+        /* Screen Container */
+        #screenContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* Main Menu Screen */
+        #mainMenuScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0a2a 0%, #1a1a4a 50%, #2a2a6a 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            padding: 20px;
+        }
+        
+        .menu-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px 30px;
+            border-radius: 25px;
+            text-align: center;
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .menu-subtitle {
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            opacity: 0.8;
+        }
+        
+        .menu-btn {
+            padding: 20px;
+            margin: 12px 0;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            display: block;
+        }
+        
+        #createRoomBtn { 
+            background: linear-gradient(45deg, #00cc66, #00ff88); 
+            color: white; 
+        }
+        
+        #joinRoomBtn { 
+            background: linear-gradient(45deg, #0099ff, #00ccff); 
+            color: white; 
+        }
+        
+        #singleplayerBtn { 
+            background: linear-gradient(45deg, #ff9900, #ffcc00); 
+            color: white; 
+        }
+        
+        .menu-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Create Room Screen */
+        #createRoomScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0a2a 0%, #1a1a4a 100%);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            padding: 20px;
+        }
+        
+        .room-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px 30px;
+            border-radius: 25px;
+            text-align: center;
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .room-title {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            color: #4ecdc4;
+        }
+        
+        .room-code {
+            font-size: 3em;
+            font-weight: bold;
+            letter-spacing: 10px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            padding: 25px 35px;
+            border-radius: 20px;
+            margin: 25px 0;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .code-input {
+            padding: 20px;
+            font-size: 1.3em;
+            width: 100%;
+            text-align: center;
+            border: none;
+            border-radius: 15px;
+            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+        }
+        
+        .action-btn {
+            padding: 18px 25px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin: 8px 0;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .primary-btn {
+            background: linear-gradient(45deg, #00cc66, #00ff88);
+            color: white;
+        }
+        
+        .secondary-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            color: white;
+        }
+        
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            margin-top: 20px;
+        }
+        
+        .action-btn:active {
+            transform: scale(0.95);
+        }
+        
+        /* Waiting Room Screen */
+        #waitingRoomScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0a2a 0%, #1a1a4a 100%);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            padding: 20px;
+        }
+        
+        .player-slot {
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            width: 100%;
+            max-width: 300px;
+            text-align: center;
+            font-size: 1.2em;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            margin: 10px 0;
+        }
+        
+        .player-connected {
+            background: rgba(0, 255, 100, 0.3);
+            border-color: rgba(0, 255, 100, 0.5);
+            box-shadow: 0 0 20px rgba(0, 255, 100, 0.3);
+        }
+        
+        /* Game Screen */
+        #gameScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            background: #000011;
+        }
+        
+        #gameCanvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* Game UI */
+        #scoreDisplay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-size: 1.3em;
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 12px 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        #gameModeDisplay {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 0.9em;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 15px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            text-align: center;
+            max-width: 200px;
+        }
+        
+        /* Mobile Controls */
+        #mobileControls {
+            position: absolute;
+            bottom: 30px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 25px;
+            pointer-events: none;
+        }
+        
+        .joystick-container {
+            width: 140px;
+            height: 140px;
+            position: relative;
+            pointer-events: auto;
+        }
+        
+        .joystick-base {
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            backdrop-filter: blur(20px);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .joystick-handle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70px;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.1s ease;
+        }
+        
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            pointer-events: auto;
+        }
+        
+        .game-action-btn {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(45deg, #0099ff, #00ccff);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8em;
+            text-align: center;
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+        
+        .game-action-btn:active {
+            transform: scale(0.9);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        #gravityBtn {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+        }
+        
+        #pulseBtn {
+            background: linear-gradient(45deg, #4ecdc4, #6effff);
+        }
 
-</style>
+        /* Responsive design */
+        @media (max-height: 700px) {
+            .menu-container, .room-container {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .menu-btn, .action-btn {
+                padding: 16px 20px;
+                font-size: 1.1em;
+            }
+            
+            .room-code {
+                font-size: 2.5em;
+                padding: 20px 30px;
+            }
+        }
+    </style>
 </head>
 <body>
+    <!-- Screen Container -->
+    <div id="screenContainer">
+        <!-- Main Menu Screen -->
+        <div id="mainMenuScreen">
+            <div class="menu-container">
+                <h1>🚀 GRAVITY RACE</h1>
+                <div class="menu-subtitle">Multiplayer vesmírný závod</div>
+                
+                <button class="menu-btn" id="createRoomBtn">Vytvořit místnost</button>
+                <button class="menu-btn" id="joinRoomBtn">Připojit se k hře</button>
+                <button class="menu-btn" id="singleplayerBtn">Hra s botem</button>
+            </div>
+        </div>
 
-<div id="loadingScreen">Level 12 studio</div>
-<div id="versionLabel">Released 1.2.3</div>
-<button id="startBtn">START</button>
-<button id="indexBtn">INDEX</button>
+        <!-- Create Room Screen -->
+        <div id="createRoomScreen">
+            <div class="room-container">
+                <div class="room-title">Vytvořit místnost</div>
+                <p style="margin-bottom: 20px; opacity: 0.8;">Sdílej tento kód s přítelem:</p>
+                
+                <div class="room-code" id="generatedRoomCode">ABCDEF</div>
+                
+                <div style="margin: 25px 0;">
+                    <button class="action-btn primary-btn" id="copyCodeBtn">Kopírovat kód</button>
+                    <button class="action-btn primary-btn" id="startGameBtn">Spustit hru</button>
+                </div>
+                
+                <button class="action-btn back-btn" id="backToMenuBtn">← Zpět do menu</button>
+            </div>
+        </div>
 
-<!-- Difficulty Selection Panel -->
-<div id="difficultyPanel">
-  <h2>Výběr Obtížnosti</h2>
-  <div class="difficultyOption" data-difficulty="easy">EASY - Nejlehčí</div>
-  <div class="difficultyOption" data-difficulty="normal">NORMAL - Vyvážená</div>
-  <div class="difficultyOption" data-difficulty="hard">HARD - Těžší než současná</div>
-  <button id="backBtn">ZPĚT</button>
-</div>
+        <!-- Join Room Screen -->
+        <div id="joinRoomScreen" style="display: none;">
+            <div class="room-container">
+                <div class="room-title">Připojit se k hře</div>
+                <p style="margin-bottom: 20px; opacity: 0.8;">Zadej kód místnosti:</p>
+                
+                <input type="text" class="code-input" id="roomCodeInput" placeholder="ABCDEF" maxlength="6">
+                
+                <div style="margin: 25px 0;">
+                    <button class="action-btn primary-btn" id="connectToRoomBtn">Připojit se</button>
+                </div>
+                
+                <button class="action-btn back-btn" id="backToMenuBtn2">← Zpět do menu</button>
+            </div>
+        </div>
 
-<div id="indexPanel">
-  <div class="closeBtn">✖</div>
-  <h2>BUBBLES INDEX</h2>
-  <div class="indexItem"><div class="bubbleImg">12</div><div class="desc"><span class="rarity">Běžná:</span> +1 skóre</div></div>
-  <div class="indexItem"><div class="bubbleImg" style="background: linear-gradient(135deg,#ffff00,#a044ff); color:#000;">12×2</div><div class="desc"><span class="rarity">Vzácná 0,25%:</span> Zdvojnásobí skóre</div></div>
-  <div class="indexItem"><div class="bubbleImg" style="background: linear-gradient(135deg,#0f0,#0a0); color:#000;">12²</div><div class="desc"><span class="rarity">Vzácná 1%:</span> +144 skóre</div></div>
-  <div class="indexItem"><div class="bubbleImg" style="background: linear-gradient(135deg,#f0f,#a0a);">3×12</div><div class="desc"><span class="rarity">Vzácná 2%:</span> Spawnuje 3 bubliny</div></div>
-  <div class="indexItem"><div class="bubbleImg" style="background: linear-gradient(135deg,#fff,#d166ff); color:#000;">&lt;12&gt;</div><div class="desc"><span class="rarity">Vzácná 3%:</span> Gravitační bublina teleportuje všechny bubliny k ní</div></div>
-  <div class="indexItem"><div class="bubbleImg" style="background: linear-gradient(135deg,#fff,#000); color:#0ff;">!12!</div><div class="desc"><span class="rarity">Vzácná 1,5%:</span> Obrátí barvy obrazovky na 5 sekund a dá +10 skóre</div></div>
-  <div class="indexItem"><div class="bubbleImg" style="background: linear-gradient(135deg,#ff0000,#ffff00); color:#000; box-shadow:0 0 30px #ff0,0 0 60px #f00;">?12?</div><div class="desc"><span class="rarity">Vzácná 0,1%:</span> Okamžité vítězství (+999 999 999 skóre)</div></div>
-</div>
+        <!-- Waiting Room Screen -->
+        <div id="waitingRoomScreen">
+            <div class="room-container">
+                <div class="room-title">Čekárna</div>
+                <p style="margin-bottom: 25px; opacity: 0.8;">Čekání na hráče...</p>
+                
+                <div class="room-code" id="waitingRoomCode">ABCDEF</div>
+                
+                <div class="player-slot" id="player1Slot">Hráč 1: Čekání...</div>
+                <div class="player-slot" id="player2Slot">Hráč 2: Čekání...</div>
+                
+                <button class="action-btn primary-btn" id="startWaitingGameBtn" style="display: none;">Spustit hru</button>
+                <button class="action-btn back-btn" id="backToCreateBtn">← Zpět</button>
+            </div>
+        </div>
 
-<div id="countdown"></div>
-<div id="scoreContainer">
-  <div id="highscore">Nejvyšší skóre: 0</div>
-  <div id="score">Skóre: 0</div>
-  <div id="lives">Životy: 3</div>
-</div>
+        <!-- Game Screen -->
+        <div id="gameScreen">
+            <canvas id="gameCanvas"></canvas>
+            
+            <div id="scoreDisplay">
+                Hráč 1: <span id="score1">0</span> | 
+                Hráč 2: <span id="score2">0</span>
+            </div>
+            
+            <div id="gameModeDisplay"></div>
+            
+            <!-- Mobile Controls -->
+            <div id="mobileControls">
+                <div class="joystick-container">
+                    <div class="joystick-base"></div>
+                    <div class="joystick-handle"></div>
+                </div>
+                
+                <div class="action-buttons">
+                    <div class="game-action-btn" id="gravityBtn">🌀<br>GRAVITACE</div>
+                    <div class="game-action-btn" id="pulseBtn">💥<br>PULZ</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<div id="pauseBtn">|  |</div>
+    <script>
+        // Screen elements
+        const mainMenuScreen = document.getElementById('mainMenuScreen');
+        const createRoomScreen = document.getElementById('createRoomScreen');
+        const joinRoomScreen = document.getElementById('joinRoomScreen');
+        const waitingRoomScreen = document.getElementById('waitingRoomScreen');
+        const gameScreen = document.getElementById('gameScreen');
 
-<div id="pauseScreen">
-  <div id="pauseText">PAUZA</div>
-  <button id="continueGameBtn">Pokračovat</button>
-  <button id="endGameBtn">Konec</button>
-</div>
+        // Buttons
+        const createRoomBtn = document.getElementById('createRoomBtn');
+        const joinRoomBtn = document.getElementById('joinRoomBtn');
+        const singleplayerBtn = document.getElementById('singleplayerBtn');
+        const backToMenuBtn = document.getElementById('backToMenuBtn');
+        const backToMenuBtn2 = document.getElementById('backToMenuBtn2');
+        const backToCreateBtn = document.getElementById('backToCreateBtn');
+        const copyCodeBtn = document.getElementById('copyCodeBtn');
+        const startGameBtn = document.getElementById('startGameBtn');
+        const connectToRoomBtn = document.getElementById('connectToRoomBtn');
+        const startWaitingGameBtn = document.getElementById('startWaitingGameBtn');
 
-<div id="endScreen">
-  <div id="finalScoreText"></div>
-  <button id="continueBtn">POKRAČOVAT</button>
-</div>
+        // Room code elements
+        const generatedRoomCode = document.getElementById('generatedRoomCode');
+        const roomCodeInput = document.getElementById('roomCodeInput');
+        const waitingRoomCode = document.getElementById('waitingRoomCode');
 
-<div id="easterEgg"></div>
+        // Game state
+        let currentRoomCode = '';
+        let isHost = false;
 
-<audio id="popSound" src="https://www.soundjay.com/button/sounds/button-16.mp3"></audio>
+        // Main Menu Navigation
+        createRoomBtn.addEventListener('click', () => {
+            mainMenuScreen.style.display = 'none';
+            createRoomScreen.style.display = 'flex';
+            generateRoomCode();
+        });
 
-<script>
-// ================== ELEMENTS ==================
-const startBtn=document.getElementById('startBtn');
-const indexBtn=document.getElementById('indexBtn');
-const indexPanel=document.getElementById('indexPanel');
-const countdownEl=document.getElementById('countdown');
-const scoreContainer=document.getElementById('scoreContainer');
-const scoreEl=document.getElementById('score');
-const highscoreEl=document.getElementById('highscore');
-const livesEl=document.getElementById('lives');
-const popSound=document.getElementById('popSound');
-const endScreen=document.getElementById('endScreen');
-const finalScoreText=document.getElementById('finalScoreText');
-const versionLabel=document.getElementById('versionLabel');
-const easterEl=document.getElementById('easterEgg');
-const closeBtn=document.querySelector('#indexPanel .closeBtn');
+        joinRoomBtn.addEventListener('click', () => {
+            mainMenuScreen.style.display = 'none';
+            joinRoomScreen.style.display = 'flex';
+        });
 
-const pauseBtn=document.getElementById('pauseBtn');
-const pauseScreen=document.getElementById('pauseScreen');
-const continueGameBtn=document.getElementById('continueGameBtn');
-const endGameBtn=document.getElementById('endGameBtn');
-const continueBtn=document.getElementById('continueBtn');
+        singleplayerBtn.addEventListener('click', () => {
+            startSingleplayerGame();
+        });
 
-// Difficulty selection elements
-const difficultyPanel = document.getElementById('difficultyPanel');
-const difficultyOptions = document.querySelectorAll('.difficultyOption');
-const backBtn = document.getElementById('backBtn');
+        // Back buttons
+        backToMenuBtn.addEventListener('click', () => {
+            createRoomScreen.style.display = 'none';
+            mainMenuScreen.style.display = 'flex';
+        });
 
-let score=0, highscore=0, lives=3, bubbles=[], gameRunning=false, gamePaused=false, startTime;
-let selectedDifficulty = 'normal'; // Default difficulty
+        backToMenuBtn2.addEventListener('click', () => {
+            joinRoomScreen.style.display = 'none';
+            mainMenuScreen.style.display = 'flex';
+        });
 
-// Difficulty settings
-const difficultySettings = {
-  easy: {
-    bubbleSpeed: 0.8,      // Pomalejší bubliny
-    spawnRate: 700,        // Méně časté spawnování
-    lives: 5               // Více životů
-  },
-  normal: {
-    bubbleSpeed: 1.2,      // Mírně pomalejší než současná
-    spawnRate: 500,        // Současná rychlost
-    lives: 3               // Současný počet životů
-  },
-  hard: {
-    bubbleSpeed: 1.8,      // Rychlejší než současná
-    spawnRate: 400,        // Častější spawnování
-    lives: 2               // Méně životů
-  }
-};
+        backToCreateBtn.addEventListener('click', () => {
+            waitingRoomScreen.style.display = 'none';
+            createRoomScreen.style.display = 'flex';
+        });
 
-// ================== LOADING SCREEN ==================
-window.addEventListener('load',()=>{
-  setTimeout(()=>{
-    loadingScreen.style.display='none';
-    startBtn.style.display='block';
-    indexBtn.style.display='block';
-    attachButtonEvents();
-  },2000);
-});
+        // Create Room Flow
+        function generateRoomCode() {
+            currentRoomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+            generatedRoomCode.textContent = currentRoomCode;
+        }
 
-// ================== BUTTON LOGIC ==================
-function attachButtonEvents(){
-  startBtn.addEventListener('click', showDifficultySelection);
-  indexBtn.addEventListener('click',(e)=>{
-    e.stopPropagation();
-    if(indexPanel.style.top==='30%'){ indexPanel.style.top='100%'; startBtn.style.display='block'; indexBtn.style.display='block'; }
-    else { indexPanel.style.top='30%'; startBtn.style.display='none'; indexBtn.style.display='none'; }
-  });
-  closeBtn.addEventListener('click',(e)=>{ e.stopPropagation(); indexPanel.style.top='100%'; startBtn.style.display='block'; indexBtn.style.display='block'; });
-  document.body.addEventListener('click',()=>{
-    if(indexPanel.style.top==='30%'){ indexPanel.style.top='100%'; startBtn.style.display='block'; indexBtn.style.display='block'; }
-  });
-  continueBtn.addEventListener('click',()=>{
-    endScreen.style.display='none'; startBtn.style.display='block'; indexBtn.style.display='block'; versionLabel.style.display='block';
-  });
-  pauseBtn.addEventListener('click', togglePause);
-  continueGameBtn.addEventListener('click', togglePause);
-  endGameBtn.addEventListener('click', endGame);
-  
-  // Difficulty selection events
-  difficultyOptions.forEach(option => {
-    option.addEventListener('click', () => {
-      difficultyOptions.forEach(opt => opt.classList.remove('selected'));
-      option.classList.add('selected');
-      selectedDifficulty = option.dataset.difficulty;
-      startCountdown();
-    });
-  });
-  
-  backBtn.addEventListener('click', () => {
-    difficultyPanel.style.display = 'none';
-    startBtn.style.display = 'block';
-    indexBtn.style.display = 'block';
-    versionLabel.style.display = 'block';
-  });
-}
+        copyCodeBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(currentRoomCode);
+            alert('Kód zkopírován! Sdílej ho s přítelem.');
+        });
 
-// ================== DIFFICULTY SELECTION ==================
-function showDifficultySelection() {
-  startBtn.style.display = 'none';
-  indexBtn.style.display = 'none';
-  versionLabel.style.display = 'none';
-  difficultyPanel.style.display = 'block';
-  
-  // Reset selection
-  difficultyOptions.forEach(opt => opt.classList.remove('selected'));
-  difficultyOptions[1].classList.add('selected'); // Select Normal by default
-  selectedDifficulty = 'normal';
-}
+        startGameBtn.addEventListener('click', () => {
+            createRoomScreen.style.display = 'none';
+            waitingRoomScreen.style.display = 'flex';
+            waitingRoomCode.textContent = currentRoomCode;
+            isHost = true;
+            
+            // Simulace připojení hráčů
+            document.getElementById('player1Slot').textContent = 'Hráč 1: Připojen ✅';
+            document.getElementById('player1Slot').classList.add('player-connected');
+            
+            setTimeout(() => {
+                document.getElementById('player2Slot').textContent = 'Hráč 2: Připojen ✅';
+                document.getElementById('player2Slot').classList.add('player-connected');
+                startWaitingGameBtn.style.display = 'block';
+            }, 2000);
+        });
 
-// ================== COUNTDOWN ==================
-function startCountdown(){
-  difficultyPanel.style.display = 'none';
-  countdownEl.style.display='block';
-  let count=3;
-  countdownEl.textContent=count;
-  const interval=setInterval(()=>{
-    count--;
-    if(count>0) countdownEl.textContent=count;
-    else{
-      clearInterval(interval);
-      countdownEl.style.display='none';
-      scoreContainer.style.display='block';
-      pauseBtn.style.display='block';
-      startGame();
-    }
-  },1000);
-}
+        // Join Room Flow
+        connectToRoomBtn.addEventListener('click', () => {
+            const code = roomCodeInput.value.toUpperCase();
+            if (code.length === 6) {
+                currentRoomCode = code;
+                joinRoomScreen.style.display = 'none';
+                waitingRoomScreen.style.display = 'flex';
+                waitingRoomCode.textContent = currentRoomCode;
+                isHost = false;
+                
+                document.getElementById('player2Slot').textContent = 'Hráč 2: Připojen ✅';
+                document.getElementById('player2Slot').classList.add('player-connected');
+                
+                // Automatický start po připojení
+                setTimeout(() => {
+                    startGame();
+                }, 1000);
+            } else {
+                alert('Zadej platný 6-místný kód!');
+            }
+        });
 
-// ================== GAME LOGIC ==================
-function startGame(){
-  score=0; 
-  
-  // Set game parameters based on selected difficulty
-  const settings = difficultySettings[selectedDifficulty];
-  lives = settings.lives;
-  
-  bubbles=[]; 
-  gameRunning=true; 
-  gamePaused=false; 
-  startTime=Date.now();
-  
-  scoreEl.textContent="Skóre: "+score; 
-  livesEl.textContent="Životy: "+lives;
-  
-  spawnBubble();
-  requestAnimationFrame(updateBubbles);
-}
+        // Start game from waiting room
+        startWaitingGameBtn.addEventListener('click', () => {
+            startGame();
+        });
 
-function togglePause(){
-  if(!gameRunning) return;
-  gamePaused = !gamePaused;
-  if(gamePaused){
-    pauseScreen.classList.remove('fadeOut'); pauseScreen.classList.add('fadeIn'); pauseScreen.style.display='flex';
-  } else{
-    pauseScreen.classList.remove('fadeIn'); pauseScreen.classList.add('fadeOut'); setTimeout(()=> pauseScreen.style.display='none',500);
-  }
-}
+        function startSingleplayerGame() {
+            currentRoomCode = 'BOT_' + Math.random().toString(36).substring(2, 6).toUpperCase();
+            mainMenuScreen.style.display = 'none';
+            gameScreen.style.display = 'flex';
+            initializeGame('singleplayer');
+        }
 
-// ================== UPDATE BUBBLES ==================
-function updateBubbles(){
-  if(!gameRunning) return;
-  if(!gamePaused){
-    bubbles.forEach(bubble=>{
-      const top=parseFloat(bubble.style.top);
-      const settings = difficultySettings[selectedDifficulty];
-      bubble.style.top=top-parseFloat(bubble.dataset.speed)+'px';
-      if(top<=0){  
-        lives--; 
-        livesEl.textContent="Životy: "+lives;
-        bubble.remove(); 
-        bubbles=bubbles.filter(b=>b!==bubble);  
-        if(lives<=0) endGame();
-      }
-    });
-  }
-  requestAnimationFrame(updateBubbles);
-}
-
-// ================== SPAWN BUBBLES ==================
-function spawnBubble(){ 
-  if(!gameRunning || gamePaused) { 
-    const settings = difficultySettings[selectedDifficulty];
-    setTimeout(spawnBubble, settings.spawnRate); 
-    return; 
-  }
-  
-  const elapsed=(Date.now()-startTime)/1000; 
-  const settings = difficultySettings[selectedDifficulty];
-  const speedMultiplier=settings.bubbleSpeed + elapsed/120; 
-  const chance=Math.random();
-  
-  const bubble=document.createElement('div'); 
-  bubble.classList.add('bubble');
-  
-  if(chance<=0.001){ bubble.classList.add('instawin'); bubble.textContent="?12?"; bubble.dataset.type="instawin"; }
-  else if(chance<=0.016){ bubble.classList.add('invert'); bubble.textContent="!12!"; bubble.dataset.type="invert"; }
-  else if(chance<=0.0185){ bubble.classList.add('rare2x'); bubble.textContent="12×2"; bubble.dataset.type="2x"; }
-  else if(chance<=0.0285){ bubble.classList.add('rare144'); bubble.textContent="12²"; bubble.dataset.type="144"; }
-  else if(chance<=0.0485){ bubble.classList.add('triple'); bubble.textContent="3×12"; bubble.dataset.type="triple"; }
-  else if(chance<=0.0785){ bubble.classList.add('gravity'); bubble.textContent="<12>"; bubble.dataset.type="gravity"; }
-  else { bubble.textContent="12"; bubble.dataset.type="normal"; }
-
-  const size=Math.random()*60+60; 
-  bubble.style.width=size+'px'; 
-  bubble.style.height=size+'px';
-  bubble.style.fontSize=(bubble.dataset.type==="144"?size/2.5:size/3)+'px';
-  bubble.style.left=Math.random()*(window.innerWidth-size)+'px';
-  bubble.style.top=(window.innerHeight-size)+'px';
-  bubble.dataset.speed=(Math.random()*1.5+1)*speedMultiplier;
-  document.body.appendChild(bubble);
-
-  const pop=()=>{
-    if(!gameRunning) return;
-    if(['2x','144','triple','gravity','invert','instawin'].includes(bubble.dataset.type)) popSound.currentTime=0, popSound.play();
-    bubble.remove(); bubbles=bubbles.filter(b=>b!==bubble);
-    if(bubble.dataset.type==="2x") score*=2;
-    else if(bubble.dataset.type==="144") score+=144;
-    else if(bubble.dataset.type==="triple") for(let i=0;i<3;i++) spawnSingleBubble();
-    else if(bubble.dataset.type==="gravity"){
-      const bx=parseFloat(bubble.style.left)+parseFloat(b
+        function startGame() {
+            waitingRoomScreen.style.display = 'none';
+            gameScreen.style.display = 'flex';
+            initializeGa
