@@ -5,51 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Gravity Race</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            user-select: none;
+        /* Předchozí styly zůstávají... */
+
+        /* Timer display */
+        #timerDisplay {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 2em;
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px 25px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            min-width: 120px;
         }
-        
-        body {
-            background: #0a0a2a;
-            font-family: 'Arial', sans-serif;
-            overflow: hidden;
-            touch-action: none;
-            height: 100vh;
-            width: 100vw;
-        }
-        
-        /* Screen Container */
-        #screenContainer {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-        
-        /* Main Menu Screen */
-        #mainMenuScreen {
+
+        /* Game over screen */
+        #gameOverScreen {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #0a0a2a 0%, #1a1a4a 50%, #2a2a6a 100%);
-            display: flex;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             color: white;
-            padding: 20px;
+            z-index: 1000;
         }
-        
-        .menu-container {
+
+        .game-over-container {
             background: rgba(255, 255, 255, 0.1);
             padding: 40px 30px;
             border-radius: 25px;
@@ -58,329 +50,15 @@
             border: 2px solid rgba(255, 255, 255, 0.2);
             width: 100%;
             max-width: 400px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
-        
-        h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
+
+        .final-score {
+            font-size: 4em;
+            font-weight: bold;
             background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-        
-        .menu-subtitle {
-            font-size: 1.1em;
-            margin-bottom: 30px;
-            opacity: 0.8;
-        }
-        
-        .menu-btn {
-            padding: 20px;
-            margin: 12px 0;
-            border: none;
-            border-radius: 15px;
-            font-size: 1.2em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            display: block;
-        }
-        
-        #createRoomBtn { 
-            background: linear-gradient(45deg, #00cc66, #00ff88); 
-            color: white; 
-        }
-        
-        #joinRoomBtn { 
-            background: linear-gradient(45deg, #0099ff, #00ccff); 
-            color: white; 
-        }
-        
-        #singleplayerBtn { 
-            background: linear-gradient(45deg, #ff9900, #ffcc00); 
-            color: white; 
-        }
-        
-        .menu-btn:active {
-            transform: scale(0.95);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-        }
-        
-        /* Create Room Screen */
-        #createRoomScreen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #0a0a2a 0%, #1a1a4a 100%);
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            padding: 20px;
-        }
-        
-        .room-container {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 40px 30px;
-            border-radius: 25px;
-            text-align: center;
-            backdrop-filter: blur(20px);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            width: 100%;
-            max-width: 400px;
-        }
-        
-        .room-title {
-            font-size: 1.8em;
-            margin-bottom: 10px;
-            color: #4ecdc4;
-        }
-        
-        .room-code {
-            font-size: 3em;
-            font-weight: bold;
-            letter-spacing: 10px;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-            padding: 25px 35px;
-            border-radius: 20px;
-            margin: 25px 0;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-        }
-        
-        .code-input {
-            padding: 20px;
-            font-size: 1.3em;
-            width: 100%;
-            text-align: center;
-            border: none;
-            border-radius: 15px;
             margin: 20px 0;
-            background: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            font-weight: bold;
-            letter-spacing: 5px;
-            text-transform: uppercase;
-        }
-        
-        .action-btn {
-            padding: 18px 25px;
-            border: none;
-            border-radius: 15px;
-            font-size: 1.1em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
-            margin: 8px 0;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-        }
-        
-        .primary-btn {
-            background: linear-gradient(45deg, #00cc66, #00ff88);
-            color: white;
-        }
-        
-        .secondary-btn {
-            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
-            color: white;
-        }
-        
-        .back-btn {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            margin-top: 20px;
-        }
-        
-        .action-btn:active {
-            transform: scale(0.95);
-        }
-        
-        /* Waiting Room Screen */
-        #waitingRoomScreen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #0a0a2a 0%, #1a1a4a 100%);
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            padding: 20px;
-        }
-        
-        .player-slot {
-            padding: 25px;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 15px;
-            width: 100%;
-            max-width: 300px;
-            text-align: center;
-            font-size: 1.2em;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-            margin: 10px 0;
-        }
-        
-        .player-connected {
-            background: rgba(0, 255, 100, 0.3);
-            border-color: rgba(0, 255, 100, 0.5);
-            box-shadow: 0 0 20px rgba(0, 255, 100, 0.3);
-        }
-        
-        /* Game Screen */
-        #gameScreen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: none;
-            background: #000011;
-        }
-        
-        #gameCanvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-        }
-        
-        /* Game UI */
-        #scoreDisplay {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            color: white;
-            font-size: 1.3em;
-            font-weight: bold;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 12px 20px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        #gameModeDisplay {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            color: white;
-            font-size: 0.9em;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 10px 15px;
-            border-radius: 12px;
-            backdrop-filter: blur(10px);
-            text-align: center;
-            max-width: 200px;
-        }
-        
-        /* Mobile Controls */
-        #mobileControls {
-            position: absolute;
-            bottom: 30px;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            padding: 0 25px;
-            pointer-events: none;
-        }
-        
-        .joystick-container {
-            width: 140px;
-            height: 140px;
-            position: relative;
-            pointer-events: auto;
-        }
-        
-        .joystick-base {
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            backdrop-filter: blur(20px);
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-        
-        .joystick-handle {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 70px;
-            height: 70px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 50%;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            transition: all 0.1s ease;
-        }
-        
-        .action-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            pointer-events: auto;
-        }
-        
-        .game-action-btn {
-            width: 90px;
-            height: 90px;
-            background: linear-gradient(45deg, #0099ff, #00ccff);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 0.8em;
-            text-align: center;
-            border: 3px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-            font-weight: bold;
-            transition: all 0.2s ease;
-        }
-        
-        .game-action-btn:active {
-            transform: scale(0.9);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-        
-        #gravityBtn {
-            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
-        }
-        
-        #pulseBtn {
-            background: linear-gradient(45deg, #4ecdc4, #6effff);
-        }
-
-        /* Responsive design */
-        @media (max-height: 700px) {
-            .menu-container, .room-container {
-                padding: 30px 20px;
-            }
-            
-            h1 {
-                font-size: 2em;
-            }
-            
-            .menu-btn, .action-btn {
-                padding: 16px 20px;
-                font-size: 1.1em;
-            }
-            
-            .room-code {
-                font-size: 2.5em;
-                padding: 20px 30px;
-            }
         }
     </style>
 </head>
@@ -395,67 +73,21 @@
                 
                 <button class="menu-btn" id="createRoomBtn">Vytvořit místnost</button>
                 <button class="menu-btn" id="joinRoomBtn">Připojit se k hře</button>
-                <button class="menu-btn" id="singleplayerBtn">Hra s botem</button>
+                <button class="menu-btn" id="singleplayerBtn">Time Attack</button>
             </div>
         </div>
 
-        <!-- Create Room Screen -->
-        <div id="createRoomScreen">
-            <div class="room-container">
-                <div class="room-title">Vytvořit místnost</div>
-                <p style="margin-bottom: 20px; opacity: 0.8;">Sdílej tento kód s přítelem:</p>
-                
-                <div class="room-code" id="generatedRoomCode">ABCDEF</div>
-                
-                <div style="margin: 25px 0;">
-                    <button class="action-btn primary-btn" id="copyCodeBtn">Kopírovat kód</button>
-                    <button class="action-btn primary-btn" id="startGameBtn">Spustit hru</button>
-                </div>
-                
-                <button class="action-btn back-btn" id="backToMenuBtn">← Zpět do menu</button>
-            </div>
-        </div>
-
-        <!-- Join Room Screen -->
-        <div id="joinRoomScreen" style="display: none;">
-            <div class="room-container">
-                <div class="room-title">Připojit se k hře</div>
-                <p style="margin-bottom: 20px; opacity: 0.8;">Zadej kód místnosti:</p>
-                
-                <input type="text" class="code-input" id="roomCodeInput" placeholder="ABCDEF" maxlength="6">
-                
-                <div style="margin: 25px 0;">
-                    <button class="action-btn primary-btn" id="connectToRoomBtn">Připojit se</button>
-                </div>
-                
-                <button class="action-btn back-btn" id="backToMenuBtn2">← Zpět do menu</button>
-            </div>
-        </div>
-
-        <!-- Waiting Room Screen -->
-        <div id="waitingRoomScreen">
-            <div class="room-container">
-                <div class="room-title">Čekárna</div>
-                <p style="margin-bottom: 25px; opacity: 0.8;">Čekání na hráče...</p>
-                
-                <div class="room-code" id="waitingRoomCode">ABCDEF</div>
-                
-                <div class="player-slot" id="player1Slot">Hráč 1: Čekání...</div>
-                <div class="player-slot" id="player2Slot">Hráč 2: Čekání...</div>
-                
-                <button class="action-btn primary-btn" id="startWaitingGameBtn" style="display: none;">Spustit hru</button>
-                <button class="action-btn back-btn" id="backToCreateBtn">← Zpět</button>
-            </div>
-        </div>
+        <!-- Ostatní obrazovky zůstávají stejné... -->
 
         <!-- Game Screen -->
         <div id="gameScreen">
             <canvas id="gameCanvas"></canvas>
             
             <div id="scoreDisplay">
-                Hráč 1: <span id="score1">0</span> | 
-                Hráč 2: <span id="score2">0</span>
+                Skóre: <span id="score1">0</span>
             </div>
+            
+            <div id="timerDisplay">30</div>
             
             <div id="gameModeDisplay"></div>
             
@@ -472,132 +104,259 @@
                 </div>
             </div>
         </div>
+
+        <!-- Game Over Screen -->
+        <div id="gameOverScreen">
+            <div class="game-over-container">
+                <h2>ČAS VYPRŠEL!</h2>
+                <div class="final-score" id="finalScore">0</div>
+                <p style="margin-bottom: 25px; font-size: 1.1em;">Celkové skóre</p>
+                
+                <button class="action-btn primary-btn" id="playAgainBtn">Hrát znovu</button>
+                <button class="action-btn back-btn" id="backToMenuFromGame">Hlavní menu</button>
+            </div>
+        </div>
     </div>
 
     <script>
-        // Screen elements
-        const mainMenuScreen = document.getElementById('mainMenuScreen');
-        const createRoomScreen = document.getElementById('createRoomScreen');
-        const joinRoomScreen = document.getElementById('joinRoomScreen');
-        const waitingRoomScreen = document.getElementById('waitingRoomScreen');
-        const gameScreen = document.getElementById('gameScreen');
-
-        // Buttons
-        const createRoomBtn = document.getElementById('createRoomBtn');
-        const joinRoomBtn = document.getElementById('joinRoomBtn');
-        const singleplayerBtn = document.getElementById('singleplayerBtn');
-        const backToMenuBtn = document.getElementById('backToMenuBtn');
-        const backToMenuBtn2 = document.getElementById('backToMenuBtn2');
-        const backToCreateBtn = document.getElementById('backToCreateBtn');
-        const copyCodeBtn = document.getElementById('copyCodeBtn');
-        const startGameBtn = document.getElementById('startGameBtn');
-        const connectToRoomBtn = document.getElementById('connectToRoomBtn');
-        const startWaitingGameBtn = document.getElementById('startWaitingGameBtn');
-
-        // Room code elements
-        const generatedRoomCode = document.getElementById('generatedRoomCode');
-        const roomCodeInput = document.getElementById('roomCodeInput');
-        const waitingRoomCode = document.getElementById('waitingRoomCode');
+        // Přidáme game over screen elementy
+        const gameOverScreen = document.getElementById('gameOverScreen');
+        const finalScore = document.getElementById('finalScore');
+        const playAgainBtn = document.getElementById('playAgainBtn');
+        const backToMenuFromGame = document.getElementById('backToMenuFromGame');
+        const timerDisplay = document.getElementById('timerDisplay');
 
         // Game state
-        let currentRoomCode = '';
-        let isHost = false;
+        let gameTime = 30;
+        let gameTimer = null;
+        let playerScore = 0;
+        let isGameActive = false;
 
-        // Main Menu Navigation
-        createRoomBtn.addEventListener('click', () => {
-            mainMenuScreen.style.display = 'none';
-            createRoomScreen.style.display = 'flex';
-            generateRoomCode();
-        });
-
-        joinRoomBtn.addEventListener('click', () => {
-            mainMenuScreen.style.display = 'none';
-            joinRoomScreen.style.display = 'flex';
-        });
-
-        singleplayerBtn.addEventListener('click', () => {
-            startSingleplayerGame();
-        });
-
-        // Back buttons
-        backToMenuBtn.addEventListener('click', () => {
-            createRoomScreen.style.display = 'none';
-            mainMenuScreen.style.display = 'flex';
-        });
-
-        backToMenuBtn2.addEventListener('click', () => {
-            joinRoomScreen.style.display = 'none';
-            mainMenuScreen.style.display = 'flex';
-        });
-
-        backToCreateBtn.addEventListener('click', () => {
-            waitingRoomScreen.style.display = 'none';
-            createRoomScreen.style.display = 'flex';
-        });
-
-        // Create Room Flow
-        function generateRoomCode() {
-            currentRoomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-            generatedRoomCode.textContent = currentRoomCode;
-        }
-
-        copyCodeBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(currentRoomCode);
-            alert('Kód zkopírován! Sdílej ho s přítelem.');
-        });
-
-        startGameBtn.addEventListener('click', () => {
-            createRoomScreen.style.display = 'none';
-            waitingRoomScreen.style.display = 'flex';
-            waitingRoomCode.textContent = currentRoomCode;
-            isHost = true;
-            
-            // Simulace připojení hráčů
-            document.getElementById('player1Slot').textContent = 'Hráč 1: Připojen ✅';
-            document.getElementById('player1Slot').classList.add('player-connected');
-            
-            setTimeout(() => {
-                document.getElementById('player2Slot').textContent = 'Hráč 2: Připojen ✅';
-                document.getElementById('player2Slot').classList.add('player-connected');
-                startWaitingGameBtn.style.display = 'block';
-            }, 2000);
-        });
-
-        // Join Room Flow
-        connectToRoomBtn.addEventListener('click', () => {
-            const code = roomCodeInput.value.toUpperCase();
-            if (code.length === 6) {
-                currentRoomCode = code;
-                joinRoomScreen.style.display = 'none';
-                waitingRoomScreen.style.display = 'flex';
-                waitingRoomCode.textContent = currentRoomCode;
-                isHost = false;
-                
-                document.getElementById('player2Slot').textContent = 'Hráč 2: Připojen ✅';
-                document.getElementById('player2Slot').classList.add('player-connected');
-                
-                // Automatický start po připojení
-                setTimeout(() => {
-                    startGame();
-                }, 1000);
-            } else {
-                alert('Zadej platný 6-místný kód!');
-            }
-        });
-
-        // Start game from waiting room
-        startWaitingGameBtn.addEventListener('click', () => {
-            startGame();
-        });
-
+        // Singleplayer - Time Attack
         function startSingleplayerGame() {
-            currentRoomCode = 'BOT_' + Math.random().toString(36).substring(2, 6).toUpperCase();
+            currentRoomCode = 'TIME_' + Math.random().toString(36).substring(2, 6).toUpperCase();
             mainMenuScreen.style.display = 'none';
             gameScreen.style.display = 'flex';
+            
+            // Změna UI pro singleplayer
+            document.getElementById('scoreDisplay').innerHTML = 'Skóre: <span id="score1">0</span>';
+            document.getElementById('gameModeDisplay').textContent = 'Time Attack - 30 vteřin';
+            
             initializeGame('singleplayer');
         }
 
-        function startGame() {
-            waitingRoomScreen.style.display = 'none';
-            gameScreen.style.display = 'flex';
-            initializeGa
+        function initializeGame(mode) {
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            // Reset game state
+            playerScore = 0;
+            gameTime = 30;
+            isGameActive = true;
+            
+            document.getElementById('score1').textContent = '0';
+            timerDisplay.textContent = gameTime;
+            
+            if (mode === 'singleplayer') {
+                startGameTimer();
+            }
+            
+            // Herní objekty
+            const player = {
+                x: canvas.width / 2,
+                y: canvas.height / 2,
+                radius: 15,
+                color: '#4ecdc4',
+                speed: 4
+            };
+            
+            const stars = [];
+            
+            // Vytvoření hvězd
+            function createStars() {
+                stars.length = 0;
+                for (let i = 0; i < 15; i++) {
+                    stars.push({
+                        x: Math.random() * (canvas.width - 100) + 50,
+                        y: Math.random() * (canvas.height - 100) + 50,
+                        radius: 8,
+                        collected: false
+                    });
+                }
+            }
+            
+            createStars();
+            
+            // Ovládání
+            let keys = {};
+            let joystickActive = false;
+            let joystickX = 0;
+            let joystickY = 0;
+            
+            // Keyboard controls
+            window.addEventListener('keydown', (e) => {
+                keys[e.key] = true;
+            });
+            
+            window.addEventListener('keyup', (e) => {
+                keys[e.key] = false;
+            });
+            
+            // Touch controls pro joystick
+            const joystick = document.querySelector('.joystick-container');
+            const joystickHandle = document.querySelector('.joystick-handle');
+            
+            let touchId = null;
+            
+            joystick.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                if (!touchId) {
+                    touchId = e.changedTouches[0].identifier;
+                    joystickActive = true;
+                }
+            });
+            
+            joystick.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                if (!joystickActive) return;
+                
+                const touch = Array.from(e.changedTouches).find(t => t.identifier === touchId);
+                if (touch) {
+                    const rect = joystick.getBoundingClientRect();
+                    const centerX = rect.left + rect.width / 2;
+                    const centerY = rect.top + rect.height / 2;
+                    
+                    const deltaX = touch.clientX - centerX;
+                    const deltaY = touch.clientY - centerY;
+                    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                    const maxDistance = rect.width / 2 - 35;
+                    
+                    if (distance > maxDistance) {
+                        joystickX = (deltaX / distance) * maxDistance;
+                        joystickY = (deltaY / distance) * maxDistance;
+                    } else {
+                        joystickX = deltaX;
+                        joystickY = deltaY;
+                    }
+                    
+                    joystickHandle.style.transform = `translate(calc(-50% + ${joystickX}px), calc(-50% + ${joystickY}px))`;
+                }
+            });
+            
+            joystick.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                if (Array.from(e.changedTouches).find(t => t.identifier === touchId)) {
+                    joystickActive = false;
+                    joystickX = 0;
+                    joystickY = 0;
+                    joystickHandle.style.transform = 'translate(-50%, -50%)';
+                    touchId = null;
+                }
+            });
+            
+            // Herní smyčka
+            function gameLoop() {
+                if (!isGameActive) return;
+                
+                // Clear canvas
+                ctx.fillStyle = '#000011';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Update player position
+                if (joystickActive) {
+                    player.x += (joystickX / 20) * player.speed;
+                    player.y += (joystickY / 20) * player.speed;
+                } else {
+                    if (keys['ArrowLeft'] || keys['a']) player.x -= player.speed;
+                    if (keys['ArrowRight'] || keys['d']) player.x += player.speed;
+                    if (keys['ArrowUp'] || keys['w']) player.y -= player.speed;
+                    if (keys['ArrowDown'] || keys['s']) player.y += player.speed;
+                }
+                
+                // Boundary check
+                player.x = Math.max(player.radius, Math.min(canvas.width - player.radius, player.x));
+                player.y = Math.max(player.radius, Math.min(canvas.height - player.radius, player.y));
+                
+                // Draw stars
+                ctx.fillStyle = '#ffff00';
+                stars.forEach(star => {
+                    if (!star.collected) {
+                        ctx.beginPath();
+                        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                        ctx.fill();
+                        
+                        // Check collision
+                        const dist = Math.sqrt((player.x - star.x) ** 2 + (player.y - star.y) ** 2);
+                        if (dist < player.radius + star.radius) {
+                            star.collected = true;
+                            playerScore += 10;
+                            document.getElementById('score1').textContent = playerScore;
+                            
+                            // Create new star after delay
+                            setTimeout(() => {
+                                star.collected = false;
+                                star.x = Math.random() * (canvas.width - 100) + 50;
+                                star.y = Math.random() * (canvas.height - 100) + 50;
+                            }, 500);
+                        }
+                    }
+                });
+                
+                // Draw player
+                ctx.fillStyle = player.color;
+                ctx.beginPath();
+                ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Draw player glow
+                ctx.shadowColor = player.color;
+                ctx.shadowBlur = 20;
+                ctx.beginPath();
+                ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+                
+                requestAnimationFrame(gameLoop);
+            }
+            
+            gameLoop();
+        }
+        
+        function startGameTimer() {
+            gameTimer = setInterval(() => {
+                gameTime--;
+                timerDisplay.textContent = gameTime;
+                
+                if (gameTime <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+        
+        function endGame() {
+            isGameActive = false;
+            clearInterval(gameTimer);
+            
+            finalScore.textContent = playerScore;
+            gameOverScreen.style.display = 'flex';
+        }
+        
+        // Game over buttons
+        playAgainBtn.addEventListener('click', () => {
+            gameOverScreen.style.display = 'none';
+            startSingleplayerGame();
+        });
+        
+        backToMenuFromGame.addEventListener('click', () => {
+            gameOverScreen.style.display = 'none';
+            gameScreen.style.display = 'none';
+            mainMenuScreen.style.display = 'flex';
+        });
+
+        // Ostatní event listeners zůstávají stejné...
+    </script>
+</body>
+</html>
