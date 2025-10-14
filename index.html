@@ -6,44 +6,31 @@
   <title>Harvest Valley</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <div class="top-bar">
-    <button id="theme-toggle">🌓</button>
-    <button id="restart-game">Restart</button>
+<body class="light-mode">
+
+  <div class="container">
+    <h1>Harvest Valley 🌾</h1>
+    <p id="day-text">Vítej na farmě! Klikni na tlačítko "Další den" a uvidíš, co se stane.</p>
+    
+    <div class="farm">
+      <div class="field" id="field1">Pole 1</div>
+      <div class="field" id="field2">Pole 2</div>
+      <div class="field" id="field3">Pole 3</div>
+      <div class="field" id="field4">Pole 4</div>
+      <div class="field" id="field5">Pole 5</div>
+      <div class="field" id="field6">Pole 6</div>
+      <div class="field" id="field7">Pole 7</div>
+      <div class="field" id="field8">Pole 8</div>
+      <div class="field" id="field9">Pole 9</div>
+    </div>
+    
+    <button class="button-next-day" id="next-day">Další den</button>
+
+    <div class="mode-toggle">
+      <button id="toggle-mode">Přepnout mód</button>
+    </div>
   </div>
 
-  <div class="stats">
-    <div class="stat">💰 <span id="money">0</span></div>
-    <div class="stat">Level <span id="level">1</span><div class="xp-bar"><div id="xp-progress"></div></div><div id="xp-text">0/100 XP</div></div>
-    <div class="stat">Den <span id="day">1</span></div>
-    <div class="stat">Pole <span id="farm-size">9</span></div>
-  </div>
-
-  <div id="selected-crop">
-    Vybraná plodina: <span id="selected-crop-name">Žádná</span> <span id="selected-crop-icon"></span>
-  </div>
-
-  <button id="next-day">Další den</button>
-
-  <div id="farm"></div>
-
-  <div class="shop-section">
-    <div class="shop-title">Semínka a sazenice</div>
-    <div id="crops"></div>
-  </div>
-
-  <div class="shop-section">
-    <div class="shop-title">Zvířata</div>
-    <div id="animals"></div>
-  </div>
-
-  <div class="shop-section">
-    <div class="shop-title">Upgrady</div>
-    <div id="upgrades"></div>
-  </div>
-
-  <div id="save-indicator">💾 Uloženo</div>
-
-  <script src="script.js"></script>
+  <script src="script.js" defer></script>
 </body>
 </html>
