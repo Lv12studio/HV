@@ -2,13 +2,12 @@
    Barvy a módy
    ========================= */
 :root {
-  --bg-color-light: #ffffff;    /* světlé pozadí stránky */
-  --text-color-light: #333333;  /* tmavý text */
-  --bg-color-dark: #1a1a1a;     /* tmavé pozadí stránky */
-  --text-color-dark: #f0f0f0;   /* světlý text */
+  --bg-color-light: #ffffff;
+  --text-color-light: #333333;
+  --bg-color-dark: #1a1a1a;
+  --text-color-dark: #f0f0f0;
 }
 
-/* Light mode */
 body.light-mode {
   --bg-color: var(--bg-color-light);
   --text-color: var(--text-color-light);
@@ -16,7 +15,6 @@ body.light-mode {
   color: var(--text-color);
 }
 
-/* Dark mode */
 body.dark-mode {
   --bg-color: var(--bg-color-dark);
   --text-color: var(--text-color-dark);
@@ -24,9 +22,6 @@ body.dark-mode {
   color: var(--text-color);
 }
 
-/* =========================
-   Základní styl stránky
-   ========================= */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
@@ -34,36 +29,73 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-h1, h2, h3, p {
-  margin: 0 0 15px 0;
-}
-
 .container {
-  max-width: 800px;
+  max-width: 900px;
   margin: 50px auto;
   padding: 0 20px;
+  text-align: center;
 }
 
-/* =========================
-   Tlačítko "Další den"
-   ========================= */
+/* Pole farmy */
+.farm {
+  display: grid;
+  grid-template-columns: repeat(3, 120px);
+  grid-gap: 15px;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.field {
+  width: 120px;
+  height: 120px;
+  background-color: #8bc34a;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.field.planted {
+  background-color: #ff9800;
+}
+
+.field.grown {
+  background-color: #4caf50;
+}
+
+.field.bonus {
+  background-color: #2196f3;
+}
+
+/* Tlačítko "Další den" */
 .button-next-day {
-  background-color: var(--bg-color); /* barva pozadí stránky */
-  color: var(--text-color);          /* opačný text */
-  padding: 10px 20px;                /* tak akorát */
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  padding: 10px 20px;
   border: none;
-  border-radius: 8px;                /* jemně zaoblené rohy */
-  font-size: 16px;                   /* pohodlná velikost textu */
-  cursor: pointer;                   /* ukazatel ruky */
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 15px;
   transition: transform 0.1s ease, box-shadow 0.2s ease;
 }
 
-/* Efekt stisknutí */
 .button-next-day:active {
   transform: scale(0.97);
 }
 
-/* Volitelně: mírný hover efekt pro lepší UX */
 .button-next-day:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.mode-toggle button {
+  margin-top: 15px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
 }
