@@ -55,6 +55,7 @@ body {
   transition: background-color 0.3s ease, transform 0.1s ease;
 }
 
+/* Stav polí */
 .field.planted {
   background-color: #ff9800;
 }
