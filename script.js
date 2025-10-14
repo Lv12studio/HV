@@ -1,5 +1,5 @@
 /* =============================
-   Harvest Valley – script.js (vyvážená verze)
+   Harvest Valley – script.js (pomalejší vydělávání)
    ============================= */
 
 const farmEl = document.getElementById("farm");
@@ -18,27 +18,27 @@ const themeToggleBtn = document.getElementById("theme-toggle");
 let selectedCrop = null;
 
 const ALL_CROPS = [
-  { name: "Mrkev", icon: "🥕", cost: 10, growTime: 2, profit: 5, xp: 3 },
-  { name: "Rajče", icon: "🍅", cost: 15, growTime: 3, profit: 10, xp: 4 },
-  { name: "Salát", icon: "🥬", cost: 12, growTime: 2, profit: 6, xp: 3 },
-  { name: "Brambory", icon: "🥔", cost: 20, growTime: 4, profit: 12, xp: 5 },
-  { name: "Jahody", icon: "🍓", cost: 18, growTime: 3, profit: 9, xp: 4 },
-  { name: "Cibule", icon: "🧅", cost: 14, growTime: 2, profit: 6, xp: 3 },
-  { name: "Paprika", icon: "🌶️", cost: 16, growTime: 3, profit: 8, xp: 4 },
-  { name: "Meloun", icon: "🍉", cost: 25, growTime: 5, profit: 15, xp: 6 },
-  { name: "Jablko", icon: "🍎", cost: 22, growTime: 4, profit: 12, xp: 5 },
+  { name: "Mrkev", icon: "🥕", cost: 10, growTime: 2, profit: 3, xp: 3 },
+  { name: "Rajče", icon: "🍅", cost: 15, growTime: 3, profit: 5, xp: 4 },
+  { name: "Salát", icon: "🥬", cost: 12, growTime: 2, profit: 3, xp: 3 },
+  { name: "Brambory", icon: "🥔", cost: 20, growTime: 4, profit: 6, xp: 5 },
+  { name: "Jahody", icon: "🍓", cost: 18, growTime: 3, profit: 5, xp: 4 },
+  { name: "Cibule", icon: "🧅", cost: 14, growTime: 2, profit: 3, xp: 3 },
+  { name: "Paprika", icon: "🌶️", cost: 16, growTime: 3, profit: 4, xp: 4 },
+  { name: "Meloun", icon: "🍉", cost: 25, growTime: 5, profit: 8, xp: 6 },
+  { name: "Jablko", icon: "🍎", cost: 22, growTime: 4, profit: 6, xp: 5 },
 ];
 
 const ALL_ANIMALS = [
-  { name: "Kráva", icon: "🐄", cost: 50, income: 3 },
-  { name: "Koza", icon: "🐐", cost: 40, income: 2 },
+  { name: "Kráva", icon: "🐄", cost: 50, income: 1 },
+  { name: "Koza", icon: "🐐", cost: 40, income: 1 },
   { name: "Slepice", icon: "🐔", cost: 30, income: 1 },
-  { name: "Ovce", icon: "🐑", cost: 45, income: 2 },
+  { name: "Ovce", icon: "🐑", cost: 45, income: 1 },
   { name: "Prase", icon: "🐖", cost: 35, income: 1 },
-  { name: "Kůň", icon: "🐎", cost: 60, income: 3 },
+  { name: "Kůň", icon: "🐎", cost: 60, income: 2 },
   { name: "Králík", icon: "🐇", cost: 20, income: 1 },
   { name: "Kačer", icon: "🦆", cost: 25, income: 1 },
-  { name: "Medvěd", icon: "🐻", cost: 100, income: 5 },
+  { name: "Medvěd", icon: "🐻", cost: 100, income: 3 },
 ];
 
 let state = {
@@ -258,3 +258,4 @@ document.getElementById("restart-game").onclick = restartGame;
 loadState();
 checkUnlocks();
 updateUI();
+       
