@@ -21,7 +21,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 15px;
+            padding: 10px;
             overflow-x: hidden;
         }
 
@@ -32,38 +32,38 @@
         }
 
         header {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             background: rgba(255, 255, 255, 0.95);
-            padding: 15px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             width: 100%;
-            max-width: 600px;
+            max-width: 500px;
             margin-left: auto;
             margin-right: auto;
         }
 
         h1 {
-            font-size: 2.2rem;
-            margin-bottom: 8px;
+            font-size: 2rem;
+            margin-bottom: 6px;
             color: #2d5016;
             text-shadow: 2px 2px 0 #a3d977;
         }
 
         .subtitle {
-            font-size: 1rem;
+            font-size: 0.9rem;
             color: #4a7c1f;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .game-container {
             background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-            margin-bottom: 15px;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            margin-bottom: 12px;
             width: 100%;
-            max-width: 600px;
+            max-width: 500px;
             margin-left: auto;
             margin-right: auto;
         }
@@ -71,13 +71,13 @@
         .stats {
             display: flex;
             justify-content: space-around;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
             background: #e8f5e9;
-            padding: 10px;
-            border-radius: 10px;
-            border: 3px solid #a5d6a7;
+            padding: 8px;
+            border-radius: 8px;
+            border: 2px solid #a5d6a7;
         }
 
         .stat-item {
@@ -85,30 +85,30 @@
             flex-direction: column;
             align-items: center;
             background: white;
-            padding: 8px 12px;
-            border-radius: 10px;
-            min-width: 80px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 6px 10px;
+            border-radius: 8px;
+            min-width: 70px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .stat-label {
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             color: #4a7c1f;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
         }
 
         .stat-value {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: bold;
             color: #2d5016;
         }
 
         .farm-container {
             background: #c8e6c9;
-            border-radius: 10px;
-            padding: 15px;
-            border: 5px solid #8bc34a;
-            margin: 0 auto 15px;
+            border-radius: 8px;
+            padding: 12px;
+            border: 4px solid #8bc34a;
+            margin: 0 auto 12px;
             max-width: 100%;
             overflow: hidden;
         }
@@ -116,7 +116,7 @@
         .farm {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
+            gap: 6px;
             margin: 0 auto;
             max-width: 100%;
         }
@@ -126,21 +126,21 @@
         }
 
         .plot {
-            width: 65px;
-            height: 65px;
-            border-radius: 8px;
+            width: 50px;
+            height: 50px;
+            border-radius: 6px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             transition: all 0.3s ease;
             background: #d7ccc8;
             cursor: pointer;
             position: relative;
             overflow: hidden;
-            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-            padding: 5px;
+            box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.2);
+            padding: 3px;
         }
 
         .plot:hover {
@@ -169,11 +169,17 @@
             border: 2px dashed #ff9800;
         }
 
+        .plot.locked {
+            background: #9e9e9e;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
         .crops {
             display: flex;
             justify-content: center;
-            gap: 12px;
-            margin: 15px 0;
+            gap: 10px;
+            margin: 12px 0;
             flex-wrap: wrap;
         }
 
@@ -182,10 +188,10 @@
             flex-direction: column;
             align-items: center;
             background: white;
-            padding: 10px;
-            border-radius: 10px;
-            min-width: 90px;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+            padding: 8px;
+            border-radius: 8px;
+            min-width: 80px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
             border: 2px solid #ffd54f;
             cursor: pointer;
             transition: all 0.2s;
@@ -205,33 +211,37 @@
         }
 
         .crop-item:hover:not(.locked) {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .crop-item:active:not(.locked) {
+            transform: translateY(0);
         }
 
         .crop-icon {
-            font-size: 1.8rem;
-            margin-bottom: 5px;
+            font-size: 1.6rem;
+            margin-bottom: 3px;
         }
 
         .crop-name {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: bold;
             color: #2d5016;
         }
 
         .crop-cost {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #e53935;
         }
 
         .crop-time {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #1976d2;
         }
 
         .crop-locked {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #757575;
             font-style: italic;
         }
@@ -239,8 +249,8 @@
         .animals {
             display: flex;
             justify-content: center;
-            gap: 12px;
-            margin: 15px 0;
+            gap: 10px;
+            margin: 12px 0;
             flex-wrap: wrap;
         }
 
@@ -249,72 +259,79 @@
             flex-direction: column;
             align-items: center;
             background: white;
-            padding: 10px;
-            border-radius: 10px;
-            min-width: 90px;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+            padding: 8px;
+            border-radius: 8px;
+            min-width: 80px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
             border: 2px solid #81c784;
             cursor: pointer;
             transition: all 0.2s;
         }
 
         .animal-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
 
         .animal-icon {
-            font-size: 1.8rem;
-            margin-bottom: 5px;
+            font-size: 1.6rem;
+            margin-bottom: 3px;
         }
 
         .animal-name {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: bold;
             color: #2d5016;
         }
 
         .animal-cost {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #e53935;
         }
 
         .animal-income {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #43a047;
         }
 
         .controls {
             display: flex;
             justify-content: center;
-            gap: 12px;
-            margin-top: 15px;
+            gap: 10px;
+            margin-top: 12px;
             flex-wrap: wrap;
         }
 
         button {
-            padding: 12px 20px;
+            padding: 10px 16px;
             border: none;
-            border-radius: 25px;
+            border-radius: 20px;
             background: linear-gradient(135deg, #4caf50, #2e7d32);
             color: white;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             font-size: 0.9rem;
         }
 
         button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
         }
 
         button:active {
             transform: translateY(0);
+        }
+
+        button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
         .market {
@@ -331,9 +348,9 @@
 
         .selected-crop {
             background: #e8f5e9;
-            padding: 10px;
-            border-radius: 10px;
-            margin: 10px 0;
+            padding: 8px;
+            border-radius: 8px;
+            margin: 8px 0;
             border: 2px dashed #4caf50;
             font-size: 0.9rem;
         }
@@ -348,78 +365,53 @@
             background-color: rgba(0, 0, 0, 0.7);
             justify-content: center;
             align-items: center;
-            z-index: 1000;
-            padding: 20px;
+            z-index: 100;
+            padding: 15px;
         }
 
         .modal-content {
             background: white;
-            padding: 25px;
-            border-radius: 15px;
+            padding: 20px;
+            border-radius: 12px;
             text-align: center;
             width: 100%;
-            max-width: 400px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-width: 350px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
             animation: modalAppear 0.4s ease;
-            position: relative;
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: #757575;
-            cursor: pointer;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-
-        .close-modal:hover {
-            background: #f5f5f5;
-            color: #e53935;
-            transform: rotate(90deg);
         }
 
         .modal h2 {
-            font-size: 1.8rem;
-            margin-bottom: 15px;
+            font-size: 1.6rem;
+            margin-bottom: 12px;
             color: #2d5016;
-            padding-right: 30px;
         }
 
         .modal p {
-            margin-bottom: 20px;
-            font-size: 1.1rem;
-            line-height: 1.5;
+            margin-bottom: 16px;
+            font-size: 1rem;
+            line-height: 1.4;
             color: #4a7c1f;
         }
 
         .instructions {
             background: #e8f5e9;
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 15px;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 12px;
             text-align: left;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             border: 2px dashed #81c784;
             width: 100%;
-            max-width: 600px;
+            max-width: 500px;
             margin-left: auto;
             margin-right: auto;
         }
 
         .instructions h3 {
             color: #2d5016;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             text-align: center;
+            font-size: 1rem;
         }
 
         .instructions ul {
@@ -428,47 +420,49 @@
         }
 
         .instructions li {
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             display: flex;
             align-items: center;
+            font-size: 0.8rem;
         }
 
         .instructions li::before {
             content: "🌱";
-            margin-right: 8px;
+            margin-right: 6px;
+            font-size: 0.8rem;
         }
 
         footer {
-            margin-top: 20px;
+            margin-top: 15px;
             text-align: center;
             color: #2d5016;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             width: 100%;
-            max-width: 600px;
+            max-width: 500px;
         }
 
         .progress-bar {
             width: 100%;
-            height: 8px;
+            height: 6px;
             background: #e0e0e0;
-            border-radius: 5px;
-            margin-top: 5px;
+            border-radius: 3px;
+            margin-top: 3px;
             overflow: hidden;
         }
 
         .progress {
             height: 100%;
             background: #4caf50;
-            border-radius: 5px;
+            border-radius: 3px;
             transition: width 0.3s;
         }
 
         .xp-bar {
             width: 100%;
-            height: 15px;
+            height: 12px;
             background: #e0e0e0;
-            border-radius: 10px;
-            margin: 5px 0;
+            border-radius: 6px;
+            margin: 3px 0;
             overflow: hidden;
             position: relative;
         }
@@ -476,7 +470,7 @@
         .xp-progress {
             height: 100%;
             background: linear-gradient(90deg, #4caf50, #8bc34a);
-            border-radius: 10px;
+            border-radius: 6px;
             transition: width 0.5s ease;
         }
 
@@ -489,25 +483,24 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             font-weight: bold;
             color: #2d5016;
         }
 
         .save-indicator {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 15px;
+            right: 15px;
             background: rgba(76, 175, 80, 0.9);
             color: white;
-            padding: 10px 15px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            padding: 8px 12px;
+            border-radius: 16px;
+            font-size: 0.7rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
             transform: translateY(100px);
             transition: transform 0.3s ease;
             z-index: 1000;
-            display: none;
         }
 
         .save-indicator.show {
@@ -521,38 +514,39 @@
         }
 
         @keyframes modalAppear {
-            from { opacity: 0; transform: translateY(-30px) scale(0.9); }
+            from { opacity: 0; transform: translateY(-20px) scale(0.9); }
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         .season-indicator {
             display: inline-block;
-            padding: 5px 15px;
+            padding: 4px 12px;
             background: #ffd54f;
-            border-radius: 20px;
+            border-radius: 16px;
             font-weight: bold;
-            margin-left: 10px;
+            margin-left: 8px;
+            font-size: 0.8rem;
         }
 
         .farm-expansion {
             background: #fff8e1;
-            padding: 8px;
-            border-radius: 8px;
-            margin: 5px 0;
+            padding: 6px;
+            border-radius: 6px;
+            margin: 4px 0;
             border: 2px solid #ffd54f;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
         }
 
         /* Responsive design */
-        @media (max-width: 480px) {
+        @media (max-width: 380px) {
             .farm {
                 grid-template-columns: repeat(5, 1fr);
             }
             
             .plot {
-                width: 55px;
-                height: 55px;
-                font-size: 1.4rem;
+                width: 45px;
+                height: 45px;
+                font-size: 1.2rem;
             }
             
             h1 {
@@ -564,8 +558,8 @@
             }
             
             .crop-item, .animal-item {
-                min-width: 80px;
-                padding: 8px;
+                min-width: 70px;
+                padding: 6px;
             }
             
             .controls {
@@ -573,8 +567,24 @@
             }
             
             button {
-                padding: 10px 15px;
+                padding: 8px 12px;
                 font-size: 0.8rem;
+            }
+            
+            .game-container, header, .instructions, footer {
+                max-width: 95%;
+            }
+        }
+
+        @media (max-height: 700px) {
+            .plot {
+                width: 40px;
+                height: 40px;
+                font-size: 1.1rem;
+            }
+            
+            .farm-container {
+                padding: 8px;
             }
         }
     </style>
@@ -672,45 +682,44 @@
         </div>
     </div>
 
-    <!-- Indikátor uložení (skrytý) -->
+    <!-- Indikátor uložení -->
     <div class="save-indicator" id="save-indicator">
         <i class="fas fa-check"></i> Hra uložena!
     </div>
 
     <div class="modal" id="market-modal">
         <div class="modal-content">
-            <button class="close-modal" id="close-market">&times;</button>
             <h2><i class="fas fa-store"></i> Farmářský Trh</h2>
             <p>Prodej své plodiny a vydělej peníze!</p>
             <div id="market-items">
                 <!-- Tržní položky budou vygenerovány JavaScriptem -->
             </div>
-            <button id="close-market-bottom">Zavřít</button>
+            <button id="close-market">Zavřít</button>
         </div>
     </div>
 
     <div class="modal" id="upgrades-modal">
         <div class="modal-content">
-            <button class="close-modal" id="close-upgrades">&times;</button>
             <h2><i class="fas fa-tools"></i> Vylepšení Farmy</h2>
             <p>Vylepši svou farmu pro vyšší výnosy!</p>
             <div id="upgrade-items">
                 <!-- Vylepšení budou vygenerována JavaScriptem -->
             </div>
-            <button id="close-upgrades-bottom">Zavřít</button>
+            <button id="close-upgrades">Zavřít</button>
         </div>
     </div>
 
     <div class="modal" id="level-up-modal">
         <div class="modal-content">
-            <button class="close-modal" id="close-level-up">&times;</button>
             <h2><i class="fas fa-trophy"></i> Level Up!</h2>
             <p>Gratulujeme! Postoupil jsi na level <span id="new-level">2</span>!</p>
             <p id="level-up-benefits"></p>
-            <button id="close-level-up-bottom">Super!</button>
+            <button id="close-level-up">Super!</button>
         </div>
     </div>
 
     <div class="modal" id="farm-expanded-modal">
         <div class="modal-content">
-            <button class="close-modal" id="c
+            <h2><i class="fas fa-expand-arrows-alt"></i> Farma Rozšířena!</h2>
+            <p>🎉 Tvá farma se rozrostla na <strong>10 políček</strong>!</p>
+    
