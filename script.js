@@ -1,5 +1,5 @@
 /* =============================
-   Harvest Valley – script.js
+   Harvest Valley – script.js (vyvážená verze)
    ============================= */
 
 const farmEl = document.getElementById("farm");
@@ -13,33 +13,32 @@ const xpProgressEl = document.getElementById("xp-progress");
 const xpTextEl = document.getElementById("xp-text");
 const dayEl = document.getElementById("day");
 const farmSizeEl = document.getElementById("farm-size");
-const saveIndicator = document.getElementById("save-indicator");
 const themeToggleBtn = document.getElementById("theme-toggle");
 
 let selectedCrop = null;
 
 const ALL_CROPS = [
-  { name: "Mrkev", icon: "🥕", cost: 10, growTime: 2, profit: 20, xp: 5 },
-  { name: "Rajče", icon: "🍅", cost: 15, growTime: 3, profit: 30, xp: 6 },
-  { name: "Salát", icon: "🥬", cost: 12, growTime: 2, profit: 22, xp: 5 },
-  { name: "Brambory", icon: "🥔", cost: 20, growTime: 4, profit: 40, xp: 7 },
-  { name: "Jahody", icon: "🍓", cost: 18, growTime: 3, profit: 35, xp: 6 },
-  { name: "Cibule", icon: "🧅", cost: 14, growTime: 2, profit: 25, xp: 5 },
-  { name: "Paprika", icon: "🌶️", cost: 16, growTime: 3, profit: 32, xp: 6 },
-  { name: "Meloun", icon: "🍉", cost: 25, growTime: 5, profit: 55, xp: 8 },
-  { name: "Jablko", icon: "🍎", cost: 22, growTime: 4, profit: 45, xp: 7 },
+  { name: "Mrkev", icon: "🥕", cost: 10, growTime: 2, profit: 5, xp: 3 },
+  { name: "Rajče", icon: "🍅", cost: 15, growTime: 3, profit: 10, xp: 4 },
+  { name: "Salát", icon: "🥬", cost: 12, growTime: 2, profit: 6, xp: 3 },
+  { name: "Brambory", icon: "🥔", cost: 20, growTime: 4, profit: 12, xp: 5 },
+  { name: "Jahody", icon: "🍓", cost: 18, growTime: 3, profit: 9, xp: 4 },
+  { name: "Cibule", icon: "🧅", cost: 14, growTime: 2, profit: 6, xp: 3 },
+  { name: "Paprika", icon: "🌶️", cost: 16, growTime: 3, profit: 8, xp: 4 },
+  { name: "Meloun", icon: "🍉", cost: 25, growTime: 5, profit: 15, xp: 6 },
+  { name: "Jablko", icon: "🍎", cost: 22, growTime: 4, profit: 12, xp: 5 },
 ];
 
 const ALL_ANIMALS = [
-  { name: "Kráva", icon: "🐄", cost: 50, income: 10 },
-  { name: "Koza", icon: "🐐", cost: 40, income: 8 },
-  { name: "Slepice", icon: "🐔", cost: 30, income: 5 },
-  { name: "Ovce", icon: "🐑", cost: 45, income: 9 },
-  { name: "Prase", icon: "🐖", cost: 35, income: 6 },
-  { name: "Kůň", icon: "🐎", cost: 60, income: 12 },
-  { name: "Králík", icon: "🐇", cost: 20, income: 4 },
-  { name: "Kačer", icon: "🦆", cost: 25, income: 5 },
-  { name: "Medvěd", icon: "🐻", cost: 100, income: 20 },
+  { name: "Kráva", icon: "🐄", cost: 50, income: 3 },
+  { name: "Koza", icon: "🐐", cost: 40, income: 2 },
+  { name: "Slepice", icon: "🐔", cost: 30, income: 1 },
+  { name: "Ovce", icon: "🐑", cost: 45, income: 2 },
+  { name: "Prase", icon: "🐖", cost: 35, income: 1 },
+  { name: "Kůň", icon: "🐎", cost: 60, income: 3 },
+  { name: "Králík", icon: "🐇", cost: 20, income: 1 },
+  { name: "Kačer", icon: "🦆", cost: 25, income: 1 },
+  { name: "Medvěd", icon: "🐻", cost: 100, income: 5 },
 ];
 
 let state = {
@@ -60,8 +59,6 @@ let state = {
    ============================= */
 function saveState() {
   localStorage.setItem("hv_state", JSON.stringify(state));
-  saveIndicator.classList.add("show");
-  setTimeout(() => saveIndicator.classList.remove("show"), 800);
 }
 
 function loadState() {
@@ -167,7 +164,7 @@ function buyAnimal(a) {
   if (state.money >= a.cost) {
     state.money -= a.cost;
     state.ownedAnimals.push(a);
-    gainXP(5);
+    gainXP(2);
     saveState();
     updateUI();
   }
@@ -203,7 +200,6 @@ function nextDay() {
   // příjem od zvířat
   state.ownedAnimals.forEach((a) => (state.money += a.income));
 
-  // level systém
   checkUnlocks();
   saveState();
   updateUI();
@@ -262,4 +258,3 @@ document.getElementById("restart-game").onclick = restartGame;
 loadState();
 checkUnlocks();
 updateUI();
-       
