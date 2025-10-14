@@ -1,0 +1,294 @@
+/* ============================
+   🌿 Zahradníkovy Výzvy – Styl
+   ============================ */
+
+body {
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(to bottom right, #a8e063, #56ab2f);
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 900px;
+  margin: 40px auto;
+  background: #ffffffcc;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(6px);
+}
+
+/* ---------- HLAVIČKA ---------- */
+header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+header h1 {
+  font-size: 2em;
+  color: #2d572c;
+  margin: 0;
+}
+
+header .subtitle {
+  color: #4a7a48;
+  font-weight: 500;
+  margin-top: 5px;
+}
+
+.season-info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  font-size: 1.1em;
+}
+
+.season-indicator {
+  font-weight: bold;
+  color: #2f5e2e;
+}
+
+/* ---------- STATISTIKY ---------- */
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  margin-bottom: 20px;
+  background: #f6fef6;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.stat-item {
+  text-align: center;
+  margin: 10px;
+}
+
+.stat-label {
+  font-size: 0.9em;
+  color: #4a7a48;
+}
+
+.stat-value {
+  font-size: 1.4em;
+  font-weight: bold;
+}
+
+.xp-bar {
+  position: relative;
+  width: 120px;
+  height: 10px;
+  background: #d6e9d6;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-top: 5px;
+}
+
+.xp-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: #68d36e;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+.xp-text {
+  font-size: 0.7em;
+  color: #2f5e2e;
+  text-align: center;
+  margin-top: 2px;
+}
+
+/* ---------- FARMA ---------- */
+.farm-container {
+  display: flex;
+  justify-content: center;
+}
+
+.farm {
+  display: grid;
+  grid-template-columns: repeat(4, 60px);
+  grid-gap: 10px;
+  justify-content: center;
+}
+
+.plot {
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8em;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.3s ease;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.plot:hover {
+  transform: scale(1.05);
+}
+
+.plot.empty {
+  background: #d6e9d6;
+}
+
+.plot.planted {
+  background: #8fd08f;
+}
+
+.plot.ready {
+  background: #ffe96e;
+}
+
+/* ---------- SEKCE PLODINY ---------- */
+.crops,
+.animals {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.crop-item,
+.animal-item {
+  background: #f8fff8;
+  border: 2px solid #b9deb9;
+  border-radius: 15px;
+  width: 140px;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.2s;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.crop-item:hover,
+.animal-item:hover {
+  background: #e6ffe6;
+  transform: translateY(-3px);
+}
+
+.crop-icon,
+.animal-icon {
+  font-size: 2em;
+  margin-bottom: 5px;
+}
+
+.crop-name,
+.animal-name {
+  font-weight: bold;
+  color: #2f5e2e;
+}
+
+.crop-cost,
+.animal-cost,
+.crop-time,
+.animal-income {
+  font-size: 0.9em;
+  color: #555;
+}
+
+/* ---------- OVLÁDACÍ TLAČÍTKA ---------- */
+.controls {
+  text-align: center;
+  margin-top: 25px;
+}
+
+button {
+  background: #68d36e;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1em;
+  margin: 5px;
+  transition: background 0.2s, transform 0.2s;
+}
+
+button:hover {
+  background: #4ac64f;
+  transform: translateY(-2px);
+}
+
+button.save {
+  background: #4fa9d3;
+}
+
+button.save:hover {
+  background: #3b8fb8;
+}
+
+/* ---------- INFO ---------- */
+.instructions {
+  background: #f6fef6;
+  border-left: 4px solid #68d36e;
+  padding: 15px;
+  border-radius: 8px;
+  font-size: 0.95em;
+}
+
+.instructions ul {
+  margin-top: 10px;
+  padding-left: 20px;
+}
+
+.instructions li {
+  margin-bottom: 6px;
+}
+
+/* ---------- ULOŽENÍ ---------- */
+.save-indicator {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #4ac64f;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 10px;
+  font-weight: bold;
+  display: none;
+  animation: fadein 0.5s ease;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- VYBRANÁ PLODINA ---------- */
+.selected-crop {
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 1.1em;
+}
+
+.selected-crop span {
+  margin-left: 5px;
+  font-weight: bold;
+}
+
+/* ---------- RESPONSIVITA ---------- */
+@media (max-width: 600px) {
+  .farm {
+    grid-template-columns: repeat(3, 60px);
+  }
+  .crop-item,
+  .animal-item {
+    width: 120px;
+  }
+}
