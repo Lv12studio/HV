@@ -1,16 +1,28 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Zahradníkovy Výzvy | Farmářská Hra</title>
+
+  <!-- Icony -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Styl -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div class="topbar">
+    <h1>Zahradníkovy Výzvy <i class="fas fa-seedling"></i></h1>
+    <div class="controls-top">
+      <button id="theme-toggle" title="Přepnout motiv"><i id="theme-icon" class="fas fa-moon"></i></button>
+      <button id="load-game" title="Načíst hru"><i class="fas fa-download"></i></button>
+      <button id="clear-game" title="Resetovat hru"><i class="fas fa-trash"></i></button>
+    </div>
+  </div>
+
   <div class="container">
     <header>
-      <h1>Zahradníkovy Výzvy <i class="fas fa-seedling"></i></h1>
       <p class="subtitle">Staň se mistrem zahradníkem! Pěstuj, sklízej a rozšiřuj svou zahradu.</p>
       <div class="season-info">
         <span>Roční období:</span>
@@ -19,17 +31,17 @@
       </div>
     </header>
 
-    <div class="game-container">
+    <section class="game-container">
       <div class="stats">
         <div class="stat-item">
           <div class="stat-label">PENÍZE</div>
-          <div class="stat-value" id="money">100</div>
+          <div class="stat-value" id="money">0</div>
         </div>
         <div class="stat-item">
           <div class="stat-label">LEVEL</div>
           <div class="stat-value" id="level">1</div>
           <div class="xp-bar">
-            <div class="xp-progress" id="xp-progress" style="width: 0%"></div>
+            <div class="xp-progress" id="xp-progress" style="width:0%"></div>
             <div class="xp-text" id="xp-text">0/100 XP</div>
           </div>
         </div>
@@ -44,44 +56,50 @@
       </div>
 
       <div class="selected-crop">
-        <strong>Vybrána plodina:</strong>
-        <span id="selected-crop-name">Žádná</span>
+        <strong>Vybráno:</strong>
         <span id="selected-crop-icon"></span>
+        <span id="selected-crop-name">Žádná</span>
       </div>
 
-      <h3><i class="fas fa-seedling"></i> Tvá Zahradní Pole</h3>
-      <div class="farm-container">
-        <div class="farm" id="farm"></div>
+      <div class="farm-wrapper">
+        <h3><i class="fas fa-seedling"></i> Tvá Zahrada</h3>
+        <div class="farm-container">
+          <div class="farm" id="farm"></div>
+        </div>
       </div>
 
-      <h3><i class="fas fa-shopping-basket"></i> Semínka a Sazenice</h3>
-      <div class="crops" id="crops"></div>
+      <div class="market-wrapper">
+        <div class="section-head">
+          <h3><i class="fas fa-shopping-basket"></i> Semínka a Sazenice</h3>
+        </div>
+        <div class="crops" id="crops"></div>
 
-      <h3><i class="fas fa-paw"></i> Zvířecí pomocníci</h3>
-      <div class="animals" id="animals"></div>
+        <div class="section-head">
+          <h3><i class="fas fa-paw"></i> Zvířecí pomocníci</h3>
+        </div>
+        <div class="animals" id="animals"></div>
+      </div>
 
       <div class="controls">
         <button id="next-day"><i class="fas fa-sun"></i> Další Den</button>
         <button id="save-game" class="save"><i class="fas fa-save"></i> Uložit</button>
       </div>
-    </div>
+    </section>
 
-    <div class="instructions">
-      <h3>Jak hrát:</h3>
+    <aside class="instructions">
+      <h4>Jak hrát</h4>
       <ul>
-        <li>Vyber plodinu kliknutím na ni.</li>
-        <li>Klikni na prázdné pole k vysazení.</li>
-        <li>Počkej, až plodina vyroste (žluté pole = sklizeň).</li>
-        <li>Skliď kliknutím a získej peníze + XP.</li>
-        <li>Zvířata dávají pravidelný příjem peněz.</li>
-        <li>Používej „Další Den“ pro posun v čase.</li>
+        <li>Vyber plodinu kliknutím.</li>
+        <li>Klikni na prázdné pole pro výsadbu.</li>
+        <li>Po dni/dnech bude plodina dozrálá (žluté pole) — klikni pro sklizeň.</li>
+        <li>Zvířata dávají peníze každý den.</li>
+        <li>Ukládej hru (Save) nebo hra se ukládá automaticky každé 3 dny.</li>
+        <li>Přepni tmavý režim ikonou nahoře.</li>
       </ul>
-    </div>
+    </aside>
   </div>
 
-  <div class="save-indicator" id="save-indicator">
-    <i class="fas fa-check"></i> Hra uložena!
-  </div>
+  <div id="save-indicator" class="save-indicator"><i class="fas fa-check"></i> Hra uložena</div>
 
   <script src="script.js"></script>
 </body>
