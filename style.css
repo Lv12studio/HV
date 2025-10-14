@@ -1,294 +1,164 @@
 /* ============================
-   🌿 Zahradníkovy Výzvy – Styl
+   Zahradníkovy Výzvy – Styl
+   (světlý + tmavý režim)
    ============================ */
 
-body {
-  font-family: "Poppins", sans-serif;
-  background: linear-gradient(to bottom right, #a8e063, #56ab2f);
-  color: #333;
-  margin: 0;
-  padding: 0;
+/* --- základ --- */
+:root{
+  --bg1: linear-gradient(135deg,#e9f7ea,#dff3ff);
+  --card: rgba(255,255,255,0.95);
+  --text: #213a12;
+  --muted: #56764a;
+  --accent: #60b044;
+  --accent-2: #f5c250;
+  --danger: #e53935;
+  --glass: rgba(255,255,255,0.6);
 }
 
-.container {
-  max-width: 900px;
-  margin: 40px auto;
-  background: #ffffffcc;
-  padding: 30px;
-  border-radius: 20px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(6px);
+body{
+  margin:0;
+  font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+  background: var(--bg1);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* ---------- HLAVIČKA ---------- */
-header {
-  text-align: center;
-  margin-bottom: 20px;
+/* dark mode */
+body.dark{
+  --bg1: linear-gradient(135deg,#0f1724,#08202f);
+  --card: rgba(10,10,10,0.7);
+  --text: #e6f5ea;
+  --muted: #9fb39b;
+  --accent: #66d07a;
+  --accent-2: #f4b64a;
+  --danger: #ff6b6b;
 }
 
-header h1 {
-  font-size: 2em;
-  color: #2d572c;
-  margin: 0;
+/* topbar */
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px 18px;
+  background:var(--card);
+  box-shadow:0 6px 20px rgba(0,0,0,0.08);
+  position:sticky;
+  top:0;
+  z-index:30;
+}
+.topbar h1{font-size:1.2rem;margin:0;color:var(--text)}
+.controls-top button{
+  border:none;background:transparent;color:var(--muted);
+  font-size:1.05rem;padding:6px;margin-left:6px;cursor:pointer;border-radius:8px;
+}
+.controls-top button:hover{background:rgba(0,0,0,0.04)}
+
+/* container */
+.container{
+  max-width:1000px;
+  margin:22px auto;
+  padding:18px;
+  background:var(--card);
+  border-radius:14px;
+  box-shadow:0 12px 40px rgba(0,0,0,0.06);
 }
 
-header .subtitle {
-  color: #4a7a48;
-  font-weight: 500;
-  margin-top: 5px;
+/* header */
+.subtitle{color:var(--muted);margin:6px 0}
+.season-info{display:flex;gap:10px;align-items:center;font-weight:600}
+
+/* stats */
+.game-container{display:flex;flex-direction:column;gap:14px}
+.stats{
+  display:flex;gap:12px;flex-wrap:wrap;align-items:center;
+  background:transparent;padding:6px;border-radius:10px;
+}
+.stat-item{background:transparent;padding:6px 10px;border-radius:8px;text-align:center}
+.stat-label{font-size:0.8rem;color:var(--muted)}
+.stat-value{font-size:1.3rem;font-weight:700;color:var(--text)}
+.xp-bar{width:160px;height:12px;background:rgba(0,0,0,0.06);border-radius:12px;position:relative}
+.xp-progress{height:100%;border-radius:12px;background:linear-gradient(90deg,var(--accent),#2e8b3a);transition:width .4s ease}
+.xp-text{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:var(--card)}
+
+/* farm */
+.farm-wrapper h3{margin:6px 0 8px}
+.farm-container{background:linear-gradient(180deg,rgba(255,255,255,0.6),rgba(255,255,255,0.2));padding:12px;border-radius:12px}
+.farm{
+  display:grid;
+  grid-template-columns:repeat(4,72px);
+  gap:10px;
+  justify-content:center;
 }
 
-.season-info {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 6px;
-  margin-top: 10px;
-  font-size: 1.1em;
+.plot{
+  width:72px;height:72px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:1.6rem;cursor:pointer;position:relative;overflow:hidden;
+  transition:transform .15s ease,box-shadow .15s ease,background .2s ease;
+  box-shadow:inset 0 0 8px rgba(0,0,0,0.06);
+  background:#e9f8ea;
+}
+.plot:hover{transform:translateY(-6px);box-shadow:0 10px 20px rgba(0,0,0,0.08)}
+
+/* states */
+.plot.empty{background:linear-gradient(180deg,#e6ffe6,#dff7df)}
+.plot.planted{background:linear-gradient(180deg,#d7f3d7,#b7e6b7)}
+.plot.ready{background:linear-gradient(180deg,var(--accent-2),#ffd666)}
+.plot.withered{background:#6b4f3f;color:#fff}
+
+/* progress bar inside plot */
+.plot .grow-wrap{position:absolute;left:6px;right:6px;bottom:6px;height:8px;background:rgba(0,0,0,0.06);border-radius:6px;overflow:hidden}
+.plot .grow{height:100%;width:0%;background:linear-gradient(90deg,#61bf44,#e6c63e);transition:width .6s ease}
+
+/* icon + name overlay */
+.plot .crop-emoji{font-size:1.6rem;pointer-events:none}
+.plot .small-name{font-size:0.65rem;margin-top:4px;opacity:.95;pointer-events:none}
+
+/* crops & animals list */
+.crops,.animals{display:flex;flex-wrap:wrap;gap:10px;padding:8px}
+.crop-item,.animal-item{
+  background:transparent;border:1px solid rgba(0,0,0,0.06);padding:8px;border-radius:10px;width:150px;text-align:center;cursor:pointer;
+  transition:transform .12s ease,box-shadow .12s ease,background .12s ease;
+}
+.crop-item:hover,.animal-item:hover{transform:translateY(-6px);box-shadow:0 8px 20px rgba(0,0,0,0.06)}
+.crop-icon,.animal-icon{font-size:1.6rem}
+.crop-name,.animal-name{font-weight:700;color:var(--text)}
+.meta{font-size:0.85rem;color:var(--muted);margin-top:4px}
+
+/* controls */
+.controls{display:flex;gap:10px;justify-content:center;margin-top:6px}
+button{background:var(--accent);border:none;color:white;padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer}
+button.save{background:#6a5bd0}
+button:hover{transform:translateY(-3px)}
+
+/* save indicator */
+.save-indicator{
+  position:fixed;right:18px;bottom:18px;background:rgba(0,0,0,0.75);color:white;padding:10px 12px;border-radius:12px;display:none;
 }
 
-.season-indicator {
-  font-weight: bold;
-  color: #2f5e2e;
+/* selected crop display */
+.selected-crop{display:flex;gap:8px;align-items:center;justify-content:center;font-weight:600}
+
+/* instructions */
+.instructions{margin-top:12px;padding:12px;border-radius:10px;background:rgba(255,255,255,0.7);color:var(--muted)}
+
+/* keyframes */
+@keyframes pulseReady{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.05)}
+  100%{transform:scale(1)}
 }
 
-/* ---------- STATISTIKY ---------- */
-.stats {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  margin-bottom: 20px;
-  background: #f6fef6;
-  border-radius: 12px;
-  padding: 10px;
-}
+/* apply pulse for ready */
+.plot.ready{animation:pulseReady 1.2s ease-in-out infinite}
 
-.stat-item {
-  text-align: center;
-  margin: 10px;
+/* responsiveness */
+@media (max-width:880px){
+  .farm{grid-template-columns:repeat(3,68px)}
+  .crop-item,.animal-item{width:120px}
 }
-
-.stat-label {
-  font-size: 0.9em;
-  color: #4a7a48;
-}
-
-.stat-value {
-  font-size: 1.4em;
-  font-weight: bold;
-}
-
-.xp-bar {
-  position: relative;
-  width: 120px;
-  height: 10px;
-  background: #d6e9d6;
-  border-radius: 5px;
-  overflow: hidden;
-  margin-top: 5px;
-}
-
-.xp-progress {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  background: #68d36e;
-  width: 0%;
-  transition: width 0.3s ease;
-}
-
-.xp-text {
-  font-size: 0.7em;
-  color: #2f5e2e;
-  text-align: center;
-  margin-top: 2px;
-}
-
-/* ---------- FARMA ---------- */
-.farm-container {
-  display: flex;
-  justify-content: center;
-}
-
-.farm {
-  display: grid;
-  grid-template-columns: repeat(4, 60px);
-  grid-gap: 10px;
-  justify-content: center;
-}
-
-.plot {
-  width: 60px;
-  height: 60px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.8em;
-  cursor: pointer;
-  transition: transform 0.2s ease, background 0.3s ease;
-  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-}
-
-.plot:hover {
-  transform: scale(1.05);
-}
-
-.plot.empty {
-  background: #d6e9d6;
-}
-
-.plot.planted {
-  background: #8fd08f;
-}
-
-.plot.ready {
-  background: #ffe96e;
-}
-
-/* ---------- SEKCE PLODINY ---------- */
-.crops,
-.animals {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.crop-item,
-.animal-item {
-  background: #f8fff8;
-  border: 2px solid #b9deb9;
-  border-radius: 15px;
-  width: 140px;
-  padding: 10px;
-  text-align: center;
-  cursor: pointer;
-  transition: 0.2s;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.crop-item:hover,
-.animal-item:hover {
-  background: #e6ffe6;
-  transform: translateY(-3px);
-}
-
-.crop-icon,
-.animal-icon {
-  font-size: 2em;
-  margin-bottom: 5px;
-}
-
-.crop-name,
-.animal-name {
-  font-weight: bold;
-  color: #2f5e2e;
-}
-
-.crop-cost,
-.animal-cost,
-.crop-time,
-.animal-income {
-  font-size: 0.9em;
-  color: #555;
-}
-
-/* ---------- OVLÁDACÍ TLAČÍTKA ---------- */
-.controls {
-  text-align: center;
-  margin-top: 25px;
-}
-
-button {
-  background: #68d36e;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 1em;
-  margin: 5px;
-  transition: background 0.2s, transform 0.2s;
-}
-
-button:hover {
-  background: #4ac64f;
-  transform: translateY(-2px);
-}
-
-button.save {
-  background: #4fa9d3;
-}
-
-button.save:hover {
-  background: #3b8fb8;
-}
-
-/* ---------- INFO ---------- */
-.instructions {
-  background: #f6fef6;
-  border-left: 4px solid #68d36e;
-  padding: 15px;
-  border-radius: 8px;
-  font-size: 0.95em;
-}
-
-.instructions ul {
-  margin-top: 10px;
-  padding-left: 20px;
-}
-
-.instructions li {
-  margin-bottom: 6px;
-}
-
-/* ---------- ULOŽENÍ ---------- */
-.save-indicator {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #4ac64f;
-  color: white;
-  padding: 10px 15px;
-  border-radius: 10px;
-  font-weight: bold;
-  display: none;
-  animation: fadein 0.5s ease;
-}
-
-@keyframes fadein {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* ---------- VYBRANÁ PLODINA ---------- */
-.selected-crop {
-  text-align: center;
-  margin-bottom: 15px;
-  font-size: 1.1em;
-}
-
-.selected-crop span {
-  margin-left: 5px;
-  font-weight: bold;
-}
-
-/* ---------- RESPONSIVITA ---------- */
-@media (max-width: 600px) {
-  .farm {
-    grid-template-columns: repeat(3, 60px);
-  }
-  .crop-item,
-  .animal-item {
-    width: 120px;
-  }
+@media (max-width:440px){
+  .farm{grid-template-columns:repeat(2,72px)}
+  .topbar h1{font-size:1rem}
+  .controls-top button{font-size:0.9rem}
 }
