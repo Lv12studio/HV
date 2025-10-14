@@ -12,6 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const dayEl = document.getElementById("day");
   const farmSizeEl = document.getElementById("farm-size");
   const themeToggleBtn = document.getElementById("theme-toggle");
+  const nextDayBtn = document.getElementById("next-day");
+  const restartBtn = document.getElementById("restart");
 
   // --- Plodiny ---
   const ALL_CROPS = [
@@ -67,6 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
     farmSize:9,
     farm:Array(9).fill(null),
     selectedCrop:null,
+    selectedCropObj:null,
     darkMode:false,
     animals:[],
     upgrades:[]
@@ -88,7 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if(plot){
         div.innerHTML=`<div class="crop-emoji">${plot.icon}</div>
           <div class="small-name">${plot.name}</div>
-          <div class="grow-wrap"><div class="grow" style="width:${(plot.age/plot.growTime)*100}%"></div></div>`;
+          <div class="grow-wrap"><div class="grow" style="width:${Math.min((plot.age/plot.growTime)*100,100)}%"></div></div>`;
       }
       div.onclick=()=>plantOrHarvest(i);
       farmEl.appendChild(div);
@@ -136,9 +139,11 @@ document.addEventListener("DOMContentLoaded", () => {
         if(state.money>=u.cost){
           state.money-=u.cost;
           state.upgrades.push(u);
-          if(u.type==="farm") { state.farmSize=Math.min(21,state.farmSize+3); while(state.farm.length<state.farmSize) state.farm.push(null);}
-          if(u.type==="growth") ALL_CROPS.forEach(c=>c.growTime=Math.max(1,c.growTime*0.9));
-          if(u.type==="profit") ALL_CROPS.forEach(c=>c.profit=Math.ceil(c.profit*1.5));
+          if(u.type==="farm") { 
+            state.farmSize=Math.min(21,state.farmSize+3); 
+            while(state.farm.length<state.farmSize) state.farm.push(null);
+          }
+          if(u.type==="growth") ALL_CROPS.forEach(c=>c.growTime=Math.max(1,Math.floor(c.growTime*0.9)));
           if(u.type==="animal") ALL_ANIMALS.forEach(a=>a.income=Math.ceil(a.income*0.1));
           updateUI(); saveState();
         }
@@ -149,8 +154,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- Výběr plodiny ---
   function selectCrop(c){ 
-    selectedCrop=c; 
-    state.selectedCrop=c.name; 
+    state.selectedCropObj = c;
+    state.selectedCrop = c.name; 
     selectedCropNameEl.textContent=c.name; 
     selectedCropIconEl.textContent=c.icon; 
     saveState(); 
@@ -169,68 +174,85 @@ document.addEventListener("DOMContentLoaded", () => {
         saveState();
       }
     } else{
-      if(selectedCrop && state.money>=selectedCrop.cost){
-        state.money-=selectedCrop.cost;
-        state.farm[i]={...selectedCrop, age:0};
+      if(state.selectedCropObj && state.money>=state.selectedCropObj.cost){
+        state.money-=state.selectedCropObj.cost;
+        state.farm[i]={...state.selectedCropObj, age:0};
         updateUI();
         saveState();
       }
     }
   }
 
-  // --- Další den ---
+  // --- Další den s animací ---
   function nextDay(){
     state.day++;
     state.farm.forEach(p=>{if(p)p.age++;});
     state.animals.forEach(a=>state.money+=Math.floor(a.income/10));
     updateUI();
     saveState();
+    farmEl.style.transition="transform 0.2s";
+    farmEl.style.transform="scale(1.03)";
+    setTimeout(()=>{farmEl.style.transform="scale(1)";},200);
   }
 
-  // --- Kontrola levelu ---
+  // --- Level up ---
   function checkLevelUp(){
     while(state.xp>=100){
       state.xp-=100;
       state.level++;
-      state.farmSize=Math.min(21,9+Math.floor((state.level-1)/5)*3);
-      while(state.farm.length<state.farmSize) state.farm.push(null);
-    }
-  }
-
-  // --- Restart hry ---
-  function restartGame(){
-    if(confirm("Opravdu restartovat hru?")){
-      localStorage.removeItem("harvestState");
-      location.reload();
+      // Každých 5 levelů rozšíření farmy
+      if(state.level%5===0 && state.farmSize<21){
+        state.farmSize+=3;
+        while(state.farm.length<state.farmSize) state.farm.push(null);
+      }
     }
   }
 
   // --- Aktualizace UI ---
   function updateUI(){
-    renderFarm();
-    renderCrops();
-    renderAnimals();
-    renderUpgrades();
     moneyEl.textContent=state.money;
     levelEl.textContent=state.level;
+    xpProgressEl.style.width=Math.min((state.xp/100)*100,100)+"%";
+    xpTextEl.textContent=`${state.xp}/100 XP`;
     dayEl.textContent=state.day;
     farmSizeEl.textContent=state.farmSize;
-    xpProgressEl.style.width=`${(state.xp/100)*100}%`;
-    xpTextEl.textContent=`${state.xp}/100 XP`;
-    document.body.classList.toggle("dark",state.darkMode);
+    renderFarm();
   }
 
   // --- Dark mode toggle ---
   themeToggleBtn.onclick=()=>{
     state.darkMode=!state.darkMode;
-    updateUI();
+    document.body.classList.toggle("dark",state.darkMode);
     saveState();
   }
 
-  document.getElementById("next-day").onclick=nextDay;
-  document.getElementById("restart-game").onclick=restartGame;
+  // --- Další den a restart ---
+  nextDayBtn.onclick=nextDay;
+  restartBtn.onclick=()=>{
+    if(confirm("Opravdu restartovat hru?")) {
+      state={
+        money:100,
+        level:1,
+        xp:0,
+        day:1,
+        farmSize:9,
+        farm:Array(9).fill(null),
+        selectedCrop:null,
+        selectedCropObj:null,
+        darkMode:state.darkMode,
+        animals:[],
+        upgrades:[]
+      };
+      updateUI();
+      saveState();
+    }
+  }
 
+  // --- Inicializace ---
   loadState();
+  document.body.classList.toggle("dark",state.darkMode);
+  renderCrops();
+  renderAnimals();
+  renderUpgrades();
   updateUI();
 });
-                                                                        
