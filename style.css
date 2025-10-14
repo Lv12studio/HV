@@ -1,188 +1,175 @@
-:root {
-  --bg: #f6f6f6;
-  --text: #222;
-  --panel: #ffffff;
-  --border: #ccc;
-  --accent: #6cbf3d;
-  --accent-dark: #5aa22f;
+/* Garden Valley – mobilní verze */
+
+const DEFAULT_STATE = {
+  money: 150, xp: 0, level: 1, day: 1, farmSize: 9,
+  farm: Array(9).fill(null), ownedAnimals: [],
+  unlockedCrops: 1, unlockedAnimals: 1, theme: 'light'
+};
+let state;
+let selectedCrop = null;
+
+window.onload = ()=>{
+  state = loadState() || DEFAULT_STATE;
+  applyTheme(state.theme);
+  init();
+};
+
+const moneyEl = document.getElementById('money');
+const levelEl = document.getElementById('level');
+const dayEl = document.getElementById('day');
+const xpProgressEl = document.getElementById('xp-progress');
+const xpTextEl = document.getElementById('xp-text');
+const farmSizeEl = document.getElementById('farm-size');
+const farmEl = document.getElementById('farm');
+const cropsEl = document.getElementById('crops');
+const animalsEl = document.getElementById('animals');
+const selectedCropName = document.getElementById('selected-crop-name');
+const selectedCropIcon = document.getElementById('selected-crop-icon');
+const saveIndicator = document.getElementById('save-indicator');
+const themeToggle = document.getElementById('theme-toggle');
+const themeIcon = document.getElementById('theme-icon');
+
+const ALL_CROPS = [
+  { name:"Mrkev", icon:"🥕", cost:10, growTime:2, profit:25, xp:10 },
+  { name:"Pšenice", icon:"🌾", cost:8, growTime:2, profit:18, xp:8 },
+  { name:"Kukuřice", icon:"🌽", cost:18, growTime:3, profit:40, xp:18 },
+  { name:"Brambora", icon:"🥔", cost:12, growTime:2, profit:30, xp:12 },
+  { name:"Rajče", icon:"🍅", cost:20, growTime:3, profit:50, xp:20 },
+  { name:"Jahoda", icon:"🍓", cost:15, growTime:2, profit:35, xp:14 },
+  { name:"Slunečnice", icon:"🌻", cost:25, growTime:4, profit:80, xp:30 },
+  { name:"Dýně", icon:"🎃", cost:30, growTime:5, profit:120, xp:40 },
+  { name:"Jabloň", icon:"🍎", cost:40, growTime:6, profit:160, xp:55 },
+  { name:"Levandule", icon:"💜", cost:22, growTime:3, profit:60, xp:25 }
+];
+const ALL_ANIMALS = [
+  { name:"Slepice", icon:"🐔", cost:50, income:8 },
+  { name:"Králík", icon:"🐇", cost:80, income:18 },
+  { name:"Kráva", icon:"🐄", cost:200, income:50 },
+  { name:"Prase", icon:"🐖", cost:120, income:28 },
+  { name:"Ovce", icon:"🐑", cost:100, income:20 },
+  { name:"Kachna", icon:"🦆", cost:60, income:10 },
+  { name:"Kůň", icon:"🐎", cost:250, income:70 },
+  { name:"Pes", icon:"🐕", cost:40, income:5 }
+];
+
+function init(){
+  renderCrops(); renderAnimals(); renderFarm(); updateStats();
+  document.getElementById('next-day').onclick = nextDay;
+  document.getElementById('save-game').onclick = saveState;
+  themeToggle.onclick = ()=>{
+    state.theme = state.theme==='light'?'dark':'light';
+    applyTheme(state.theme); saveState();
+  };
+  setInterval(saveState,60000);
 }
 
-body.dark {
-  --bg: #1b1b1b;
-  --text: #eaeaea;
-  --panel: #222;
-  --border: #444;
-  --accent: #9be36b;
-  --accent-dark: #82c95d;
+/* ----- render ----- */
+function renderCrops(){
+  cropsEl.innerHTML='';
+  ALL_CROPS.forEach((c,i)=>{
+    const el=document.createElement('div'); el.className='crop-item';
+    if(i>=state.unlockedCrops) el.classList.add('locked');
+    el.innerHTML=`<div class="crop-icon">${c.icon}</div><div class="crop-name">${c.name}</div>${
+      i>=state.unlockedCrops?`<div class="crop-locked">🔒 Level ${i+1}</div>`:
+      `<div class="meta">Cena:${c.cost} • Růst:${c.growTime}d</div>`
+    }`;
+    if(i<state.unlockedCrops) el.onclick=()=>{selectedCrop=c; selectedCropName.textContent=c.name; selectedCropIcon.textContent=c.icon;};
+    cropsEl.appendChild(el);
+  });
 }
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: "Poppins", sans-serif;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  user-select: none;
-  transition: background 0.3s, color 0.3s;
+function renderAnimals(){
+  animalsEl.innerHTML='';
+  ALL_ANIMALS.forEach((a,i)=>{
+    const el=document.createElement('div'); el.className='animal-item';
+    if(i>=state.unlockedAnimals) el.classList.add('locked');
+    el.innerHTML=`<div class="animal-icon">${a.icon}</div><div class="animal-name">${a.name}</div>${
+      i>=state.unlockedAnimals?`<div class="crop-locked">🔒 Level ${i+1}</div>`:
+      `<div class="meta">Cena:${a.cost} • Příjem:${a.income}/den</div>`
+    }`;
+    if(i<state.unlockedAnimals) el.onclick=()=>buyAnimal(a);
+    animalsEl.appendChild(el);
+  });
 }
 
-/* ---- horní panel ---- */
-.top-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 95%;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 0.4em 0.8em;
-  margin: 0.5em 0;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-.top-bar button {
-  background: var(--accent);
-  border: none;
-  color: white;
-  border-radius: 10px;
-  padding: 0.4em 0.9em;
-  font-size: 1em;
-  font-weight: 500;
-  transition: background 0.2s;
-}
-.top-bar button:active { background: var(--accent-dark); }
-
-/* ---- statistiky ---- */
-.stats {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.6em;
-  width: 95%;
-  background: var(--panel);
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  padding: 0.6em;
-  text-align: center;
-}
-.stat {
-  flex: 1 1 45%;
-  background: var(--bg);
-  border-radius: 10px;
-  padding: 0.3em;
-}
-.xp-bar {
-  width: 90%;
-  height: 8px;
-  background: var(--border);
-  border-radius: 5px;
-  margin: 0.3em auto;
-  overflow: hidden;
-}
-.xp-progress {
-  height: 100%;
-  background: var(--accent);
-  width: 0%;
-  transition: width 0.3s;
+function renderFarm(){
+  farmEl.innerHTML='';
+  for(let i=0;i<state.farmSize;i++){
+    const plot=document.createElement('div'); plot.className='plot';
+    const crop=state.farm[i];
+    if(crop){
+      plot.innerHTML=`<div class="crop-emoji">${crop.icon}</div>
+      <div class="small-name">${crop.name}</div>
+      <div class="grow-wrap"><div class="grow" style="width:${(crop.progress/crop.growTime)*100}%"></div></div>`;
+    }
+    plot.onclick=()=>plantCrop(i);
+    farmEl.appendChild(plot);
+  }
 }
 
-/* ---- farma ---- */
-#farm {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
-  width: 95%;
-  margin: 0.8em auto;
+function updateStats(){
+  moneyEl.textContent=state.money;
+  levelEl.textContent=state.level;
+  dayEl.textContent=state.day;
+  xpProgressEl.style.width=Math.min(state.xp,100)+'%';
+  xpTextEl.textContent=`${state.xp}/100 XP`;
+  farmSizeEl.textContent=state.farmSize;
 }
-.plot {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 0.5em;
-  aspect-ratio: 1/1;
-  text-align: center;
-  position: relative;
-  transition: transform 0.1s;
-}
-.plot:active { transform: scale(0.97); }
-.plot .crop-emoji { font-size: 1.8em; margin-bottom: 0.2em; }
-.plot .small-name { font-size: 0.75em; opacity: 0.8; }
-.plot .grow-wrap {
-  background: var(--border);
-  border-radius: 4px;
-  height: 6px;
-  width: 80%;
-  margin: 0.2em auto;
-  overflow: hidden;
-}
-.plot .grow { background: var(--accent); height: 100%; width: 0%; transition: width 0.5s linear; }
 
-/* ---- obchod ---- */
-.shop-section {
-  width: 95%;
-  background: var(--panel);
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  padding: 0.6em;
-  margin-bottom: 0.8em;
+/* ----- logika ----- */
+function plantCrop(idx){
+  if(!selectedCrop) return;
+  if(state.farm[idx]) return;
+  if(state.money<selectedCrop.cost) return;
+  state.money-=selectedCrop.cost;
+  state.farm[idx]={...selectedCrop, progress:0};
+  updateStats(); renderFarm();
 }
-.shop-title { font-weight: 600; margin-bottom: 0.3em; text-align: center; }
-#crops, #animals {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 5px;
-}
-.crop-item, .animal-item {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 0.3em;
-  text-align: center;
-  transition: transform 0.1s;
-}
-.crop-item:active, .animal-item:active { transform: scale(0.96); }
-.crop-icon, .animal-icon { font-size: 1.5em; }
-.meta { font-size: 0.75em; opacity: 0.8; }
-.locked { opacity: 0.4; filter: grayscale(1); }
 
-/* ---- vybraná plodina ---- */
-#selected-crop {
-  width: 95%;
-  text-align: center;
-  background: var(--panel);
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  padding: 0.6em;
-  margin-bottom: 0.6em;
+function nextDay(){
+  state.day++;
+  state.farm.forEach(c=>{
+    if(c){ c.progress++; if(c.progress>=c.growTime){ state.money+=c.profit; state.xp+=c.xp; c=null; } }
+  });
+  state.farm=state.farm.map(c=>c);
+  state.xp+=5;
+  checkLevel();
+  updateStats(); renderFarm(); autoUnlock();
 }
-#selected-crop-icon { font-size: 1.4em; }
 
-/* ---- save indikátor ---- */
-#save-indicator {
-  position: fixed;
-  bottom: 10px;
-  right: 12px;
-  background: var(--accent);
-  color: white;
-  border-radius: 10px;
-  padding: 0.3em 0.6em;
-  font-size: 0.8em;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s;
+function buyAnimal(a){
+  if(state.money<a.cost) return;
+  state.money-=a.cost;
+  state.ownedAnimals.push(a);
+  state.xp+=3; checkLevel(); updateStats(); renderAnimals();
 }
-#save-indicator.show { opacity: 1; }
 
-/* ---- theme toggle ---- */
-#theme-toggle {
-  background: none;
-  border: none;
-  font-size: 1.3em;
-  color: var(--accent);
-  padding: 0.3em;
+function checkLevel(){
+  const neededXP=100;
+  while(state.xp>=neededXP){
+    state.level++;
+    state.xp-=neededXP;
+    state.farmSize = Math.min(9 + Math.floor(state.level/5)*3,21);
+    autoUnlock();
+  }
+}
+
+function autoUnlock(){
+  state.unlockedCrops=Math.min(state.level, ALL_CROPS.length);
+  state.unlockedAnimals=Math.min(state.level, ALL_ANIMALS.length);
+  renderCrops(); renderAnimals();
+}
+
+/* ----- save/load ----- */
+function saveState(){
+  localStorage.setItem('gardenValley',JSON.stringify(state));
+  saveIndicator.classList.add('show');
+  setTimeout(()=>saveIndicator.classList.remove('show'),900);
+}
+function loadState(){ const s=localStorage.getItem('gardenValley'); return s?JSON.parse(s):null; }
+
+/* ----- theme ----- */
+function applyTheme(t){
+  document.body.className=t==='dark'?'dark':'';
+  themeIcon.className=t==='dark'?'fas fa-sun':'fas fa-moon';
 }
