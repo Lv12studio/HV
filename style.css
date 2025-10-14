@@ -1,144 +1,69 @@
-/* =============================
-   Mobilní farma – style.css
-   ============================= */
-
+/* =========================
+   Barvy a módy
+   ========================= */
 :root {
-  --bg: #f6f6f6;
-  --text: #222;
-  --panel: #ffffff;
-  --border: #ccc;
-  --accent: #6cbf3d;
-  --accent-dark: #5aa22f;
+  --bg-color-light: #ffffff;    /* světlé pozadí stránky */
+  --text-color-light: #333333;  /* tmavý text */
+  --bg-color-dark: #1a1a1a;     /* tmavé pozadí stránky */
+  --text-color-dark: #f0f0f0;   /* světlý text */
 }
 
-body.dark {
-  --bg: #1b1b1b;
-  --text: #eaeaea;
-  --panel: #222;
-  --border: #444;
-  --accent: #9be36b;
-  --accent-dark: #82c95d;
+/* Light mode */
+body.light-mode {
+  --bg-color: var(--bg-color-light);
+  --text-color: var(--text-color-light);
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
 
+/* Dark mode */
+body.dark-mode {
+  --bg-color: var(--bg-color-dark);
+  --text-color: var(--text-color-dark);
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+/* =========================
+   Základní styl stránky
+   ========================= */
 body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: "Poppins", sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  user-select: none;
-  transition: background 0.3s, color 0.3s;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Top bar */
-.top-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 95%;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 0.4em 0.8em;
-  margin: 0.5em 0;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  position: sticky;
-  top: 0;
-  z-index: 10;
+h1, h2, h3, p {
+  margin: 0 0 15px 0;
 }
-.top-bar button {
-  background: var(--accent);
+
+.container {
+  max-width: 800px;
+  margin: 50px auto;
+  padding: 0 20px;
+}
+
+/* =========================
+   Tlačítko "Další den"
+   ========================= */
+.button-next-day {
+  background-color: var(--bg-color); /* barva pozadí stránky */
+  color: var(--text-color);          /* opačný text */
+  padding: 10px 20px;                /* tak akorát */
   border: none;
-  color: white;
-  border-radius: 10px;
-  padding: 0.4em 0.9em;
-  font-size: 1em;
-  font-weight: 500;
-  transition: background 0.2s;
-}
-.top-bar button:active {
-  background: var(--accent-dark);
+  border-radius: 8px;                /* jemně zaoblené rohy */
+  font-size: 16px;                   /* pohodlná velikost textu */
+  cursor: pointer;                   /* ukazatel ruky */
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
 }
 
-/* Statistika */
-.stats {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.6em;
-  width: 95%;
-  background: var(--panel);
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  padding: 0.6em;
-  text-align: center;
-}
-.stat {
-  flex: 1 1 45%;
-  background: var(--bg);
-  border-radius: 10px;
-  padding: 0.3em;
-}
-.xp-bar {
-  width: 90%;
-  height: 8px;
-  background: var(--border);
-  border-radius: 5px;
-  margin: 0.3em auto;
-  overflow: hidden;
-}
-#xp-progress {
-  height: 100%;
-  background: var(--accent);
-  width: 0%;
-  transition: width 0.3s;
+/* Efekt stisknutí */
+.button-next-day:active {
+  transform: scale(0.97);
 }
 
-/* Farma */
-#farm {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
-  width: 95%;
-  margin: 0.8em auto;
+/* Volitelně: mírný hover efekt pro lepší UX */
+.button-next-day:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
-.plot {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 0.5em;
-  aspect-ratio: 1/1;
-  text-align: center;
-  position: relative;
-  transition: transform 0.1s;
-}
-.plot:active { transform: scale(0.97); }
-.plot .crop-emoji { font-size: 1.8em; margin-bottom: 0.2em; }
-.plot .small-name { font-size: 0.75em; opacity: 0.8; }
-.plot .grow-wrap { background: var(--border); border-radius: 4px; height: 6px; width: 80%; margin: 0.2em auto; overflow: hidden; }
-.plot .grow { background: var(--accent); height: 100%; width: 0%; transition: width 0.5s linear; }
-
-/* Obchod */
-.shop-section { width: 95%; background: var(--panel); border-radius: 14px; border: 1px solid var(--border); padding: 0.6em; margin-bottom: 0.8em; }
-.shop-title { font-weight: 600; margin-bottom: 0.3em; text-align: center; }
-#crops, #animals, #upgrades { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
-.crop-item, .animal-item { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 0.3em; text-align: center; transition: transform 0.1s; cursor:pointer; }
-.crop-item:active, .animal-item:active { transform: scale(0.96); }
-.crop-icon, .animal-icon { font-size: 1.5em; }
-.meta { font-size: 0.75em; opacity: 0.8; }
-.locked { opacity: 0.4; filter: grayscale(1); }
-
-/* Vybraná plodina */
-#selected-crop { width: 95%; text-align: center; background: var(--panel); border-radius: 14px; border: 1px solid var(--border); padding: 0.6em; margin-bottom: 0.6em; }
-#selected-crop-icon { font-size: 1.4em; }
-
-/* Save indikátor */
-#save-indicator { position: fixed; bottom: 10px; right: 12px; background: var(--accent); color: white; border-radius: 10px; padding: 0.3em 0.6em; font-size: 0.8em; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
-#save-indicator.show { opacity: 1; }
-
-/* Theme toggle */
-#theme-toggle { background: none; border: none; font-size: 1.3em; color: var(--accent); padding: 0.3em; }
-                          
