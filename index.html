@@ -2,361 +2,715 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gravity Race</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmářská Výzva | Zemědělská Hra</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Předchozí styly zůstávají... */
-
-        /* Timer display */
-        #timerDisplay {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: white;
-            font-size: 2em;
-            font-weight: bold;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 15px 25px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            text-align: center;
-            min-width: 120px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            touch-action: manipulation;
         }
 
-        /* Game over screen */
-        #gameOverScreen {
-            position: absolute;
+        body {
+            background: linear-gradient(135deg, #87CEEB, #98FB98);
+            color: #2d5016;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 100%;
+            width: 100%;
+            text-align: center;
+        }
+
+        header {
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            color: #2d5016;
+            text-shadow: 2px 2px 0 #a3d977;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: #4a7c1f;
+            margin-bottom: 10px;
+        }
+
+        .game-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: #e8f5e9;
+            padding: 10px;
+            border-radius: 10px;
+            border: 3px solid #a5d6a7;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 10px;
+            min-width: 80px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #4a7c1f;
+            margin-bottom: 3px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2d5016;
+        }
+
+        .farm-container {
+            background: #c8e6c9;
+            border-radius: 10px;
+            padding: 15px;
+            border: 5px solid #8bc34a;
+            margin: 0 auto 15px;
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        .farm {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin: 0 auto;
+            max-width: 100%;
+        }
+
+        .farm.expanded {
+            grid-template-columns: repeat(5, 1fr);
+        }
+
+        .plot {
+            width: 65px;
+            height: 65px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            transition: all 0.3s ease;
+            background: #d7ccc8;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+            padding: 5px;
+        }
+
+        .plot:hover {
+            transform: scale(1.05);
+        }
+
+        .plot.empty {
+            background: #d7ccc8;
+        }
+
+        .plot.planted {
+            background: #8bc34a;
+        }
+
+        .plot.ready {
+            background: #ffd54f;
+            animation: pulse 1s infinite;
+        }
+
+        .plot.withered {
+            background: #795548;
+        }
+
+        .plot.new {
+            background: #ffecb3;
+            border: 2px dashed #ff9800;
+        }
+
+        .crops {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .crop-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            min-width: 90px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+            border: 2px solid #ffd54f;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .crop-item.selected {
+            border-color: #e53935;
+            background: #fff3e0;
+            transform: scale(1.05);
+        }
+
+        .crop-item.locked {
+            border-color: #9e9e9e;
+            background: #f5f5f5;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .crop-item:hover:not(.locked) {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .crop-icon {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .crop-name {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #2d5016;
+        }
+
+        .crop-cost {
+            font-size: 0.75rem;
+            color: #e53935;
+        }
+
+        .crop-time {
+            font-size: 0.75rem;
+            color: #1976d2;
+        }
+
+        .crop-locked {
+            font-size: 0.75rem;
+            color: #757575;
+            font-style: italic;
+        }
+
+        .animals {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .animal-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            min-width: 90px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+            border: 2px solid #81c784;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .animal-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .animal-icon {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .animal-name {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #2d5016;
+        }
+
+        .animal-cost {
+            font-size: 0.75rem;
+            color: #e53935;
+        }
+
+        .animal-income {
+            font-size: 0.75rem;
+            color: #43a047;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .market {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+        }
+
+        .upgrades {
+            background: linear-gradient(135deg, #2196f3, #0d47a1);
+        }
+
+        .save {
+            background: linear-gradient(135deg, #9c27b0, #673ab7);
+        }
+
+        .selected-crop {
+            background: #e8f5e9;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border: 2px dashed #4caf50;
+            font-size: 0.9rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: none;
-            flex-direction: column;
-            align-items: center;
+            background-color: rgba(0, 0, 0, 0.7);
             justify-content: center;
-            color: white;
+            align-items: center;
             z-index: 1000;
+            padding: 20px;
         }
 
-        .game-over-container {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 40px 30px;
-            border-radius: 25px;
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
             text-align: center;
-            backdrop-filter: blur(20px);
-            border: 2px solid rgba(255, 255, 255, 0.2);
             width: 100%;
             max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: modalAppear 0.4s ease;
+            position: relative;
         }
 
-        .final-score {
-            font-size: 4em;
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #757575;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .close-modal:hover {
+            background: #f5f5f5;
+            color: #e53935;
+            transform: rotate(90deg);
+        }
+
+        .modal h2 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #2d5016;
+            padding-right: 30px;
+        }
+
+        .modal p {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            line-height: 1.5;
+            color: #4a7c1f;
+        }
+
+        .instructions {
+            background: #e8f5e9;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: left;
+            font-size: 0.9rem;
+            border: 2px dashed #81c784;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .instructions h3 {
+            color: #2d5016;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .instructions ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .instructions li::before {
+            content: "🌱";
+            margin-right: 8px;
+        }
+
+        footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #2d5016;
+            font-size: 0.8rem;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: #4caf50;
+            border-radius: 5px;
+            transition: width 0.3s;
+        }
+
+        .xp-bar {
+            width: 100%;
+            height: 15px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin: 5px 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .xp-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #8bc34a);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .xp-text {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
             font-weight: bold;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 20px 0;
+            color: #2d5016;
+        }
+
+        .save-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(76, 175, 80, 0.9);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            transform: translateY(100px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            display: none;
+        }
+
+        .save-indicator.show {
+            transform: translateY(0);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes modalAppear {
+            from { opacity: 0; transform: translateY(-30px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .season-indicator {
+            display: inline-block;
+            padding: 5px 15px;
+            background: #ffd54f;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .farm-expansion {
+            background: #fff8e1;
+            padding: 8px;
+            border-radius: 8px;
+            margin: 5px 0;
+            border: 2px solid #ffd54f;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive design */
+        @media (max-width: 480px) {
+            .farm {
+                grid-template-columns: repeat(5, 1fr);
+            }
+            
+            .plot {
+                width: 55px;
+                height: 55px;
+                font-size: 1.4rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .crops, .animals {
+                gap: 8px;
+            }
+            
+            .crop-item, .animal-item {
+                min-width: 80px;
+                padding: 8px;
+            }
+            
+            .controls {
+                gap: 8px;
+            }
+            
+            button {
+                padding: 10px 15px;
+                font-size: 0.8rem;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Screen Container -->
-    <div id="screenContainer">
-        <!-- Main Menu Screen -->
-        <div id="mainMenuScreen">
-            <div class="menu-container">
-                <h1>🚀 GRAVITY RACE</h1>
-                <div class="menu-subtitle">Multiplayer vesmírný závod</div>
-                
-                <button class="menu-btn" id="createRoomBtn">Vytvořit místnost</button>
-                <button class="menu-btn" id="joinRoomBtn">Připojit se k hře</button>
-                <button class="menu-btn" id="singleplayerBtn">Time Attack</button>
+    <div class="container">
+        <header>
+            <h1>Farmářská Výzva <i class="fas fa-tractor"></i></h1>
+            <p class="subtitle">Staň se úspěšným farmářem! Pěstuj plodiny, chovej zvířata a rozšiřuj svou farmu.</p>
+            <div>
+                <span>Roční období:</span>
+                <span class="season-indicator" id="season">Jaro</span>
+            </div>
+        </header>
+
+        <div class="game-container">
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-label">PENÍZE</div>
+                    <div class="stat-value" id="money">100</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">LEVEL</div>
+                    <div class="stat-value" id="level">1</div>
+                    <div class="xp-bar">
+                        <div class="xp-progress" id="xp-progress" style="width: 0%"></div>
+                        <div class="xp-text" id="xp-text">0/100 XP</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">DEN</div>
+                    <div class="stat-value" id="day">1</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">POLE</div>
+                    <div class="stat-value" id="farm-size">8</div>
+                </div>
+            </div>
+
+            <div class="selected-crop">
+                <strong>Vybrána plodina:</strong> 
+                <span id="selected-crop-name">Žádná</span>
+                <span id="selected-crop-icon"></span>
+            </div>
+
+            <div class="farm-expansion" id="farm-expansion-info">
+                Na levelu 3 se farma rozšíří na 10 políček!
+            </div>
+
+            <h3><i class="fas fa-seedling"></i> Tvá Farmářská Pole</h3>
+            <div class="farm-container">
+                <div class="farm" id="farm">
+                    <!-- Farmářská pole budou vygenerována JavaScriptem -->
+                </div>
+            </div>
+
+            <h3><i class="fas fa-shopping-basket"></i> Obchod s Plodinami</h3>
+            <div class="crops" id="crops">
+                <!-- Plodiny budou vygenerovány JavaScriptem -->
+            </div>
+
+            <h3><i class="fas fa-paw"></i> Chov Zvířat</h3>
+            <div class="animals" id="animals">
+                <!-- Zvířata budou vygenerována JavaScriptem -->
+            </div>
+
+            <div class="controls">
+                <button id="next-day">
+                    <i class="fas fa-sun"></i> Další Den
+                </button>
+                <button id="market" class="market">
+                    <i class="fas fa-store"></i> Trh
+                </button>
+                <button id="upgrades" class="upgrades">
+                    <i class="fas fa-tools"></i> Vylepšení
+                </button>
+                <button id="save-game" class="save">
+                    <i class="fas fa-save"></i> Uložit
+                </button>
             </div>
         </div>
 
-        <!-- Ostatní obrazovky zůstávají stejné... -->
-
-        <!-- Game Screen -->
-        <div id="gameScreen">
-            <canvas id="gameCanvas"></canvas>
-            
-            <div id="scoreDisplay">
-                Skóre: <span id="score1">0</span>
-            </div>
-            
-            <div id="timerDisplay">30</div>
-            
-            <div id="gameModeDisplay"></div>
-            
-            <!-- Mobile Controls -->
-            <div id="mobileControls">
-                <div class="joystick-container">
-                    <div class="joystick-base"></div>
-                    <div class="joystick-handle"></div>
-                </div>
-                
-                <div class="action-buttons">
-                    <div class="game-action-btn" id="gravityBtn">🌀<br>GRAVITACE</div>
-                    <div class="game-action-btn" id="pulseBtn">💥<br>PULZ</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Game Over Screen -->
-        <div id="gameOverScreen">
-            <div class="game-over-container">
-                <h2>ČAS VYPRŠEL!</h2>
-                <div class="final-score" id="finalScore">0</div>
-                <p style="margin-bottom: 25px; font-size: 1.1em;">Celkové skóre</p>
-                
-                <button class="action-btn primary-btn" id="playAgainBtn">Hrát znovu</button>
-                <button class="action-btn back-btn" id="backToMenuFromGame">Hlavní menu</button>
-            </div>
+        <div class="instructions">
+            <h3>Jak hrát:</h3>
+            <ul>
+                <li>Nejprve vyber plodinu kliknutím na ni v obchodě</li>
+                <li>Pak klikni na prázdné pole k vysazení vybrané plodiny</li>
+                <li>Počkej, až plodina vyroste (ukazuje progress bar)</li>
+                <li>Skliď zralé plodiny (žlutá pole) a prodej je na trhu</li>
+                <li>Kupuj zvířata, která ti přinášejí pravidelný příjem</li>
+                <li>Používej tlačítko "Další Den" k postupu v čase</li>
+                <li><strong>Hra se automaticky ukládá! Můžeš také použít tlačítko "Uložit"</strong></li>
+                <li><strong>Na levelu 3 se farma rozšíří na 10 políček!</strong></li>
+            </ul>
         </div>
     </div>
 
-    <script>
-        // Přidáme game over screen elementy
-        const gameOverScreen = document.getElementById('gameOverScreen');
-        const finalScore = document.getElementById('finalScore');
-        const playAgainBtn = document.getElementById('playAgainBtn');
-        const backToMenuFromGame = document.getElementById('backToMenuFromGame');
-        const timerDisplay = document.getElementById('timerDisplay');
+    <!-- Indikátor uložení (skrytý) -->
+    <div class="save-indicator" id="save-indicator">
+        <i class="fas fa-check"></i> Hra uložena!
+    </div>
 
-        // Game state
-        let gameTime = 30;
-        let gameTimer = null;
-        let playerScore = 0;
-        let isGameActive = false;
+    <div class="modal" id="market-modal">
+        <div class="modal-content">
+            <button class="close-modal" id="close-market">&times;</button>
+            <h2><i class="fas fa-store"></i> Farmářský Trh</h2>
+            <p>Prodej své plodiny a vydělej peníze!</p>
+            <div id="market-items">
+                <!-- Tržní položky budou vygenerovány JavaScriptem -->
+            </div>
+            <button id="close-market-bottom">Zavřít</button>
+        </div>
+    </div>
 
-        // Singleplayer - Time Attack
-        function startSingleplayerGame() {
-            currentRoomCode = 'TIME_' + Math.random().toString(36).substring(2, 6).toUpperCase();
-            mainMenuScreen.style.display = 'none';
-            gameScreen.style.display = 'flex';
-            
-            // Změna UI pro singleplayer
-            document.getElementById('scoreDisplay').innerHTML = 'Skóre: <span id="score1">0</span>';
-            document.getElementById('gameModeDisplay').textContent = 'Time Attack - 30 vteřin';
-            
-            initializeGame('singleplayer');
-        }
+    <div class="modal" id="upgrades-modal">
+        <div class="modal-content">
+            <button class="close-modal" id="close-upgrades">&times;</button>
+            <h2><i class="fas fa-tools"></i> Vylepšení Farmy</h2>
+            <p>Vylepši svou farmu pro vyšší výnosy!</p>
+            <div id="upgrade-items">
+                <!-- Vylepšení budou vygenerována JavaScriptem -->
+            </div>
+            <button id="close-upgrades-bottom">Zavřít</button>
+        </div>
+    </div>
 
-        function initializeGame(mode) {
-            const canvas = document.getElementById('gameCanvas');
-            const ctx = canvas.getContext('2d');
-            
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            
-            // Reset game state
-            playerScore = 0;
-            gameTime = 30;
-            isGameActive = true;
-            
-            document.getElementById('score1').textContent = '0';
-            timerDisplay.textContent = gameTime;
-            
-            if (mode === 'singleplayer') {
-                startGameTimer();
-            }
-            
-            // Herní objekty
-            const player = {
-                x: canvas.width / 2,
-                y: canvas.height / 2,
-                radius: 15,
-                color: '#4ecdc4',
-                speed: 4
-            };
-            
-            const stars = [];
-            
-            // Vytvoření hvězd
-            function createStars() {
-                stars.length = 0;
-                for (let i = 0; i < 15; i++) {
-                    stars.push({
-                        x: Math.random() * (canvas.width - 100) + 50,
-                        y: Math.random() * (canvas.height - 100) + 50,
-                        radius: 8,
-                        collected: false
-                    });
-                }
-            }
-            
-            createStars();
-            
-            // Ovládání
-            let keys = {};
-            let joystickActive = false;
-            let joystickX = 0;
-            let joystickY = 0;
-            
-            // Keyboard controls
-            window.addEventListener('keydown', (e) => {
-                keys[e.key] = true;
-            });
-            
-            window.addEventListener('keyup', (e) => {
-                keys[e.key] = false;
-            });
-            
-            // Touch controls pro joystick
-            const joystick = document.querySelector('.joystick-container');
-            const joystickHandle = document.querySelector('.joystick-handle');
-            
-            let touchId = null;
-            
-            joystick.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                if (!touchId) {
-                    touchId = e.changedTouches[0].identifier;
-                    joystickActive = true;
-                }
-            });
-            
-            joystick.addEventListener('touchmove', (e) => {
-                e.preventDefault();
-                if (!joystickActive) return;
-                
-                const touch = Array.from(e.changedTouches).find(t => t.identifier === touchId);
-                if (touch) {
-                    const rect = joystick.getBoundingClientRect();
-                    const centerX = rect.left + rect.width / 2;
-                    const centerY = rect.top + rect.height / 2;
-                    
-                    const deltaX = touch.clientX - centerX;
-                    const deltaY = touch.clientY - centerY;
-                    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-                    const maxDistance = rect.width / 2 - 35;
-                    
-                    if (distance > maxDistance) {
-                        joystickX = (deltaX / distance) * maxDistance;
-                        joystickY = (deltaY / distance) * maxDistance;
-                    } else {
-                        joystickX = deltaX;
-                        joystickY = deltaY;
-                    }
-                    
-                    joystickHandle.style.transform = `translate(calc(-50% + ${joystickX}px), calc(-50% + ${joystickY}px))`;
-                }
-            });
-            
-            joystick.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                if (Array.from(e.changedTouches).find(t => t.identifier === touchId)) {
-                    joystickActive = false;
-                    joystickX = 0;
-                    joystickY = 0;
-                    joystickHandle.style.transform = 'translate(-50%, -50%)';
-                    touchId = null;
-                }
-            });
-            
-            // Herní smyčka
-            function gameLoop() {
-                if (!isGameActive) return;
-                
-                // Clear canvas
-                ctx.fillStyle = '#000011';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                // Update player position
-                if (joystickActive) {
-                    player.x += (joystickX / 20) * player.speed;
-                    player.y += (joystickY / 20) * player.speed;
-                } else {
-                    if (keys['ArrowLeft'] || keys['a']) player.x -= player.speed;
-                    if (keys['ArrowRight'] || keys['d']) player.x += player.speed;
-                    if (keys['ArrowUp'] || keys['w']) player.y -= player.speed;
-                    if (keys['ArrowDown'] || keys['s']) player.y += player.speed;
-                }
-                
-                // Boundary check
-                player.x = Math.max(player.radius, Math.min(canvas.width - player.radius, player.x));
-                player.y = Math.max(player.radius, Math.min(canvas.height - player.radius, player.y));
-                
-                // Draw stars
-                ctx.fillStyle = '#ffff00';
-                stars.forEach(star => {
-                    if (!star.collected) {
-                        ctx.beginPath();
-                        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-                        ctx.fill();
-                        
-                        // Check collision
-                        const dist = Math.sqrt((player.x - star.x) ** 2 + (player.y - star.y) ** 2);
-                        if (dist < player.radius + star.radius) {
-                            star.collected = true;
-                            playerScore += 10;
-                            document.getElementById('score1').textContent = playerScore;
-                            
-                            // Create new star after delay
-                            setTimeout(() => {
-                                star.collected = false;
-                                star.x = Math.random() * (canvas.width - 100) + 50;
-                                star.y = Math.random() * (canvas.height - 100) + 50;
-                            }, 500);
-                        }
-                    }
-                });
-                
-                // Draw player
-                ctx.fillStyle = player.color;
-                ctx.beginPath();
-                ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
-                ctx.fill();
-                
-                // Draw player glow
-                ctx.shadowColor = player.color;
-                ctx.shadowBlur = 20;
-                ctx.beginPath();
-                ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.shadowBlur = 0;
-                
-                requestAnimationFrame(gameLoop);
-            }
-            
-            gameLoop();
-        }
-        
-        function startGameTimer() {
-            gameTimer = setInterval(() => {
-                gameTime--;
-                timerDisplay.textContent = gameTime;
-                
-                if (gameTime <= 0) {
-                    endGame();
-                }
-            }, 1000);
-        }
-        
-        function endGame() {
-            isGameActive = false;
-            clearInterval(gameTimer);
-            
-            finalScore.textContent = playerScore;
-            gameOverScreen.style.display = 'flex';
-        }
-        
-        // Game over buttons
-        playAgainBtn.addEventListener('click', () => {
-            gameOverScreen.style.display = 'none';
-            startSingleplayerGame();
-        });
-        
-        backToMenuFromGame.addEventListener('click', () => {
-            gameOverScreen.style.display = 'none';
-            gameScreen.style.display = 'none';
-            mainMenuScreen.style.display = 'flex';
-        });
+    <div class="modal" id="level-up-modal">
+        <div class="modal-content">
+            <button class="close-modal" id="close-level-up">&times;</button>
+            <h2><i class="fas fa-trophy"></i> Level Up!</h2>
+            <p>Gratulujeme! Postoupil jsi na level <span id="new-level">2</span>!</p>
+            <p id="level-up-benefits"></p>
+            <button id="close-level-up-bottom">Super!</button>
+        </div>
+    </div>
 
-        // Ostatní event listeners zůstávají stejné...
-    </script>
-</body>
-</html>
+    <div class="modal" id="farm-expanded-modal">
+        <div class="modal-content">
+            <button class="close-modal" id="c
