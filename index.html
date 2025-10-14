@@ -3,51 +3,67 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Harvest Valley</title>
+  <title>Harvest Valley | Mobilní Farma</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Horní panel -->
   <div class="top-bar">
-    <button id="next-day">🌞 Další den</button>
-    <div>
-      💰 <span id="money">0</span> | ⭐ Level <span id="level">1</span> | 📅 Den <span id="day">1</span>
-    </div>
+    <button id="next-day">Další den</button>
+    <span>💰 <span id="money">0</span></span>
+    <span>Lv. <span id="level">1</span></span>
     <button id="theme-toggle">🌙</button>
-    <button id="save-game">💾 Uložit</button>
-    <button id="restart-game">🔄 Restart</button>
+    <button id="restart-game">Restart</button>
   </div>
 
+  <!-- Statistika -->
+  <div class="stats">
+    <div class="stat">
+      <div>Den</div>
+      <div id="day">1</div>
+    </div>
+    <div class="stat">
+      <div>XP</div>
+      <div class="xp-bar">
+        <div id="xp-progress"></div>
+      </div>
+      <div id="xp-text">0/100 XP</div>
+    </div>
+    <div class="stat">
+      <div>Polí</div>
+      <div id="farm-size">9</div>
+    </div>
+  </div>
+
+  <!-- Farma -->
   <div id="farm"></div>
-  <div id="farm-size-info" style="text-align:center; margin-bottom:0.8em;">
-    Pole: <span id="farm-size">9</span>
-  </div>
 
+  <!-- Vybraná plodina -->
   <div id="selected-crop">
-    Vybraná plodina: <span id="selected-crop-name">Žádná</span> <span id="selected-crop-icon"></span>
+    <span id="selected-crop-icon"></span>
+    <span id="selected-crop-name">Žádná</span>
   </div>
 
+  <!-- Obchod -->
   <div class="shop-section">
-    <div class="shop-title">🌱 Semínka a sazenice</div>
+    <div class="shop-title">Semínka a Sazenice</div>
     <div id="crops"></div>
   </div>
 
   <div class="shop-section">
-    <div class="shop-title">🐾 Zvířecí pomocníci</div>
+    <div class="shop-title">Zvířecí pomocníci</div>
     <div id="animals"></div>
   </div>
 
-  <div class="stats" style="justify-content:center;">
-    <div class="xp-bar">
-      <div id="xp-progress"></div>
-      <div id="xp-text" style="position:absolute; width:100%; text-align:center; font-size:0.8em;">0/100 XP</div>
-    </div>
+  <!-- Skleník / Upgrady -->
+  <div class="shop-section">
+    <div class="shop-title">Vylepšení farmy</div>
+    <div id="upgrades"></div>
   </div>
 
-  <div id="save-indicator">💾 Hra uložena!</div>
+  <!-- Save indikátor -->
+  <div id="save-indicator">💾 Uloženo</div>
 
   <script src="script.js"></script>
-  <script>
-    document.getElementById('save-game').onclick = () => saveState();
-  </script>
 </body>
 </html>
