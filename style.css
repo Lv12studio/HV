@@ -1,6 +1,3 @@
-/* =========================
-   Barvy a módy
-   ========================= */
 :root {
   --bg-color-light: #ffffff;
   --text-color-light: #333333;
@@ -36,7 +33,6 @@ body {
   text-align: center;
 }
 
-/* Pole farmy */
 .farm {
   display: grid;
   grid-template-columns: repeat(3, 120px);
@@ -71,7 +67,6 @@ body {
   background-color: #2196f3;
 }
 
-/* Tlačítko "Další den" */
 .button-next-day {
   background-color: var(--bg-color);
   color: var(--text-color);
