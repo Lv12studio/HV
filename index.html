@@ -3,52 +3,64 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Garden Valley | Farmářská Hra</title>
+  <title>Garden Valley</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <!-- ===== horní panel ===== -->
+
+  <!-- ===== Horní panel ===== -->
   <div class="top-bar">
-    <button id="next-day"><i class="fas fa-sun"></i> Další den</button>
-    <button id="save-game"><i class="fas fa-save"></i> Uložit</button>
-    <button id="theme-toggle"><i class="fas fa-moon" id="theme-icon"></i></button>
-  </div>
-
-  <!-- ===== statistiky ===== -->
-  <div class="stats">
-    <div class="stat">💰 Peníze: <span id="money">0</span></div>
-    <div class="stat">🏆 Level: <span id="level">1</span>
-      <div class="xp-bar"><div id="xp-progress" class="xp-progress"></div></div>
-      <div id="xp-text">0/100 XP</div>
+    <button id="next-day">🌞 Další den</button>
+    <div>
+      <span>💰 <span id="money">0</span></span>
+      <span>⭐ Level <span id="level">1</span></span>
+      <span>📅 Den <span id="day">1</span></span>
     </div>
-    <div class="stat">📅 Den: <span id="day">1</span></div>
-    <div class="stat">🌾 Pole: <span id="farm-size">9</span></div>
+    <button id="theme-toggle">🌙</button>
+    <button id="save-game">💾 Uložit</button>
+    <button id="restart-game">🔄 Restart</button>
   </div>
 
-  <!-- ===== farma ===== -->
-  <div id="farm" class="farm"></div>
+  <!-- ===== Farma ===== -->
+  <div id="farm"></div>
+  <div id="farm-size-info" style="text-align:center; margin-bottom:0.8em;">
+    Pole: <span id="farm-size">9</span>
+  </div>
 
-  <!-- ===== vybraná plodina ===== -->
+  <!-- ===== Vybraná plodina ===== -->
   <div id="selected-crop">
     Vybraná plodina: <span id="selected-crop-name">Žádná</span> <span id="selected-crop-icon"></span>
   </div>
 
-  <!-- ===== obchod: plodiny ===== -->
+  <!-- ===== Obchod s plodinami ===== -->
   <div class="shop-section">
-    <div class="shop-title"><i class="fas fa-seedling"></i> Semínka a sazenice</div>
+    <div class="shop-title">🌱 Semínka a sazenice</div>
     <div id="crops"></div>
   </div>
 
-  <!-- ===== obchod: zvířata ===== -->
+  <!-- ===== Obchod se zvířaty ===== -->
   <div class="shop-section">
-    <div class="shop-title"><i class="fas fa-paw"></i> Zvířecí pomocníci</div>
+    <div class="shop-title">🐾 Zvířecí pomocníci</div>
     <div id="animals"></div>
   </div>
 
-  <!-- ===== save indikátor ===== -->
-  <div id="save-indicator">💾 Uloženo</div>
+  <!-- ===== XP Bar ===== -->
+  <div class="stats" style="justify-content:center;">
+    <div class="xp-bar">
+      <div id="xp-progress"></div>
+      <div id="xp-text" style="position:absolute; width:100%; text-align:center; font-size:0.8em;">0/100 XP</div>
+    </div>
+  </div>
+
+  <!-- ===== Save indikátor ===== -->
+  <div id="save-indicator">💾 Hra uložena!</div>
 
   <script src="script.js"></script>
+  <script>
+    // Save tlačítko
+    document.getElementById('save-game').onclick = () => {
+      saveState();
+    }
+  </script>
 </body>
 </html>
