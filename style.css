@@ -1,338 +1,89 @@
-/* ====== ZÁKLADNÍ STYL HRY ====== */
-body {
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(to bottom, #bde0fe, #a2d2ff);
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: 100vh;
-}
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zahradníkovy Výzvy | Farmářská Hra</title>
 
-.container {
-  max-width: 480px;
-  width: 95%;
-  background: #fff;
-  border-radius: 20px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-  overflow: hidden;
-  margin: 30px 0;
-}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Zahradníkovy Výzvy 🌱</h1>
+      <p class="subtitle">Staň se mistrem zahradníkem! Pěstuj, sklízej a rozšiřuj svou zahradu.</p>
+      <div class="season-info">
+        <span>Roční období:</span>
+        <span class="season-indicator" id="season">Jaro</span>
+        <span class="season-icon" id="season-icon">🌸</span>
+        <span id="season-bonus">(1.0x růst)</span>
+      </div>
+    </header>
 
-/* ====== HLAVIČKA ====== */
-header {
-  background: #e3f2fd;
-  padding: 20px;
-  text-align: center;
-  color: #2e7d32;
-}
+    <div class="stats">
+      <div class="stat-item">
+        <div class="stat-label">PENÍZE</div>
+        <div class="stat-value" id="money">0</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">LEVEL</div>
+        <div class="stat-value" id="level">1</div>
+        <div class="xp-bar">
+          <div class="xp-progress" id="xp-progress" style="width: 0%"></div>
+          <div class="xp-text" id="xp-text">0/100 XP</div>
+        </div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">DEN</div>
+        <div class="stat-value" id="day">1</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">POLE</div>
+        <div class="stat-value" id="farm-size">8</div>
+      </div>
+    </div>
 
-header h1 {
-  margin: 0;
-  font-size: 26px;
-  color: #2e7d32;
-}
+    <div class="selected-crop">
+      <strong>Vybraná plodina:</strong>
+      <span id="selected-crop-name">Žádná</span>
+      <span id="selected-crop-icon"></span>
+    </div>
 
-header .subtitle {
-  font-size: 14px;
-  color: #388e3c;
-  margin-top: 5px;
-}
+    <div class="farm-expansion" id="farm-expansion-info">
+      Zahrada se rozšíří na 10 políček na levelu 3!
+    </div>
 
-header .season-info {
-  margin-top: 10px;
-  font-size: 14px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-}
+    <h3>🌿 Tvá Zahradní Pole</h3>
+    <div class="farm-container">
+      <div class="farm" id="farm"></div>
+    </div>
 
-header .season-indicator {
-  font-weight: bold;
-  padding: 2px 8px;
-  border-radius: 6px;
-  background: #ffecb3;
-  color: #795548;
-}
+    <h3>🛒 Semínka a Sazenice</h3>
+    <div class="crops" id="crops"></div>
 
-/* ====== STATISTIKY ====== */
-.stats {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  padding: 16px;
-  background: #f9fbe7;
-}
+    <h3>🐾 Zvířecí pomocníci</h3>
+    <div class="animals" id="animals"></div>
 
-.stat-item {
-  text-align: center;
-  background: #fff;
-  padding: 10px;
-  border-radius: 12px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
+    <div class="controls">
+      <button id="next-day"><i class="fas fa-sun"></i> Další den</button>
+      <button id="save-game" class="save"><i class="fas fa-save"></i> Uložit</button>
+    </div>
 
-.stat-label {
-  font-size: 13px;
-  color: #388e3c;
-  font-weight: 600;
-}
+    <div class="instructions">
+      <h3>Jak hrát:</h3>
+      <ul>
+        <li>Vyber plodinu kliknutím na ni</li>
+        <li>Klikni na prázdné pole k vysazení</li>
+        <li>Počkej, až vyroste a skliď</li>
+        <li>Každý den ti zvířata vydělávají peníze</li>
+        <li>Postupuj v levelech a rozšiřuj zahradu</li>
+      </ul>
+    </div>
+  </div>
 
-.stat-value {
-  font-size: 20px;
-  font-weight: bold;
-  color: #2e7d32;
-  margin-top: 4px;
-}
+  <div class="save-indicator" id="notification"></div>
 
-.xp-bar {
-  height: 10px;
-  background: #c8e6c9;
-  border-radius: 5px;
-  overflow: hidden;
-  position: relative;
-  margin-top: 5px;
-}
-
-.xp-progress {
-  height: 100%;
-  background: #81c784;
-  transition: width 0.3s;
-}
-
-.xp-text {
-  font-size: 11px;
-  color: #1b5e20;
-  position: absolute;
-  width: 100%;
-  text-align: center;
-  top: -16px;
-}
-
-/* ====== FARMA ====== */
-.farm-container {
-  display: flex;
-  justify-content: center;
-  padding: 16px;
-}
-
-.farm {
-  display: grid;
-  grid-template-columns: repeat(4, 60px);
-  gap: 10px;
-}
-
-.plot {
-  width: 60px;
-  height: 60px;
-  background: #dcedc8;
-  border-radius: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 28px;
-  cursor: pointer;
-  border: 2px solid #c5e1a5;
-  transition: transform 0.2s, background 0.3s;
-}
-
-.plot:hover {
-  transform: scale(1.05);
-}
-
-.plot.empty {
-  background: #f0f4c3;
-}
-
-.plot.planted {
-  background: #aed581;
-}
-
-.plot.ready {
-  background: #ffeb3b;
-  animation: glow 1s infinite alternate;
-}
-
-@keyframes glow {
-  from { box-shadow: 0 0 8px #ffeb3b; }
-  to { box-shadow: 0 0 16px #fdd835; }
-}
-
-/* ====== PLODINY ====== */
-.crops, .animals {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
-  padding: 10px;
-}
-
-.crop-item, .animal-item {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-  padding: 10px;
-  text-align: center;
-  width: 90px;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.crop-item:hover, .animal-item:hover {
-  transform: scale(1.08);
-}
-
-.crop-icon {
-  font-size: 26px;
-}
-
-.crop-name {
-  font-size: 13px;
-  font-weight: 600;
-  margin-top: 5px;
-  color: #388e3c;
-}
-
-.crop-cost, .crop-time {
-  font-size: 11px;
-  color: #5d4037;
-}
-
-.selected-crop {
-  background: #e8f5e9;
-  padding: 10px;
-  margin: 10px;
-  border-radius: 8px;
-  border: 1px dashed #81c784;
-  font-size: 14px;
-  color: #2e7d32;
-}
-
-/* ====== OVLÁDACÍ TLAČÍTKA ====== */
-.controls {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  padding: 16px;
-}
-
-button {
-  border: none;
-  border-radius: 12px;
-  padding: 10px 14px;
-  font-size: 14px;
-  cursor: pointer;
-  color: #fff;
-  font-weight: 600;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-  transition: background 0.3s, transform 0.2s;
-}
-
-button:hover {
-  transform: scale(1.05);
-}
-
-#next-day {
-  background: #4caf50;
-}
-
-#market {
-  background: #ff9800;
-}
-
-#upgrades {
-  background: #2196f3;
-}
-
-#save-game {
-  background: #9c27b0;
-}
-
-/* ====== MODÁLY ====== */
-.modal {
-  display: none;
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.5);
-  justify-content: center;
-  align-items: center;
-  z-index: 10;
-}
-
-.modal-content {
-  background: #fff;
-  padding: 20px;
-  border-radius: 14px;
-  width: 90%;
-  max-width: 400px;
-  text-align: center;
-  position: relative;
-}
-
-.close-modal {
-  position: absolute;
-  right: 12px;
-  top: 8px;
-  background: none;
-  border: none;
-  font-size: 22px;
-  cursor: pointer;
-  color: #555;
-}
-
-/* ====== ULOŽENÍ ====== */
-.save-indicator {
-  display: none;
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #4caf50;
-  color: #fff;
-  padding: 10px 16px;
-  border-radius: 12px;
-  font-weight: 600;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-  z-index: 20;
-  animation: fadeInOut 2s ease;
-}
-
-@keyframes fadeInOut {
-  0%, 100% { opacity: 0; }
-  20%, 80% { opacity: 1; }
-}
-
-/* ====== NÁVOD ====== */
-.instructions {
-  background: #f1f8e9;
-  padding: 14px;
-  border-top: 2px solid #aed581;
-}
-
-.instructions ul {
-  margin: 8px 0;
-  padding-left: 18px;
-  font-size: 13px;
-}
-
-.instructions li {
-  margin-bottom: 6px;
-  color: #33691e;
-}
-
-/* ====== RESPONSIVITA ====== */
-@media (max-width: 480px) {
-  .farm {
-    grid-template-columns: repeat(3, 60px);
-  }
-
-  .stat-item {
-    font-size: 12px;
-  }
-
-  button {
-    font-size: 12px;
-    padding: 8px 10px;
-  }
-}
+  <script src="script.js"></script>
+</body>
+</html>
