@@ -3,33 +3,53 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Harvest Valley</title>
+  <title>Zahradníkovy Výzvy | Farmářská Hra</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="light-mode">
-
+<body>
   <div class="container">
-    <h1>Harvest Valley 🌾</h1>
-    <p id="day-text">Vítej na farmě! Klikni na tlačítko "Další den".</p>
-    
-    <div class="farm">
-      <div class="field" id="field1">Pole 1</div>
-      <div class="field" id="field2">Pole 2</div>
-      <div class="field" id="field3">Pole 3</div>
-      <div class="field" id="field4">Pole 4</div>
-      <div class="field" id="field5">Pole 5</div>
-      <div class="field" id="field6">Pole 6</div>
-      <div class="field" id="field7">Pole 7</div>
-      <div class="field" id="field8">Pole 8</div>
-      <div class="field" id="field9">Pole 9</div>
+    <header>
+      <h1>Zahradníkovy Výzvy <span>🌿</span></h1>
+      <p>Staň se mistrem zahradníkem! Pěstuj, sklízej a rozšiřuj svou zahradu.</p>
+      <div class="season-info">
+        Roční období: <span id="season" class="season-badge">Načítám...</span>
+        <span id="season-icon"></span>
+      </div>
+    </header>
+
+    <div class="stats">
+      <div><strong>PENÍZE</strong><br><span id="money">0</span></div>
+      <div>
+        <strong>LEVEL</strong><br>
+        <span id="level">1</span>
+        <div class="xp-bar"><div id="xp-bar"></div></div>
+        <small id="xp-text">0 / 100 XP</small>
+      </div>
+      <div><strong>DEN</strong><br><span id="day">1</span></div>
+      <div><strong>POLE</strong><br><span id="plots">8</span></div>
     </div>
-    
-    <button class="button-next-day" id="next-day">Další den</button>
-    <div class="mode-toggle">
-      <button id="toggle-mode">Přepnout mód</button>
+
+    <div class="selected">
+      Vybraná plodina: <span id="selected-crop">Žádná</span>
+    </div>
+
+    <div id="farm" class="farm"></div>
+
+    <h3>🌱 Semínka a Sazenice</h3>
+    <div id="crops" class="shop"></div>
+
+    <h3>🐾 Zvířecí pomocníci</h3>
+    <div id="animals" class="shop"></div>
+
+    <div class="controls">
+      <button id="next-day" class="next">Další Den</button>
+      <button id="save" class="save">Uložit</button>
     </div>
   </div>
 
-  <script src="script.js" defer></script>
+  <div id="toast" class="toast">Hra uložena!</div>
+
+  <script src="script.js"></script>
 </body>
 </html>
