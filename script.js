@@ -1,5 +1,5 @@
 /* =============================
-   Harvest Valley – script.js (pomalejší vydělávání)
+   Harvest Valley – script.js (finální)
    ============================= */
 
 const farmEl = document.getElementById("farm");
@@ -17,30 +17,39 @@ const themeToggleBtn = document.getElementById("theme-toggle");
 
 let selectedCrop = null;
 
+/* =============================
+   PLANTY
+   ============================= */
 const ALL_CROPS = [
-  { name: "Mrkev", icon: "🥕", cost: 10, growTime: 2, profit: 3, xp: 3 },
-  { name: "Rajče", icon: "🍅", cost: 15, growTime: 3, profit: 5, xp: 4 },
-  { name: "Salát", icon: "🥬", cost: 12, growTime: 2, profit: 3, xp: 3 },
-  { name: "Brambory", icon: "🥔", cost: 20, growTime: 4, profit: 6, xp: 5 },
-  { name: "Jahody", icon: "🍓", cost: 18, growTime: 3, profit: 5, xp: 4 },
-  { name: "Cibule", icon: "🧅", cost: 14, growTime: 2, profit: 3, xp: 3 },
-  { name: "Paprika", icon: "🌶️", cost: 16, growTime: 3, profit: 4, xp: 4 },
-  { name: "Meloun", icon: "🍉", cost: 25, growTime: 5, profit: 8, xp: 6 },
-  { name: "Jablko", icon: "🍎", cost: 22, growTime: 4, profit: 6, xp: 5 },
+  { name: "Mrkev", icon: "🥕", cost: 10, growTime: 2, profit: Math.ceil(10 * 1.5), xp: 3 },
+  { name: "Rajče", icon: "🍅", cost: 15, growTime: 3, profit: Math.ceil(15 * 1.5), xp: 4 },
+  { name: "Salát", icon: "🥬", cost: 12, growTime: 2, profit: Math.ceil(12 * 1.5), xp: 3 },
+  { name: "Brambory", icon: "🥔", cost: 20, growTime: 4, profit: Math.ceil(20 * 1.5), xp: 5 },
+  { name: "Jahody", icon: "🍓", cost: 18, growTime: 3, profit: Math.ceil(18 * 1.5), xp: 4 },
+  { name: "Cibule", icon: "🧅", cost: 14, growTime: 2, profit: Math.ceil(14 * 1.5), xp: 3 },
+  { name: "Paprika", icon: "🌶️", cost: 16, growTime: 3, profit: Math.ceil(16 * 1.5), xp: 4 },
+  { name: "Meloun", icon: "🍉", cost: 25, growTime: 5, profit: Math.ceil(25 * 1.5), xp: 6 },
+  { name: "Jablko", icon: "🍎", cost: 22, growTime: 4, profit: Math.ceil(22 * 1.5), xp: 5 },
 ];
 
+/* =============================
+   ZVÍŘATA
+   ============================= */
 const ALL_ANIMALS = [
-  { name: "Kráva", icon: "🐄", cost: 50, income: 1 },
-  { name: "Koza", icon: "🐐", cost: 40, income: 1 },
-  { name: "Slepice", icon: "🐔", cost: 30, income: 1 },
-  { name: "Ovce", icon: "🐑", cost: 45, income: 1 },
-  { name: "Prase", icon: "🐖", cost: 35, income: 1 },
-  { name: "Kůň", icon: "🐎", cost: 60, income: 2 },
-  { name: "Králík", icon: "🐇", cost: 20, income: 1 },
-  { name: "Kačer", icon: "🦆", cost: 25, income: 1 },
-  { name: "Medvěd", icon: "🐻", cost: 100, income: 3 },
+  { name: "Kráva", icon: "🐄", cost: 50, income: Math.ceil(50 * 1.5 / 12) },
+  { name: "Koza", icon: "🐐", cost: 40, income: Math.ceil(40 * 1.5 / 12) },
+  { name: "Slepice", icon: "🐔", cost: 30, income: Math.ceil(30 * 1.5 / 12) },
+  { name: "Ovce", icon: "🐑", cost: 45, income: Math.ceil(45 * 1.5 / 12) },
+  { name: "Prase", icon: "🐖", cost: 35, income: Math.ceil(35 * 1.5 / 12) },
+  { name: "Kůň", icon: "🐎", cost: 60, income: Math.ceil(60 * 1.5 / 12) },
+  { name: "Králík", icon: "🐇", cost: 20, income: Math.ceil(20 * 1.5 / 12) },
+  { name: "Kačer", icon: "🦆", cost: 25, income: Math.ceil(25 * 1.5 / 12) },
+  { name: "Medvěd", icon: "🐻", cost: 100, income: Math.ceil(100 * 1.5 / 12) },
 ];
 
+/* =============================
+   STAV HRY
+   ============================= */
 let state = {
   money: 100,
   level: 1,
@@ -128,9 +137,7 @@ function renderShop() {
       <div>${c.name}</div>
       <div class="meta">${c.cost}💰</div>
     `;
-    if (i < state.unlockedCrops) {
-      div.onclick = () => selectCrop(c);
-    }
+    if (i < state.unlockedCrops) div.onclick = () => selectCrop(c);
     cropsEl.appendChild(div);
   });
 
@@ -142,9 +149,7 @@ function renderShop() {
       <div>${a.name}</div>
       <div class="meta">${a.cost}💰</div>
     `;
-    if (i < state.unlockedAnimals) {
-      div.onclick = () => buyAnimal(a);
-    }
+    if (i < state.unlockedAnimals) div.onclick = () => buyAnimal(a);
     animalsEl.appendChild(div);
   });
 }
@@ -252,10 +257,17 @@ function updateUI() {
 /* =============================
    INIT
    ============================= */
+loadState();
+if (!state.farm) state.farm = Array(state.farmSize).fill(null);
+if (state.selectedCrop) {
+  const sel = ALL_CROPS.find(c => c.name === state.selectedCrop);
+  if (sel) selectCrop(sel);
+}
+updateUI();
+
+/* =============================
+   BUTTONS
+   ============================= */
 document.getElementById("next-day").onclick = nextDay;
 document.getElementById("restart-game").onclick = restartGame;
-
-loadState();
-checkUnlocks();
-updateUI();
-       
+     
