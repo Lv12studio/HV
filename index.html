@@ -1,55 +1,146 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zahradníkovy Výzvy | Farmářská Hra</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zahradníkovy Výzvy | Farmářská Hra</title>
+
+    <!-- Font Awesome ikony -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Naše CSS -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>Zahradníkovy Výzvy <span>🌿</span></h1>
-      <p>Staň se mistrem zahradníkem! Pěstuj, sklízej a rozšiřuj svou zahradu.</p>
-      <div class="season-info">
-        Roční období: <span id="season" class="season-badge">Načítám...</span>
-        <span id="season-icon"></span>
-      </div>
-    </header>
+    <div class="container">
+        <header>
+            <h1>Zahradníkovy Výzvy <i class="fas fa-seedling"></i></h1>
+            <p class="subtitle">Staň se mistrem zahradníkem! Pěstuj, sklízej a rozšiřuj svou zahradu.</p>
+            <div class="season-info">
+                <span>Roční období:</span>
+                <span class="season-indicator" id="season">Načítání...</span>
+                <span class="season-icon" id="season-icon">🌱</span>
+            </div>
+        </header>
 
-    <div class="stats">
-      <div><strong>PENÍZE</strong><br><span id="money">0</span></div>
-      <div>
-        <strong>LEVEL</strong><br>
-        <span id="level">1</span>
-        <div class="xp-bar"><div id="xp-bar"></div></div>
-        <small id="xp-text">0 / 100 XP</small>
-      </div>
-      <div><strong>DEN</strong><br><span id="day">1</span></div>
-      <div><strong>POLE</strong><br><span id="plots">8</span></div>
+        <div class="game-container">
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-label">PENÍZE</div>
+                    <div class="stat-value" id="money">100</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">LEVEL</div>
+                    <div class="stat-value" id="level">1</div>
+                    <div class="xp-bar">
+                        <div class="xp-progress" id="xp-progress" style="width: 0%"></div>
+                        <div class="xp-text" id="xp-text">0/100 XP</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">DEN</div>
+                    <div class="stat-value" id="day">1</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">POLE</div>
+                    <div class="stat-value" id="farm-size">8</div>
+                </div>
+            </div>
+
+            <div class="selected-crop">
+                <strong>Vybrána plodina:</strong>
+                <span id="selected-crop-name">Žádná</span>
+                <span id="selected-crop-icon"></span>
+            </div>
+
+            <div class="farm-expansion" id="farm-expansion-info">
+                Na levelu 3 se zahrada rozšíří na 10 políček!
+            </div>
+
+            <h3><i class="fas fa-seedling"></i> Tvá Zahradní Pole</h3>
+            <div class="farm-container">
+                <div class="farm" id="farm"></div>
+            </div>
+
+            <h3><i class="fas fa-shopping-basket"></i> Semínka a Sazenice</h3>
+            <div class="crops" id="crops"></div>
+
+            <h3><i class="fas fa-paw"></i> Zvířecí pomocníci</h3>
+            <div class="animals" id="animals"></div>
+
+            <div class="controls">
+                <button id="next-day">
+                    <i class="fas fa-sun"></i> Další Den
+                </button>
+                <button id="market" class="market">
+                    <i class="fas fa-store"></i> Tržiště
+                </button>
+                <button id="upgrades" class="upgrades">
+                    <i class="fas fa-tools"></i> Nástroje
+                </button>
+                <button id="save-game" class="save">
+                    <i class="fas fa-save"></i> Uložit
+                </button>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h3>Jak hrát:</h3>
+            <ul>
+                <li>Vyber plodinu kliknutím na ni</li>
+                <li>Klikni na prázdné pole k vysazení</li>
+                <li>Počkej, až vyroste a skliď</li>
+                <li>Prodej na tržišti a vydělávej</li>
+                <li>Postupuj v levelech a rozšiřuj zahradu</li>
+            </ul>
+        </div>
     </div>
 
-    <div class="selected">
-      Vybraná plodina: <span id="selected-crop">Žádná</span>
+    <div class="save-indicator" id="save-indicator">
+        <i class="fas fa-check"></i> Hra uložena!
     </div>
 
-    <div id="farm" class="farm"></div>
-
-    <h3>🌱 Semínka a Sazenice</h3>
-    <div id="crops" class="shop"></div>
-
-    <h3>🐾 Zvířecí pomocníci</h3>
-    <div id="animals" class="shop"></div>
-
-    <div class="controls">
-      <button id="next-day" class="next">Další Den</button>
-      <button id="save" class="save">Uložit</button>
+    <!-- Modály -->
+    <div class="modal" id="market-modal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <h2><i class="fas fa-store"></i> Zahradní Tržiště</h2>
+            <p>Prodej svou úrodu a vydělej peníze!</p>
+            <div id="market-items"></div>
+            <button class="close-modal-btn">Zavřít</button>
+        </div>
     </div>
-  </div>
 
-  <div id="toast" class="toast">Hra uložena!</div>
+    <div class="modal" id="upgrades-modal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <h2><i class="fas fa-tools"></i> Zahradní Nástroje</h2>
+            <p>Vylepši svou zahradu pro vyšší výnosy!</p>
+            <div id="upgrade-items"></div>
+            <button class="close-modal-btn">Zavřít</button>
+        </div>
+    </div>
 
-  <script src="script.js"></script>
+    <div class="modal" id="level-up-modal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <h2><i class="fas fa-trophy"></i> Level Up!</h2>
+            <p>Gratulujeme! Postoupil jsi na level <span id="new-level">2</span>!</p>
+            <p id="level-up-benefits"></p>
+            <button class="close-modal-btn">Super!</button>
+        </div>
+    </div>
+
+    <div class="modal" id="farm-expanded-modal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <h2><i class="fas fa-expand-arrows-alt"></i> Zahrada Rozšířena!</h2>
+            <p>🎉 Tvá zahrada se rozrostla na <strong>10 políček</strong>!</p>
+            <p>Nyní můžeš pěstovat ještě více plodin!</p>
+            <button class="close-modal-btn">Hurá!</button>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="script.js"></script>
 </body>
 </html>
