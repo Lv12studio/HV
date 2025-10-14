@@ -1,149 +1,338 @@
+/* ====== ZÁKLADNÍ STYL HRY ====== */
 body {
-  font-family: "Poppins", sans-serif;
-  background: linear-gradient(to bottom right, #a8edea, #fed6e3);
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(to bottom, #bde0fe, #a2d2ff);
   margin: 0;
   padding: 0;
   display: flex;
   justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
 }
 
 .container {
-  max-width: 450px;
-  background: white;
-  margin: 20px;
-  padding: 20px;
+  max-width: 480px;
+  width: 95%;
+  background: #fff;
   border-radius: 20px;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  overflow: hidden;
+  margin: 30px 0;
 }
 
+/* ====== HLAVIČKA ====== */
 header {
+  background: #e3f2fd;
+  padding: 20px;
   text-align: center;
+  color: #2e7d32;
 }
 
 header h1 {
-  color: #2b7a2b;
+  margin: 0;
+  font-size: 26px;
+  color: #2e7d32;
 }
 
-.season-info {
+header .subtitle {
+  font-size: 14px;
+  color: #388e3c;
+  margin-top: 5px;
+}
+
+header .season-info {
   margin-top: 10px;
-  font-weight: 500;
-}
-
-.season-badge {
-  background: #ffe7a0;
-  padding: 3px 10px;
-  border-radius: 10px;
-  font-weight: bold;
-}
-
-.stats {
+  font-size: 14px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+header .season-indicator {
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: #ffecb3;
+  color: #795548;
+}
+
+/* ====== STATISTIKY ====== */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 16px;
+  background: #f9fbe7;
+}
+
+.stat-item {
   text-align: center;
-  margin: 20px 0;
+  background: #fff;
+  padding: 10px;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.stat-label {
+  font-size: 13px;
+  color: #388e3c;
+  font-weight: 600;
+}
+
+.stat-value {
+  font-size: 20px;
+  font-weight: bold;
+  color: #2e7d32;
+  margin-top: 4px;
 }
 
 .xp-bar {
-  background: #e0e0e0;
-  border-radius: 10px;
-  height: 8px;
-  margin-top: 4px;
+  height: 10px;
+  background: #c8e6c9;
+  border-radius: 5px;
   overflow: hidden;
+  position: relative;
+  margin-top: 5px;
 }
 
-#xp-bar {
-  background: #4caf50;
-  width: 0%;
-  height: 8px;
+.xp-progress {
+  height: 100%;
+  background: #81c784;
+  transition: width 0.3s;
+}
+
+.xp-text {
+  font-size: 11px;
+  color: #1b5e20;
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  top: -16px;
+}
+
+/* ====== FARMA ====== */
+.farm-container {
+  display: flex;
+  justify-content: center;
+  padding: 16px;
 }
 
 .farm {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  margin-bottom: 20px;
+  grid-template-columns: repeat(4, 60px);
+  gap: 10px;
 }
 
 .plot {
-  aspect-ratio: 1/1;
-  background: #d1e7d1;
+  width: 60px;
+  height: 60px;
+  background: #dcedc8;
   border-radius: 10px;
   display: flex;
-  align-items: center;
   justify-content: center;
-  font-size: 1.6rem;
+  align-items: center;
+  font-size: 28px;
   cursor: pointer;
-  transition: background 0.3s;
+  border: 2px solid #c5e1a5;
+  transition: transform 0.2s, background 0.3s;
 }
 
-.plot.empty:hover {
-  background: #b8deb8;
+.plot:hover {
+  transform: scale(1.05);
+}
+
+.plot.empty {
+  background: #f0f4c3;
+}
+
+.plot.planted {
+  background: #aed581;
 }
 
 .plot.ready {
-  background: #ffe3a0;
+  background: #ffeb3b;
+  animation: glow 1s infinite alternate;
 }
 
-.shop {
+@keyframes glow {
+  from { box-shadow: 0 0 8px #ffeb3b; }
+  to { box-shadow: 0 0 16px #fdd835; }
+}
+
+/* ====== PLODINY ====== */
+.crops, .animals {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
   justify-content: center;
+  gap: 12px;
+  padding: 10px;
 }
 
-.shop-item {
-  background: #f8f8f8;
-  border: 2px solid #ddd;
+.crop-item, .animal-item {
+  background: #fff;
   border-radius: 12px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
   padding: 10px;
   text-align: center;
-  flex: 1 1 100px;
+  width: 90px;
   cursor: pointer;
-  transition: transform 0.2s, border-color 0.3s;
+  transition: transform 0.2s;
 }
 
-.shop-item:hover {
-  transform: scale(1.05);
-  border-color: #4caf50;
+.crop-item:hover, .animal-item:hover {
+  transform: scale(1.08);
 }
 
+.crop-icon {
+  font-size: 26px;
+}
+
+.crop-name {
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 5px;
+  color: #388e3c;
+}
+
+.crop-cost, .crop-time {
+  font-size: 11px;
+  color: #5d4037;
+}
+
+.selected-crop {
+  background: #e8f5e9;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 8px;
+  border: 1px dashed #81c784;
+  font-size: 14px;
+  color: #2e7d32;
+}
+
+/* ====== OVLÁDACÍ TLAČÍTKA ====== */
 .controls {
   display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px;
 }
 
 button {
   border: none;
   border-radius: 12px;
-  padding: 10px 15px;
-  font-weight: bold;
+  padding: 10px 14px;
+  font-size: 14px;
   cursor: pointer;
-  font-size: 1rem;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  transition: background 0.3s, transform 0.2s;
 }
 
-.next {
+button:hover {
+  transform: scale(1.05);
+}
+
+#next-day {
   background: #4caf50;
-  color: white;
 }
 
-.save {
+#market {
+  background: #ff9800;
+}
+
+#upgrades {
+  background: #2196f3;
+}
+
+#save-game {
   background: #9c27b0;
-  color: white;
 }
 
-.toast {
+/* ====== MODÁLY ====== */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 14px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  position: relative;
+}
+
+.close-modal {
+  position: absolute;
+  right: 12px;
+  top: 8px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: #555;
+}
+
+/* ====== ULOŽENÍ ====== */
+.save-indicator {
+  display: none;
   position: fixed;
   bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
+  right: 20px;
   background: #4caf50;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 10px;
-  opacity: 0;
-  transition: opacity 0.4s ease;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  z-index: 20;
+  animation: fadeInOut 2s ease;
 }
-.toast.show {
-  opacity: 1;
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0; }
+  20%, 80% { opacity: 1; }
+}
+
+/* ====== NÁVOD ====== */
+.instructions {
+  background: #f1f8e9;
+  padding: 14px;
+  border-top: 2px solid #aed581;
+}
+
+.instructions ul {
+  margin: 8px 0;
+  padding-left: 18px;
+  font-size: 13px;
+}
+
+.instructions li {
+  margin-bottom: 6px;
+  color: #33691e;
+}
+
+/* ====== RESPONSIVITA ====== */
+@media (max-width: 480px) {
+  .farm {
+    grid-template-columns: repeat(3, 60px);
+  }
+
+  .stat-item {
+    font-size: 12px;
+  }
+
+  button {
+    font-size: 12px;
+    padding: 8px 10px;
+  }
 }
