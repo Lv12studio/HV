@@ -1,5 +1,5 @@
 /* =============================
-   Mobilní farma – style.css (v4)
+   Mobilní farma – style.css
    ============================= */
 
 :root {
@@ -48,6 +48,8 @@ body {
   position: sticky;
   top: 0;
   z-index: 10;
+  flex-wrap: wrap;
+  gap: 0.3em;
 }
 
 .top-bar button {
