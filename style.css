@@ -1,97 +1,149 @@
-:root {
-  --bg-color-light: #ffffff;
-  --text-color-light: #333333;
-  --bg-color-dark: #1a1a1a;
-  --text-color-dark: #f0f0f0;
-}
-
-body.light-mode {
-  --bg-color: var(--bg-color-light);
-  --text-color: var(--text-color-light);
-  background-color: var(--bg-color);
-  color: var(--text-color);
-}
-
-body.dark-mode {
-  --bg-color: var(--bg-color-dark);
-  --text-color: var(--text-color-dark);
-  background-color: var(--bg-color);
-  color: var(--text-color);
-}
-
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(to bottom right, #a8edea, #fed6e3);
   margin: 0;
   padding: 0;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  display: flex;
+  justify-content: center;
 }
 
 .container {
-  max-width: 900px;
-  margin: 50px auto;
-  padding: 0 20px;
+  max-width: 450px;
+  background: white;
+  margin: 20px;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+header {
   text-align: center;
+}
+
+header h1 {
+  color: #2b7a2b;
+}
+
+.season-info {
+  margin-top: 10px;
+  font-weight: 500;
+}
+
+.season-badge {
+  background: #ffe7a0;
+  padding: 3px 10px;
+  border-radius: 10px;
+  font-weight: bold;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+  margin: 20px 0;
+}
+
+.xp-bar {
+  background: #e0e0e0;
+  border-radius: 10px;
+  height: 8px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+
+#xp-bar {
+  background: #4caf50;
+  width: 0%;
+  height: 8px;
 }
 
 .farm {
   display: grid;
-  grid-template-columns: repeat(3, 120px);
-  grid-gap: 15px;
-  justify-content: center;
-  margin: 20px 0;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 20px;
 }
 
-.field {
-  width: 120px;
-  height: 120px;
-  background-color: #8bc34a;
+.plot {
+  aspect-ratio: 1/1;
+  background: #d1e7d1;
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 1.6rem;
   cursor: pointer;
-  color: white;
+  transition: background 0.3s;
+}
+
+.plot.empty:hover {
+  background: #b8deb8;
+}
+
+.plot.ready {
+  background: #ffe3a0;
+}
+
+.shop {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.shop-item {
+  background: #f8f8f8;
+  border: 2px solid #ddd;
+  border-radius: 12px;
+  padding: 10px;
+  text-align: center;
+  flex: 1 1 100px;
+  cursor: pointer;
+  transition: transform 0.2s, border-color 0.3s;
+}
+
+.shop-item:hover {
+  transform: scale(1.05);
+  border-color: #4caf50;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+button {
+  border: none;
+  border-radius: 12px;
+  padding: 10px 15px;
   font-weight: bold;
-  transition: background-color 0.3s ease, transform 0.1s ease;
+  cursor: pointer;
+  font-size: 1rem;
 }
 
-/* Stav polí */
-.field.planted {
-  background-color: #ff9800;
+.next {
+  background: #4caf50;
+  color: white;
 }
 
-.field.grown {
-  background-color: #4caf50;
+.save {
+  background: #9c27b0;
+  color: white;
 }
 
-.field.bonus {
-  background-color: #2196f3;
-}
-
-.button-next-day {
-  background-color: var(--bg-color);
-  color: var(--text-color);
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #4caf50;
+  color: white;
   padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  margin-top: 15px;
-  transition: transform 0.1s ease, box-shadow 0.2s ease;
+  border-radius: 10px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
 }
-
-.button-next-day:active {
-  transform: scale(0.97);
-}
-
-.button-next-day:hover {
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
-
-.mode-toggle button {
-  margin-top: 15px;
-  padding: 6px 12px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+.toast.show {
+  opacity: 1;
 }
