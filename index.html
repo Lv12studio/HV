@@ -3,65 +3,45 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Harvest Valley | Mobilní Farma</title>
+  <title>Harvest Valley</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Horní panel -->
   <div class="top-bar">
-    <button id="next-day">Další den</button>
-    <span>💰 <span id="money">0</span></span>
-    <span>Lv. <span id="level">1</span></span>
-    <button id="theme-toggle">🌙</button>
+    <button id="theme-toggle">🌓</button>
     <button id="restart-game">Restart</button>
   </div>
 
-  <!-- Statistika -->
   <div class="stats">
-    <div class="stat">
-      <div>Den</div>
-      <div id="day">1</div>
-    </div>
-    <div class="stat">
-      <div>XP</div>
-      <div class="xp-bar">
-        <div id="xp-progress"></div>
-      </div>
-      <div id="xp-text">0/100 XP</div>
-    </div>
-    <div class="stat">
-      <div>Polí</div>
-      <div id="farm-size">9</div>
-    </div>
+    <div class="stat">💰 <span id="money">0</span></div>
+    <div class="stat">Level <span id="level">1</span><div class="xp-bar"><div id="xp-progress"></div></div><div id="xp-text">0/100 XP</div></div>
+    <div class="stat">Den <span id="day">1</span></div>
+    <div class="stat">Pole <span id="farm-size">9</span></div>
   </div>
 
-  <!-- Farma -->
+  <div id="selected-crop">
+    Vybraná plodina: <span id="selected-crop-name">Žádná</span> <span id="selected-crop-icon"></span>
+  </div>
+
+  <button id="next-day">Další den</button>
+
   <div id="farm"></div>
 
-  <!-- Vybraná plodina -->
-  <div id="selected-crop">
-    <span id="selected-crop-icon"></span>
-    <span id="selected-crop-name">Žádná</span>
-  </div>
-
-  <!-- Obchod -->
   <div class="shop-section">
-    <div class="shop-title">Semínka a Sazenice</div>
+    <div class="shop-title">Semínka a sazenice</div>
     <div id="crops"></div>
   </div>
 
   <div class="shop-section">
-    <div class="shop-title">Zvířecí pomocníci</div>
+    <div class="shop-title">Zvířata</div>
     <div id="animals"></div>
   </div>
 
-  <!-- Skleník / Upgrady -->
   <div class="shop-section">
-    <div class="shop-title">Vylepšení farmy</div>
+    <div class="shop-title">Upgrady</div>
     <div id="upgrades"></div>
   </div>
 
-  <!-- Save indikátor -->
   <div id="save-indicator">💾 Uloženo</div>
 
   <script src="script.js"></script>
