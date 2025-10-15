@@ -1,0 +1,2255 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harvest Valley | Farmářská Hra</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            touch-action: manipulation;
+        }
+
+        :root {
+            --bg-primary: linear-gradient(135deg, #87CEEB, #98FB98);
+            --bg-secondary: rgba(255, 255, 255, 0.95);
+            --text-primary: #2d5016;
+            --text-secondary: #4a7c1f;
+            --accent-color: #a3d977;
+            --border-color: #a5d6a7;
+            --button-bg: linear-gradient(135deg, #4caf50, #2e7d32);
+            --plot-bg: #d7ccc8;
+            --plot-planted: #8bc34a;
+            --plot-ready: #ffd54f;
+            --plot-withered: #795548;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .dark-mode {
+            --bg-primary: linear-gradient(135deg, #1a2f3f, #2d4a2d);
+            --bg-secondary: rgba(40, 40, 40, 0.95);
+            --text-primary: #c8e6c9;
+            --text-secondary: #a5d6a7;
+            --accent-color: #4a7c1f;
+            --border-color: #4a7c1f;
+            --button-bg: linear-gradient(135deg, #388e3c, #1b5e20);
+            --plot-bg: #5d4037;
+            --plot-planted: #689f38;
+            --plot-ready: #fbc02d;
+            --plot-withered: #4e342e;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 100%;
+            width: 100%;
+            text-align: center;
+        }
+
+        header {
+            margin-bottom: 20px;
+            background: var(--bg-secondary);
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-primary);
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(30deg);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            text-shadow: 2px 2px 0 var(--accent-color);
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .season-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .season-icon {
+            font-size: 1.5rem;
+        }
+
+        .auto-time-info {
+            background: #e3f2fd;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            border: 2px solid #2196f3;
+        }
+
+        .dark-mode .auto-time-info {
+            background: #1a2f3f;
+            border-color: #1976d2;
+        }
+
+        .game-container {
+            background: var(--bg-secondary);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: #e8f5e9;
+            padding: 10px;
+            border-radius: 10px;
+            border: 3px solid var(--border-color);
+        }
+
+        .dark-mode .stats {
+            background: #2d4a2d;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 10px;
+            min-width: 80px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .stat-item {
+            background: #3a3a3a;
+            color: var(--text-primary);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 3px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .farm-container {
+            background: #c8e6c9;
+            border-radius: 10px;
+            padding: 15px;
+            border: 5px solid #8bc34a;
+            margin: 0 auto 15px;
+            max-width: 100%;
+        }
+
+        .dark-mode .farm-container {
+            background: #2d4a2d;
+            border-color: #4a7c1f;
+        }
+
+        .farm {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 0 auto;
+            max-width: 100%;
+            justify-content: center;
+        }
+
+        .plot {
+            width: 85px;
+            height: 85px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            transition: all 0.3s ease;
+            background: var(--plot-bg);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+            padding: 5px;
+        }
+
+        .plot:hover {
+            transform: scale(1.05);
+        }
+
+        .plot.empty {
+            background: var(--plot-bg);
+        }
+
+        .plot.planted {
+            background: var(--plot-planted);
+        }
+
+        .plot.ready {
+            background: var(--plot-ready);
+            animation: pulse 1s infinite;
+        }
+
+        .plot.withered {
+            background: var(--plot-withered);
+        }
+
+        .plot.new {
+            background: #ffecb3;
+            border: 2px dashed #ff9800;
+        }
+
+        .dark-mode .plot.new {
+            background: #5d4037;
+            border-color: #ff9800;
+        }
+
+        .crops {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .crop-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            min-width: 90px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+            border: 2px solid #ffd54f;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dark-mode .crop-item {
+            background: #3a3a3a;
+            color: var(--text-primary);
+        }
+
+        .crop-item.selected {
+            border-color: #e53935;
+            background: #fff3e0;
+            transform: scale(1.05);
+        }
+
+        .dark-mode .crop-item.selected {
+            background: #5d4037;
+        }
+
+        .crop-item.locked {
+            border-color: #9e9e9e;
+            background: #f5f5f5;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .dark-mode .crop-item.locked {
+            background: #2a2a2a;
+        }
+
+        .crop-item:hover:not(.locked) {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .crop-icon {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .crop-name {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .crop-cost {
+            font-size: 0.75rem;
+            color: #e53935;
+        }
+
+        .crop-time {
+            font-size: 0.75rem;
+            color: #1976d2;
+        }
+
+        .crop-locked {
+            font-size: 0.75rem;
+            color: #757575;
+            font-style: italic;
+        }
+
+        .animals {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .animal-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            min-width: 90px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+            border: 2px solid #81c784;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dark-mode .animal-item {
+            background: #3a3a3a;
+            color: var(--text-primary);
+        }
+
+        .animal-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .animal-icon {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .animal-name {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .animal-cost {
+            font-size: 0.75rem;
+            color: #e53935;
+        }
+
+        .animal-income {
+            font-size: 0.75rem;
+            color: #43a047;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            background: var(--button-bg);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .market {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+        }
+
+        .upgrades {
+            background: linear-gradient(135deg, #2196f3, #0d47a1);
+        }
+
+        .save {
+            background: linear-gradient(135deg, #9c27b0, #673ab7);
+        }
+
+        .economy {
+            background: linear-gradient(135deg, #ff5722, #d84315);
+        }
+
+        .reset {
+            background: linear-gradient(135deg, #f44336, #b71c1c);
+        }
+
+        .selected-crop {
+            background: #e8f5e9;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border: 2px dashed #4caf50;
+            font-size: 0.9rem;
+        }
+
+        .dark-mode .selected-crop {
+            background: #2d4a2d;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+            max-height: 80vh;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: modalAppear 0.4s ease;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .dark-mode .modal-content {
+            background: #3a3a3a;
+            color: var(--text-primary);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #757575;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .close-modal:hover {
+            background: #f5f5f5;
+            color: #e53935;
+        }
+
+        .dark-mode .close-modal:hover {
+            background: #4a4a4a;
+        }
+
+        .modal h2 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+            padding-right: 30px;
+        }
+
+        .modal p {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            line-height: 1.5;
+            color: var(--text-secondary);
+        }
+
+        .instructions {
+            background: #e8f5e9;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: left;
+            font-size: 0.9rem;
+            border: 2px dashed #81c784;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .dark-mode .instructions {
+            background: #2d4a2d;
+        }
+
+        .instructions h3 {
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .instructions ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .instructions li::before {
+            content: "🌱";
+            margin-right: 8px;
+        }
+
+        footer {
+            margin-top: 20px;
+            text-align: center;
+            color: var(--text-primary);
+            font-size: 0.8rem;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .dark-mode .progress-bar {
+            background: #4a4a4a;
+        }
+
+        .progress {
+            height: 100%;
+            background: #4caf50;
+            border-radius: 5px;
+            transition: width 0.3s;
+        }
+
+        .xp-bar {
+            width: 100%;
+            height: 15px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin: 5px 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .dark-mode .xp-bar {
+            background: #4a4a4a;
+        }
+
+        .xp-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #8bc34a);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .xp-text {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .save-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(76, 175, 80, 0.9);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            transform: translateY(100px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            display: none;
+        }
+
+        .save-indicator.show {
+            transform: translateY(0);
+        }
+
+        .time-indicator {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(33, 150, 243, 0.9);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none;
+        }
+
+        .time-indicator.show {
+            display: block;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes modalAppear {
+            from { opacity: 0; transform: translateY(-30px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .season-indicator {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+
+        .season-spring { background: #c8e6c9; color: #2e7d32; }
+        .season-summer { background: #fff9c4; color: #f57f17; }
+        .season-autumn { background: #ffcc80; color: #ef6c00; }
+        .season-winter { background: #e3f2fd; color: #1565c0; }
+
+        .dark-mode .season-spring { background: #2d4a2d; color: #c8e6c9; }
+        .dark-mode .season-summer { background: #5d4037; color: #ffd54f; }
+        .dark-mode .season-autumn { background: #5d4037; color: #ffb74d; }
+        .dark-mode .season-winter { background: #1a2f3f; color: #bbdefb; }
+
+        .farm-expansion {
+            background: #fff8e1;
+            padding: 8px;
+            border-radius: 8px;
+            margin: 5px 0;
+            border: 2px solid #ffd54f;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .dark-mode .farm-expansion {
+            background: #5d4037;
+        }
+
+        .upgrade-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 10px 0;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+            border: 2px solid #2196f3;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dark-mode .upgrade-item {
+            background: #3a3a3a;
+            color: var(--text-primary);
+        }
+
+        .upgrade-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .upgrade-item.purchased {
+            border-color: #4caf50;
+            background: #e8f5e9;
+        }
+
+        .dark-mode .upgrade-item.purchased {
+            background: #2d4a2d;
+        }
+
+        .upgrade-icon {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .upgrade-name {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .upgrade-cost {
+            font-size: 0.8rem;
+            color: #e53935;
+        }
+
+        .upgrade-description {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-align: center;
+            margin: 5px 0;
+        }
+
+        .upgrade-stats {
+            font-size: 0.7rem;
+            color: #666;
+            margin-top: 3px;
+        }
+
+        .dark-mode .upgrade-stats {
+            color: #aaa;
+        }
+
+        .market-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 10px 0;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+            border: 2px solid #ff9800;
+        }
+
+        .dark-mode .market-item {
+            background: #3a3a3a;
+            color: var(--text-primary);
+        }
+
+        .save-slot {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+            border: 2px solid #9c27b0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dark-mode .save-slot {
+            background: #3a3a3a;
+            color: var(--text-primary);
+        }
+
+        .save-slot:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .save-slot.empty {
+            border-color: #9e9e9e;
+            background: #f5f5f5;
+        }
+
+        .dark-mode .save-slot.empty {
+            background: #2a2a2a;
+        }
+
+        .save-slot-info {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        .economy-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 10px 0;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+            border: 2px solid #ff5722;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dark-mode .economy-item {
+            background: #3a3a3a;
+            color: var(--text-primary);
+        }
+
+        .economy-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .economy-item.purchased {
+            border-color: #4caf50;
+            background: #e8f5e9;
+        }
+
+        .dark-mode .economy-item.purchased {
+            background: #2d4a2d;
+        }
+
+        .economy-icon {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .economy-name {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .economy-cost {
+            font-size: 0.8rem;
+            color: #e53935;
+        }
+
+        .economy-description {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-align: center;
+            margin: 5px 0;
+        }
+
+        .economy-income {
+            font-size: 0.7rem;
+            color: #43a047;
+            margin-top: 3px;
+        }
+
+        @media (max-width: 480px) {
+            .farm {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .plot {
+                width: 75px;
+                height: 75px;
+                font-size: 1.4rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .crops, .animals {
+                gap: 8px;
+            }
+            
+            .crop-item, .animal-item {
+                min-width: 80px;
+                padding: 8px;
+            }
+            
+            .controls {
+                gap: 8px;
+            }
+            
+            button {
+                padding: 10px 15px;
+                font-size: 0.8rem;
+            }
+            
+            .modal-content {
+                max-width: 95%;
+                padding: 20px 15px;
+            }
+            
+            .time-indicator {
+                left: 10px;
+                bottom: 10px;
+                font-size: 0.7rem;
+                padding: 8px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <button class="theme-toggle" id="theme-toggle">
+                <i class="fas fa-moon"></i>
+            </button>
+            <h1>Harvest Valley <i class="fas fa-tractor"></i></h1>
+            <p class="subtitle">Staň se mistrem farmářem! Pěstuj, sklízej a rozšiřuj svou farmu.</p>
+            <div class="season-info">
+                <span>Roční období:</span>
+                <span class="season-indicator" id="season">Načítání...</span>
+                <span class="season-icon" id="season-icon">🌱</span>
+            </div>
+            <div class="auto-time-info">
+                <i class="fas fa-clock"></i> Každých 10 minut automaticky uběhne den
+            </div>
+        </header>
+
+        <div class="game-container">
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-label">PENÍZE</div>
+                    <div class="stat-value" id="money">100</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">LEVEL</div>
+                    <div class="stat-value" id="level">1</div>
+                    <div class="xp-bar">
+                        <div class="xp-progress" id="xp-progress" style="width: 0%"></div>
+                        <div class="xp-text" id="xp-text">0/100 XP</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">DEN</div>
+                    <div class="stat-value" id="day">1</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">POLE</div>
+                    <div class="stat-value" id="farm-size">9</div>
+                </div>
+            </div>
+
+            <div class="selected-crop">
+                <strong>Vybrána plodina:</strong> 
+                <span id="selected-crop-name">Žádná</span>
+                <span id="selected-crop-icon"></span>
+            </div>
+
+            <!-- Tlačítka přesunuta nad pole -->
+            <div class="controls">
+                <button id="next-day">
+                    <i class="fas fa-sun"></i> Další Den
+                </button>
+                <button id="market" class="market">
+                    <i class="fas fa-store"></i> Tržiště
+                </button>
+                <button id="upgrades" class="upgrades">
+                    <i class="fas fa-tools"></i> Nástroje
+                </button>
+                <button id="economy" class="economy">
+                    <i class="fas fa-chart-line"></i> Ekonomika
+                </button>
+                <button id="save-game" class="save">
+                    <i class="fas fa-save"></i> Uložit
+                </button>
+            </div>
+
+            <h3><i class="fas fa-seedling"></i> Tvá Farmářská Pole</h3>
+            <div class="farm-container">
+                <div class="farm" id="farm"></div>
+            </div>
+
+            <h3><i class="fas fa-shopping-basket"></i> Semínka a Sazenice</h3>
+            <div class="crops" id="crops"></div>
+
+            <h3><i class="fas fa-paw"></i> Zvířecí pomocníci</h3>
+            <div class="animals" id="animals"></div>
+        </div>
+
+        <div class="instructions">
+            <h3>Jak hrát:</h3>
+            <ul>
+                <li>Nejprve vyber plodinu kliknutím na ni v obchodě</li>
+                <li>Pak klikni na prázdné pole k vysazení vybrané plodiny</li>
+                <li>Počkej, až plodina vyroste (ukazuje progress bar)</li>
+                <li>Skliď zralé plodiny (žlutá pole) a prodej je na tržišti</li>
+                <li>Pořizuj si zvířecí pomocníky pro pravidelný příjem</li>
+                <li>Investuj do ekonomických aktivit pro pasivní příjem</li>
+                <li>Používej tlačítko "Další Den" k postupu v čase</li>
+                <li><strong>Každých 10 minut automaticky uběhne den (online i offline)!</strong></li>
+                <li><strong>Roční období ovlivňují růst plodin podle reálného času!</strong></li>
+                <li><strong>Hra automaticky ukládá postup a funguje offline!</strong></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="save-indicator" id="save-indicator">
+        <i class="fas fa-check"></i> Hra uložena!
+    </div>
+
+    <div class="time-indicator" id="time-indicator">
+        <i class="fas fa-clock"></i> Automaticky uběhl den!
+    </div>
+
+    <div class="modal" id="market-modal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <h2><i class="fas fa-store"></i> Farmářské Tržiště</h2>
+            <p>Prodej své úrody a vydělej peníze!</p>
+            <div id="market-items"></div>
+            <button class="close-modal-btn">Zavřít</button>
+        </div>
+    </div>
+
+    <div class="modal" id="upgrades-modal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <h2><i class="fas fa-tools"></i> Farmářské Nástroje</h2>
+            <p>Vylepši svou farmu pro vyšší výnosy!</p>
+            <div id="upgrade-items"></div>
+            <button class="close-modal-btn">Zavřít</button>
+        </div>
+    </div>
+
+    <div class="modal" id="economy-modal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <h2><i class="fas fa-chart-line"></i> Ekonomické Investice</h2>
+            <p>Investuj do ekonomických aktivit pro pasivní příjem!</p>
+            <div id="economy-items"></div>
+            <button class="close-modal-btn">Zavřít</button>
+        </div>
+    </div>
+
+    <div class="modal" id="save-modal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <h2><i class="fas fa-save"></i> Správa Uložení</h2>
+            <p>Vyber slot pro uložení nebo načtení hry:</p>
+            <div id="save-slots"></div>
+            <button class="close-modal-btn">Zavřít</button>
+        </div>
+    </div>
+
+    <div class="modal" id="level-up-modal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <h2><i class="fas fa-trophy"></i> Level Up!</h2>
+            <p>Gratulujeme! Postoupil jsi na level <span id="new-level">2</span>!</p>
+            <p id="level-up-benefits"></p>
+            <button class="close-modal-btn">Super!</button>
+        </div>
+    </div>
+
+    <div class="modal" id="load-game-modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-folder-open"></i> Načíst Hru</h2>
+            <p>Našli jsme uloženou hru. Chceš ji načíst?</p>
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+                <button id="load-game-yes" style="background: #4caf50;">Ano, načíst</button>
+                <button id="load-game-no" style="background: #f44336;">Ne, začít novou</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="reset-confirm-modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-redo"></i> Resetovat Farma</h2>
+            <p>Opravdu chceš resetovat svou farmu?</p>
+            <p><strong>Ztratíš:</strong> Všechny plodiny, zvířata, vylepšení a ekonomické investice</p>
+            <p><strong>Zachováš:</strong> Level 5, XP a save slot</p>
+            <p><strong>Získáš:</strong> 10 000 Kč a 100 XP</p>
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+                <button id="reset-confirm-yes" style="background: #f44336;">Ano, resetovat</button>
+                <button id="reset-confirm-no" style="background: #4caf50;">Ne, vrátit se</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Harvest Valley - Farmářská strategie &copy; 2023</p>
+        <p><small>Hra funguje offline a automaticky ukládá postup</small></p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Herní konstanty
+            const INITIAL_FARM_SIZE = 9; // 3x3 mřížka
+            const SAVE_KEY_PREFIX = 'harvest_valley_save_';
+            const THEME_KEY = 'harvest_valley_theme';
+            const AUTO_DAY_INTERVAL = 10 * 60 * 1000; // 10 minut v milisekundách
+            const CURRENT_SAVE_SLOT_KEY = 'harvest_valley_current_slot';
+            const MAX_SAVE_SLOTS = 5;
+
+            // Reálná roční období podle měsíců
+            const REAL_SEASONS = {
+                0: { name: 'Zima', icon: '❄️', multiplier: 0.5, class: 'season-winter' },     // Leden
+                1: { name: 'Zima', icon: '❄️', multiplier: 0.6, class: 'season-winter' },     // Únor
+                2: { name: 'Jaro', icon: '🌱', multiplier: 1.2, class: 'season-spring' },     // Březen
+                3: { name: 'Jaro', icon: '🌸', multiplier: 1.4, class: 'season-spring' },     // Duben
+                4: { name: 'Jaro', icon: '🌼', multiplier: 1.5, class: 'season-spring' },     // Květen
+                5: { name: 'Léto', icon: '☀️', multiplier: 1.8, class: 'season-summer' },     // Červen
+                6: { name: 'Léto', icon: '🌞', multiplier: 2.0, class: 'season-summer' },     // Červenec
+                7: { name: 'Léto', icon: '🔥', multiplier: 1.9, class: 'season-summer' },     // Srpen
+                8: { name: 'Podzim', icon: '🍂', multiplier: 1.3, class: 'season-autumn' },   // Září
+                9: { name: 'Podzim', icon: '🍁', multiplier: 1.1, class: 'season-autumn' },   // Říjen
+                10: { name: 'Podzim', icon: '🌧️', multiplier: 0.9, class: 'season-autumn' },  // Listopad
+                11: { name: 'Zima', icon: '⛄', multiplier: 0.7, class: 'season-winter' }     // Prosinec
+            };
+
+            // Stav hry
+            let gameState = {
+                money: 100,
+                xp: 0,
+                level: 1,
+                day: 1,
+                farm: [],
+                inventory: {},
+                animals: [],
+                upgrades: [],
+                economy: [],
+                selectedCrop: null,
+                farmSize: INITIAL_FARM_SIZE,
+                currentSeason: getCurrentRealSeason(),
+                lastPlayed: Date.now(),
+                growthMultiplier: 1.0, // Základní multiplikátor růstu
+                lastAutoDay: Date.now(), // Čas posledního automatického dne
+                sellMultiplier: 1.0, // Multiplikátor prodejní ceny
+                currentSaveSlot: 1, // Aktuální save slot (1-5)
+                maxSaveSlots: 3 // Maximální počet save slotů (3-5)
+            };
+
+            // Dostupné plodiny - 13 PLODIN (přidáno Secret semínko)
+            const crops = [
+                { id: 1, name: 'Mrkev', icon: '🥕', cost: 10, growTime: 3, sellPrice: 20, xp: 5, unlocked: true, unlockLevel: 1 },
+                { id: 2, name: 'Brambory', icon: '🥔', cost: 15, growTime: 4, sellPrice: 30, xp: 8, unlocked: false, unlockLevel: 2 },
+                { id: 3, name: 'Kukuřice', icon: '🌽', cost: 20, growTime: 5, sellPrice: 40, xp: 12, unlocked: false, unlockLevel: 3 },
+                { id: 4, name: 'Jahody', icon: '🍓', cost: 25, growTime: 4, sellPrice: 50, xp: 15, unlocked: false, unlockLevel: 4 },
+                { id: 5, name: 'Dýně', icon: '🎃', cost: 40, growTime: 6, sellPrice: 80, xp: 20, unlocked: false, unlockLevel: 5 },
+                { id: 6, name: 'Brokolice', icon: '🥦', cost: 35, growTime: 5, sellPrice: 60, xp: 18, unlocked: false, unlockLevel: 6 },
+                { id: 7, name: 'Papriky', icon: '🫑', cost: 45, growTime: 6, sellPrice: 90, xp: 22, unlocked: false, unlockLevel: 7 },
+                { id: 8, name: 'Meloun', icon: '🍉', cost: 60, growTime: 8, sellPrice: 120, xp: 30, unlocked: false, unlockLevel: 8 },
+                { id: 9, name: 'Ananas', icon: '🍍', cost: 80, growTime: 10, sellPrice: 200, xp: 40, unlocked: false, unlockLevel: 9 },
+                { id: 10, name: 'Dračí ovoce', icon: '🐉', cost: 500, growTime: 15, sellPrice: 1000, xp: 100, unlocked: false, unlockLevel: 10 },
+                { id: 11, name: 'Zlatá řepa', icon: '🌟', cost: 1000, growTime: 20, sellPrice: 2500, xp: 200, unlocked: false, unlockLevel: 12 },
+                { id: 12, name: 'Křišťálové jablko', icon: '🍎', cost: 5000, growTime: 30, sellPrice: 10000, xp: 500, unlocked: false, unlockLevel: 15 },
+                { id: 13, name: 'Secret semínko', icon: '🔮', cost: 0, growTime: 1, sellPrice: 10000000, xp: 10000, unlocked: false, unlockLevel: 150 }
+            ];
+
+            // Dostupná zvířata - 12 ZVÍŘAT
+            const animals = [
+                { id: 1, name: 'Slepice', icon: '🐔', cost: 50, income: 5, xp: 10, unlocked: true, unlockLevel: 1 },
+                { id: 2, name: 'Králík', icon: '🐇', cost: 80, income: 8, xp: 15, unlocked: false, unlockLevel: 2 },
+                { id: 3, name: 'Ovce', icon: '🐑', cost: 120, income: 12, xp: 20, unlocked: false, unlockLevel: 3 },
+                { id: 4, name: 'Koza', icon: '🐐', cost: 180, income: 15, xp: 25, unlocked: false, unlockLevel: 4 },
+                { id: 5, name: 'Kráva', icon: '🐄', cost: 250, income: 20, xp: 30, unlocked: false, unlockLevel: 5 },
+                { id: 6, name: 'Prase', icon: '🐖', cost: 200, income: 18, xp: 28, unlocked: false, unlockLevel: 6 },
+                { id: 7, name: 'Kůň', icon: '🐎', cost: 400, income: 25, xp: 35, unlocked: false, unlockLevel: 7 },
+                { id: 8, name: 'Velbloud', icon: '🐫', cost: 500, income: 30, xp: 40, unlocked: false, unlockLevel: 8 },
+                { id: 9, name: 'Slon', icon: '🐘', cost: 1000, income: 50, xp: 60, unlocked: false, unlockLevel: 9 },
+                { id: 10, name: 'Jednorožec', icon: '🦄', cost: 5000, income: 200, xp: 300, unlocked: false, unlockLevel: 10 },
+                { id: 11, name: 'Fénix', icon: '🔥', cost: 10000, income: 500, xp: 600, unlocked: false, unlockLevel: 12 },
+                { id: 12, name: 'Drak', icon: '🐲', cost: 50000, income: 2000, xp: 1500, unlocked: false, unlockLevel: 15 }
+            ];
+
+            // Vylepšení - 13 VYLEPŠENÍ (přidáno Magická půda za 100 000 Kč)
+            const upgrades = [
+                { id: 1, name: 'Lepší konve', icon: '🚰', cost: 100, description: 'Rychlejší růst plodin o 10%', effect: 'growthBoost', value: 0.1, purchased: false },
+                { id: 2, name: 'Kvalitní hnojivo', icon: '💩', cost: 200, description: 'Zvyšuje cenu prodeje o 15%', effect: 'sellBoost', value: 0.15, purchased: false },
+                { id: 3, name: 'Automatická závlaha', icon: '🚿', cost: 300, description: 'Rychlejší růst plodin o 20%', effect: 'growthBoost', value: 0.2, purchased: false },
+                { id: 4, name: 'Skleník', icon: '🏭', cost: 500, description: 'Rychlejší růst plodin o 30%', effect: 'growthBoost', value: 0.3, purchased: false },
+                { id: 5, name: 'Rychlorostoucí semena', icon: '⚡', cost: 400, description: 'Rychlejší růst plodin o 25%', effect: 'growthBoost', value: 0.25, purchased: false },
+                { id: 6, name: 'Pokročilé hnojivo', icon: '🧪', cost: 600, description: 'Rychlejší růst plodin o 35%', effect: 'growthBoost', value: 0.35, purchased: false },
+                { id: 7, name: 'Zahradní skřítci', icon: '🧚', cost: 800, description: 'Rychlejší růst plodin o 40%', effect: 'growthBoost', value: 0.4, purchased: false },
+                { id: 8, name: 'Zázračná voda', icon: '💧', cost: 1000, description: 'Rychlejší růst plodin o 50%', effect: 'growthBoost', value: 0.5, purchased: false },
+                { id: 9, name: 'Expertní zemědělec', icon: '👨‍🌾', cost: 1200, description: 'Zvyšuje cenu prodeje o 25%', effect: 'sellBoost', value: 0.25, purchased: false },
+                { id: 10, name: 'Prémiová semena', icon: '🌰', cost: 1500, description: 'Rychlejší růst plodin o 60%', effect: 'growthBoost', value: 0.6, purchased: false },
+                { id: 11, name: 'Robotický farmář', icon: '🤖', cost: 2000, description: 'Rychlejší růst plodin o 75%', effect: 'growthBoost', value: 0.75, purchased: false },
+                { id: 12, name: 'Magická půda', icon: '✨', cost: 100000, description: 'Rychlejší růst plodin o 100%', effect: 'growthBoost', value: 1.0, purchased: false }
+            ];
+
+            // Ekonomické investice - NOVÉ EKONOMICKÉ AKTIVITY (přidáno Investiční portfolio za 5 000 000 Kč a Reset za 5 000 000 Kč)
+            const economyItems = [
+                { id: 1, name: 'Stánek s limonádou', icon: '🍋', cost: 200, income: 10, xp: 20, description: 'Malý příjem z prodeje limonády', purchased: false },
+                { id: 2, name: 'Farmářský trh', icon: '🛒', cost: 500, income: 25, xp: 40, description: 'Stálý příjem z prodeje na trhu', purchased: false },
+                { id: 3, name: 'Zahradní kavárna', icon: '☕', cost: 1000, income: 50, xp: 60, description: 'Příjem z posezení v kavárně', purchased: false },
+                { id: 4, name: 'Agroturistika', icon: '🏡', cost: 2000, income: 100, xp: 80, description: 'Příjem z turistů na farmě', purchased: false },
+                { id: 5, name: 'Bioobchod', icon: '🏪', cost: 4000, income: 200, xp: 120, description: 'Příjem z prodeje bio produktů', purchased: false },
+                { id: 6, name: 'Zemědělská firma', icon: '🏢', cost: 8000, income: 400, xp: 200, description: 'Velký příjem z velkoobchodu', purchased: false },
+                { id: 7, name: 'Investiční portfolio', icon: '💼', cost: 5000000, income: 0, xp: 1000, description: 'Odemyká další save sloty (až 5)', purchased: false },
+                { id: 8, name: 'Reset farmy', icon: '🔄', cost: 5000000, income: 0, xp: 200, description: 'Resetuje farmu, ale zachovává level 5 a dává 10 000 Kč', purchased: false }
+            ];
+
+            // DOM elementy
+            const moneyElement = document.getElementById('money');
+            const levelElement = document.getElementById('level');
+            const dayElement = document.getElementById('day');
+            const xpProgressElement = document.getElementById('xp-progress');
+            const xpTextElement = document.getElementById('xp-text');
+            const farmElement = document.getElementById('farm');
+            const cropsElement = document.getElementById('crops');
+            const animalsElement = document.getElementById('animals');
+            const selectedCropNameElement = document.getElementById('selected-crop-name');
+            const selectedCropIconElement = document.getElementById('selected-crop-icon');
+            const farmSizeElement = document.getElementById('farm-size');
+            const seasonElement = document.getElementById('season');
+            const seasonIconElement = document.getElementById('season-icon');
+            const themeToggle = document.getElementById('theme-toggle');
+            const saveIndicator = document.getElementById('save-indicator');
+            const timeIndicator = document.getElementById('time-indicator');
+            const nextDayButton = document.getElementById('next-day');
+            const marketButton = document.getElementById('market');
+            const upgradesButton = document.getElementById('upgrades');
+            const economyButton = document.getElementById('economy');
+            const saveGameButton = document.getElementById('save-game');
+            const marketModal = document.getElementById('market-modal');
+            const upgradesModal = document.getElementById('upgrades-modal');
+            const economyModal = document.getElementById('economy-modal');
+            const saveModal = document.getElementById('save-modal');
+            const levelUpModal = document.getElementById('level-up-modal');
+            const loadGameModal = document.getElementById('load-game-modal');
+            const resetConfirmModal = document.getElementById('reset-confirm-modal');
+            const loadGameYesButton = document.getElementById('load-game-yes');
+            const loadGameNoButton = document.getElementById('load-game-no');
+            const resetConfirmYesButton = document.getElementById('reset-confirm-yes');
+            const resetConfirmNoButton = document.getElementById('reset-confirm-no');
+
+            // Inicializace hry
+            function initGame() {
+                loadGame();
+                updateUI();
+                renderFarm();
+                renderCrops();
+                renderAnimals();
+                updateSeason();
+                setupEventListeners();
+                
+                // Kontrola odemčení plodin a zvířat
+                checkUnlocks();
+                
+                // Automatické ukládání každých 30 sekund
+                setInterval(autoSave, 30000);
+                
+                // Automatický příjem od zvířat a ekonomiky každých 60 sekund
+                setInterval(collectIncome, 60000);
+                
+                // Automatický postup času každých 10 minut
+                setInterval(autoNextDay, AUTO_DAY_INTERVAL);
+                
+                // Kontrola uplynulého času při načtení hry
+                checkElapsedTime();
+            }
+
+            // Kontrola uplynulého času od posledního uložení
+            function checkElapsedTime() {
+                const now = Date.now();
+                const timeSinceLastAutoDay = now - gameState.lastAutoDay;
+                
+                if (timeSinceLastAutoDay >= AUTO_DAY_INTERVAL) {
+                    const daysPassed = Math.floor(timeSinceLastAutoDay / AUTO_DAY_INTERVAL);
+                    
+                    if (daysPassed > 0) {
+                        // Přidat dny, které uběhly během nepřítomnosti
+                        for (let i = 0; i < daysPassed; i++) {
+                            processAutoDay();
+                        }
+                        
+                        gameState.lastAutoDay = now;
+                        updateUI();
+                        renderFarm();
+                        showTimeIndicator(`Během tvé nepřítomnosti uběhlo ${daysPassed} dní!`);
+                        autoSave();
+                    }
+                }
+            }
+
+            // Automatický přechod na další den
+            function autoNextDay() {
+                processAutoDay();
+                gameState.lastAutoDay = Date.now();
+                updateUI();
+                renderFarm();
+                showTimeIndicator('Automaticky uběhl den!');
+                autoSave();
+            }
+
+            // Zpracování automatického dne
+            function processAutoDay() {
+                gameState.day++;
+                
+                // Aktualizace ročního období (každých 30 dní)
+                if (gameState.day % 30 === 0) {
+                    updateSeason();
+                }
+                
+                // Růst plodin
+                gameState.farm.forEach(plot => {
+                    if (plot.state === 'planted') {
+                        const crop = crops.find(c => c.id === plot.cropId);
+                        if (crop) {
+                            // Rychlost růstu podle ročního období a vylepšení
+                            const baseGrowthRate = 100 / plot.growTime;
+                            const seasonMultiplier = gameState.currentSeason.multiplier;
+                            const upgradeMultiplier = gameState.growthMultiplier;
+                            const totalMultiplier = seasonMultiplier * upgradeMultiplier;
+                            const growthRate = baseGrowthRate * totalMultiplier;
+                            
+                            plot.progress += growthRate;
+                            
+                            // Kontrola, zda plodina vyrostla
+                            if (plot.progress >= 100) {
+                                plot.state = 'ready';
+                                plot.progress = 100;
+                            }
+                            
+                            // Kontrola, zda plodina uschla (po 3 dnech od zralosti)
+                            if (plot.state === 'ready' && gameState.day - plot.daysPlanted > plot.growTime + 3) {
+                                plot.state = 'withered';
+                            }
+                        }
+                    }
+                });
+                
+                // Příjem od zvířat a ekonomiky
+                collectIncome();
+            }
+
+            // Příjem od zvířat a ekonomiky
+            function collectIncome() {
+                let totalIncome = 0;
+                
+                // Příjem od zvířat
+                gameState.animals.forEach(animalId => {
+                    const animal = animals.find(a => a.id === animalId);
+                    if (animal) {
+                        totalIncome += animal.income;
+                    }
+                });
+                
+                // Příjem z ekonomických aktivit
+                gameState.economy.forEach(economyId => {
+                    const economyItem = economyItems.find(e => e.id === economyId);
+                    if (economyItem) {
+                        totalIncome += economyItem.income;
+                    }
+                });
+                
+                if (totalIncome > 0) {
+                    gameState.money += totalIncome;
+                    updateUI();
+                }
+            }
+
+            // Zobrazení indikátoru času
+            function showTimeIndicator(message) {
+                timeIndicator.textContent = message;
+                timeIndicator.classList.add('show');
+                
+                setTimeout(() => {
+                    timeIndicator.classList.remove('show');
+                }, 5000);
+            }
+
+            // Načtení hry z localStorage
+            function loadGame() {
+                const savedTheme = localStorage.getItem(THEME_KEY);
+                const currentSlot = localStorage.getItem(CURRENT_SAVE_SLOT_KEY) || '1';
+                gameState.currentSaveSlot = parseInt(currentSlot);
+                
+                // Načtení tématu
+                if (savedTheme === 'dark') {
+                    document.body.classList.add('dark-mode');
+                    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                }
+                
+                // Kontrola, zda existuje uložená hra v aktuálním slotu
+                const saveKey = SAVE_KEY_PREFIX + gameState.currentSaveSlot;
+                const savedGame = localStorage.getItem(saveKey);
+                
+                if (!savedGame) {
+                    initializeNewGame();
+                    return;
+                }
+                
+                try {
+                    const parsedGame = JSON.parse(savedGame);
+                    
+                    // Kontrola, zda je uložená hra platná
+                    if (parsedGame && typeof parsedGame.money === 'number') {
+                        // Zobrazení modalu pro načtení hry
+                        loadGameModal.style.display = 'flex';
+                    } else {
+                        initializeNewGame();
+                    }
+                } catch (e) {
+                    console.error('Chyba při načítání hry:', e);
+                    initializeNewGame();
+                }
+            }
+
+            // Inicializace nové hry
+            function initializeNewGame() {
+                gameState = {
+                    money: 100,
+                    xp: 0,
+                    level: 1,
+                    day: 1,
+                    farm: Array(INITIAL_FARM_SIZE).fill().map(() => ({ state: 'empty', progress: 0 })),
+                    inventory: {},
+                    animals: [],
+                    upgrades: [],
+                    economy: [],
+                    selectedCrop: null,
+                    farmSize: INITIAL_FARM_SIZE,
+                    currentSeason: getCurrentRealSeason(),
+                    lastPlayed: Date.now(),
+                    growthMultiplier: 1.0,
+                    lastAutoDay: Date.now(),
+                    sellMultiplier: 1.0,
+                    currentSaveSlot: gameState.currentSaveSlot || 1,
+                    maxSaveSlots: 3
+                };
+                saveGame();
+            }
+
+            // Nastavení event listenerů
+            function setupEventListeners() {
+                // Tlačítko pro přepínání tématu
+                themeToggle.addEventListener('click', toggleTheme);
+                
+                // Tlačítko pro další den
+                nextDayButton.addEventListener('click', () => {
+                    nextDay();
+                    showSaveIndicator('Manuálně uběhl den!');
+                });
+                
+                // Tlačítka pro modaly
+                marketButton.addEventListener('click', () => openModal('market'));
+                upgradesButton.addEventListener('click', () => openModal('upgrades'));
+                economyButton.addEventListener('click', () => openModal('economy'));
+                saveGameButton.addEventListener('click', () => openModal('save'));
+                
+                // Tlačítka pro modaly načtení hry
+                loadGameYesButton.addEventListener('click', loadSavedGame);
+                loadGameNoButton.addEventListener('click', startNewGame);
+                
+                // Tlačítka pro reset
+                resetConfirmYesButton.addEventListener('click', resetFarm);
+                resetConfirmNoButton.addEventListener('click', () => {
+                    resetConfirmModal.style.display = 'none';
+                });
+                
+                // Zavírání modalů
+                document.querySelectorAll('.close-modal, .close-modal-btn').forEach(button => {
+                    button.addEventListener('click', function() {
+                        document.querySelectorAll('.modal').forEach(modal => {
+                            modal.style.display = 'none';
+                        });
+                    });
+                });
+                
+                // Zavírání modalů kliknutím mimo obsah
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.addEventListener('click', function(e) {
+                        if (e.target === modal) {
+                            modal.style.display = 'none';
+                        }
+                    });
+                });
+            }
+
+            // Přepínání světlého/tmavého režimu
+            function toggleTheme() {
+                document.body.classList.toggle('dark-mode');
+                if (document.body.classList.contains('dark-mode')) {
+                    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                    localStorage.setItem(THEME_KEY, 'dark');
+                } else {
+                    themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                    localStorage.setItem(THEME_KEY, 'light');
+                }
+            }
+
+            // Načtení uložené hry
+            function loadSavedGame() {
+                const saveKey = SAVE_KEY_PREFIX + gameState.currentSaveSlot;
+                const savedGame = localStorage.getItem(saveKey);
+                if (savedGame) {
+                    try {
+                        const parsedGame = JSON.parse(savedGame);
+                        gameState = parsedGame;
+                        
+                        // Zajištění, že nové vlastnosti existují
+                        if (gameState.growthMultiplier === undefined) gameState.growthMultiplier = 1.0;
+                        if (gameState.lastAutoDay === undefined) gameState.lastAutoDay = Date.now();
+                        if (gameState.sellMultiplier === undefined) gameState.sellMultiplier = 1.0;
+                        if (gameState.economy === undefined) gameState.economy = [];
+                        if (gameState.currentSaveSlot === undefined) gameState.currentSaveSlot = 1;
+                        if (gameState.maxSaveSlots === undefined) gameState.maxSaveSlots = 3;
+                        
+                        loadGameModal.style.display = 'none';
+                        updateUI();
+                        renderFarm();
+                        renderCrops();
+                        renderAnimals();
+                        updateSeason();
+                        checkUnlocks();
+                        showSaveIndicator('Hra načtena!');
+                    } catch (e) {
+                        console.error('Chyba při načítání hry:', e);
+                        initializeNewGame();
+                    }
+                }
+            }
+
+            // Začít novou hru
+            function startNewGame() {
+                initializeNewGame();
+                loadGameModal.style.display = 'none';
+                updateUI();
+                renderFarm();
+                renderCrops();
+                renderAnimals();
+                updateSeason();
+            }
+
+            // Reset farmy
+            function resetFarm() {
+                // Zachovat level 5, XP a save slot
+                const currentSaveSlot = gameState.currentSaveSlot;
+                const maxSaveSlots = gameState.maxSaveSlots;
+                
+                // Resetovat farmu
+                gameState = {
+                    money: 10000, // Bonus 10 000 Kč
+                    xp: 100, // Bonus 100 XP
+                    level: 5, // Level 5
+                    day: 1,
+                    farm: Array(INITIAL_FARM_SIZE).fill().map(() => ({ state: 'empty', progress: 0 })),
+                    inventory: {},
+                    animals: [],
+                    upgrades: [],
+                    economy: [],
+                    selectedCrop: null,
+                    farmSize: INITIAL_FARM_SIZE,
+                    currentSeason: getCurrentRealSeason(),
+                    lastPlayed: Date.now(),
+                    growthMultiplier: 1.0,
+                    lastAutoDay: Date.now(),
+                    sellMultiplier: 1.0,
+                    currentSaveSlot: currentSaveSlot,
+                    maxSaveSlots: maxSaveSlots
+                };
+                
+                resetConfirmModal.style.display = 'none';
+                updateUI();
+                renderFarm();
+                renderCrops();
+                renderAnimals();
+                checkUnlocks();
+                showSaveIndicator('Farma resetována! Získal jsi 10 000 Kč, 100 XP a level 5!');
+                saveGame();
+            }
+
+            // Získání aktuálního reálného ročního období
+            function getCurrentRealSeason() {
+                const now = new Date();
+                const month = now.getMonth();
+                return REAL_SEASONS[month];
+            }
+
+            // Aktualizace ročního období
+            function updateSeason() {
+                const season = getCurrentRealSeason();
+                gameState.currentSeason = season;
+                seasonElement.textContent = season.name;
+                seasonElement.className = `season-indicator ${season.class}`;
+                seasonIconElement.textContent = season.icon;
+            }
+
+            // Vykreslení farmy
+            function renderFarm() {
+                farmElement.innerHTML = '';
+                for (let i = 0; i < gameState.farmSize; i++) {
+                    const plot = document.createElement('div');
+                    plot.className = `plot ${gameState.farm[i]?.state || 'empty'}`;
+                    plot.dataset.index = i;
+                    
+                    if (gameState.farm[i]?.state === 'empty') {
+                        plot.innerHTML = '<i class="fas fa-seedling"></i>';
+                    } else if (gameState.farm[i]?.state === 'planted') {
+                        const crop = crops.find(c => c.id === gameState.farm[i].cropId);
+                        plot.innerHTML = `
+                            <div>${crop?.icon || '🌱'}</div>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: ${gameState.farm[i].progress}%"></div>
+                            </div>
+                        `;
+                    } else if (gameState.farm[i]?.state === 'ready') {
+                        const crop = crops.find(c => c.id === gameState.farm[i].cropId);
+                        plot.innerHTML = `<div>${crop?.icon || '🌱'}</div><small>SKLIDIT</small>`;
+                    } else if (gameState.farm[i]?.state === 'withered') {
+                        plot.innerHTML = '<div>🌵</div><small>USCHLÉ</small>';
+                    }
+                    
+                    plot.addEventListener('click', () => handlePlotClick(i));
+                    farmElement.appendChild(plot);
+                }
+            }
+
+            // Kliknutí na pole
+            function handlePlotClick(index) {
+                const plot = gameState.farm[index];
+                
+                if (plot.state === 'empty' && gameState.selectedCrop) {
+                    // Výsadba plodiny
+                    const crop = crops.find(c => c.id === gameState.selectedCrop);
+                    if (gameState.money >= crop.cost) {
+                        gameState.money -= crop.cost;
+                        plot.state = 'planted';
+                        plot.cropId = crop.id;
+                        plot.progress = 0;
+                        
+                        // Výpočet času růstu s ohledem na roční období a vylepšení
+                        const baseGrowTime = crop.growTime;
+                        const seasonMultiplier = gameState.currentSeason.multiplier;
+                        const upgradeMultiplier = gameState.growthMultiplier;
+                        const totalMultiplier = seasonMultiplier * upgradeMultiplier;
+                        
+                        plot.growTime = Math.max(1, Math.round(baseGrowTime / totalMultiplier));
+                        plot.daysPlanted = gameState.day;
+                        
+                        updateUI();
+                        renderFarm();
+                        showSaveIndicator(`Vysazeno: ${crop.name}`);
+                    } else {
+                        showSaveIndicator('Nemáš dostatek peněz!', true);
+                    }
+                } else if (plot.state === 'ready') {
+                    // Sklizeň plodiny
+                    const crop = crops.find(c => c.id === plot.cropId);
+                    if (crop) {
+                        // Přidání do inventáře
+                        if (!gameState.inventory[crop.id]) {
+                            gameState.inventory[crop.id] = 0;
+                        }
+                        gameState.inventory[crop.id]++;
+                        
+                        // Přidání XP
+                        addXP(crop.xp);
+                        
+                        // Reset pole
+                        plot.state = 'empty';
+                        plot.progress = 0;
+                        delete plot.cropId;
+                        
+                        updateUI();
+                        renderFarm();
+                        showSaveIndicator(`Sklizeno: ${crop.name}`);
+                    }
+                } else if (plot.state === 'withered') {
+                    // Odstranění uschlé plodiny
+                    plot.state = 'empty';
+                    plot.progress = 0;
+                    delete plot.cropId;
+                    updateUI();
+                    renderFarm();
+                    showSaveIndicator('Uschlá plodina odstraněna');
+                }
+            }
+
+            // Přechod na další den (manuální)
+            function nextDay() {
+                gameState.day++;
+                gameState.lastAutoDay = Date.now();
+                
+                // Aktualizace ročního období (každých 30 dní)
+                if (gameState.day % 30 === 0) {
+                    updateSeason();
+                }
+                
+                // Růst plodin
+                let anyGrowth = false;
+                gameState.farm.forEach(plot => {
+                    if (plot.state === 'planted') {
+                        const crop = crops.find(c => c.id === plot.cropId);
+                        if (crop) {
+                            // Rychlost růstu podle ročního období a vylepšení
+                            const baseGrowthRate = 100 / plot.growTime;
+                            const seasonMultiplier = gameState.currentSeason.multiplier;
+                            const upgradeMultiplier = gameState.growthMultiplier;
+                            const totalMultiplier = seasonMultiplier * upgradeMultiplier;
+                            const growthRate = baseGrowthRate * totalMultiplier;
+                            
+                            plot.progress += growthRate;
+                            
+                            // Kontrola, zda plodina vyrostla
+                            if (plot.progress >= 100) {
+                                plot.state = 'ready';
+                                plot.progress = 100;
+                            }
+                            
+                            // Kontrola, zda plodina uschla (po 3 dnech od zralosti)
+                            if (plot.state === 'ready' && gameState.day - plot.daysPlanted > plot.growTime + 3) {
+                                plot.state = 'withered';
+                            }
+                            
+                            anyGrowth = true;
+                        }
+                    }
+                });
+                
+                // Příjem od zvířat a ekonomiky
+                collectIncome();
+                
+                updateUI();
+                renderFarm();
+                
+                // Automatické ukládání
+                autoSave();
+            }
+
+            // Přidání XP
+            function addXP(amount) {
+                gameState.xp += amount;
+                const xpNeeded = gameState.level * 100;
+                
+                if (gameState.xp >= xpNeeded) {
+                    // Level up
+                    gameState.level++;
+                    gameState.xp = gameState.xp - xpNeeded;
+                    showLevelUpModal();
+                }
+                
+                updateUI();
+                checkUnlocks();
+            }
+
+            // Zobrazení modalu pro level up
+            function showLevelUpModal() {
+                const newLevelElement = document.getElementById('new-level');
+                const benefitsElement = document.getElementById('level-up-benefits');
+                
+                newLevelElement.textContent = gameState.level;
+                
+                let benefits = '';
+                if (gameState.level === 2) {
+                    benefits = 'Odemkl jsi brambory a králíky!';
+                } else if (gameState.level === 3) {
+                    benefits = 'Odemkl jsi kukuřici a ovce!';
+                } else if (gameState.level === 4) {
+                    benefits = 'Odemkl jsi jahody a kozy!';
+                } else if (gameState.level === 5) {
+                    benefits = 'Odemkl jsi dýně a krávu!';
+                } else if (gameState.level === 6) {
+                    benefits = 'Odemkl jsi brokolici a prase!';
+                } else if (gameState.level === 7) {
+                    benefits = 'Odemkl jsi papriky a koně!';
+                } else if (gameState.level === 8) {
+                    benefits = 'Odemkl jsi meloun a velblouda!';
+                } else if (gameState.level === 9) {
+                    benefits = 'Odemkl jsi ananas a slona!';
+                } else if (gameState.level === 10) {
+                    benefits = 'Odemkl jsi dračí ovoce a jednorožce!';
+                } else if (gameState.level === 12) {
+                    benefits = 'Odemkl jsi zlatou řepu a fénixe!';
+                } else if (gameState.level === 15) {
+                    benefits = 'Odemkl jsi křišťálové jablko a draka!';
+                } else if (gameState.level === 150) {
+                    benefits = 'Odemkl jsi SECRET SEMÍNKO!';
+                } else {
+                    benefits = 'Získáváš bonusové peníze a nové možnosti!';
+                }
+                
+                benefitsElement.textContent = benefits;
+                levelUpModal.style.display = 'flex';
+            }
+
+            // Kontrola odemčení plodin a zvířat
+            function checkUnlocks() {
+                crops.forEach(crop => {
+                    crop.unlocked = gameState.level >= crop.unlockLevel;
+                });
+                
+                animals.forEach(animal => {
+                    animal.unlocked = gameState.level >= animal.unlockLevel;
+                });
+                
+                renderCrops();
+                renderAnimals();
+            }
+
+            // Vykreslení plodin
+            function renderCrops() {
+                cropsElement.innerHTML = '';
+                crops.forEach(crop => {
+                    const cropElement = document.createElement('div');
+                    cropElement.className = `crop-item ${crop.unlocked ? '' : 'locked'} ${gameState.selectedCrop === crop.id ? 'selected' : ''}`;
+                    
+                    if (crop.unlocked) {
+                        cropElement.innerHTML = `
+                            <div class="crop-icon">${crop.icon}</div>
+                            <div class="crop-name">${crop.name}</div>
+                            <div class="crop-cost">${crop.cost} Kč</div>
+                            <div class="crop-time">${crop.growTime} dní</div>
+                        `;
+                        cropElement.addEventListener('click', () => selectCrop(crop.id));
+                    } else {
+                        cropElement.innerHTML = `
+                            <div class="crop-icon">${crop.icon}</div>
+                            <div class="crop-name">${crop.name}</div>
+                            <div class="crop-locked">Level ${crop.unlockLevel}</div>
+                        `;
+                    }
+                    
+                    cropsElement.appendChild(cropElement);
+                });
+            }
+
+            // Výběr plodiny
+            function selectCrop(cropId) {
+                gameState.selectedCrop = cropId;
+                const crop = crops.find(c => c.id === cropId);
+                selectedCropNameElement.textContent = crop.name;
+                selectedCropIconElement.textContent = crop.icon;
+                renderCrops();
+            }
+
+            // Vykreslení zvířat
+            function renderAnimals() {
+                animalsElement.innerHTML = '';
+                animals.forEach(animal => {
+                    const animalElement = document.createElement('div');
+                    animalElement.className = `animal-item ${animal.unlocked ? '' : 'locked'}`;
+                    
+                    if (animal.unlocked) {
+                        animalElement.innerHTML = `
+                            <div class="animal-icon">${animal.icon}</div>
+                            <div class="animal-name">${animal.name}</div>
+                            <div class="animal-cost">${animal.cost} Kč</div>
+                            <div class="animal-income">+${animal.income} Kč/den</div>
+                        `;
+                        animalElement.addEventListener('click', () => buyAnimal(animal.id));
+                    } else {
+                        animalElement.innerHTML = `
+                            <div class="animal-icon">${animal.icon}</div>
+                            <div class="animal-name">${animal.name}</div>
+                            <div class="animal-locked">Level ${animal.unlockLevel}</div>
+                        `;
+                    }
+                    
+                    animalsElement.appendChild(animalElement);
+                });
+            }
+
+            // Nákup zvířete
+            function buyAnimal(animalId) {
+                const animal = animals.find(a => a.id === animalId);
+                if (gameState.money >= animal.cost) {
+                    gameState.money -= animal.cost;
+                    gameState.animals.push(animalId);
+                    addXP(animal.xp);
+                    updateUI();
+                    showSaveIndicator(`Koupeno: ${animal.name}`);
+                } else {
+                    showSaveIndicator('Nemáš dostatek peněz!', true);
+                }
+            }
+
+            // Otevření modalu
+            function openModal(type) {
+                if (type === 'market') {
+                    renderMarket();
+                    marketModal.style.display = 'flex';
+                } else if (type === 'upgrades') {
+                    renderUpgrades();
+                    upgradesModal.style.display = 'flex';
+                } else if (type === 'economy') {
+                    renderEconomy();
+                    economyModal.style.display = 'flex';
+                } else if (type === 'save') {
+                    renderSaveSlots();
+                    saveModal.style.display = 'flex';
+                }
+            }
+
+            // Vykreslení tržiště
+            function renderMarket() {
+                const marketItemsElement = document.getElementById('market-items');
+                marketItemsElement.innerHTML = '';
+                
+                let hasItems = false;
+                
+                Object.keys(gameState.inventory).forEach(cropId => {
+                    const quantity = gameState.inventory[cropId];
+                    if (quantity > 0) {
+                        hasItems = true;
+                        const crop = crops.find(c => c.id === parseInt(cropId));
+                        const sellPrice = Math.round(crop.sellPrice * gameState.sellMultiplier);
+                        const totalPrice = sellPrice * quantity;
+                        
+                        const itemElement = document.createElement('div');
+                        itemElement.className = 'market-item';
+                        itemElement.innerHTML = `
+                            <div class="upgrade-icon">${crop.icon}</div>
+                            <div class="upgrade-name">${crop.name}</div>
+                            <div class="upgrade-description">Množství: ${quantity}</div>
+                            <div class="upgrade-cost">Cena: ${totalPrice} Kč</div>
+                            <button class="sell-button" style="margin-top: 5px;">Prodat</button>
+                        `;
+                        
+                        const sellButton = itemElement.querySelector('.sell-button');
+                        sellButton.addEventListener('click', () => sellCrop(parseInt(cropId), quantity));
+                        
+                        marketItemsElement.appendChild(itemElement);
+                    }
+                });
+                
+                if (!hasItems) {
+                    marketItemsElement.innerHTML = '<p>Nemáš žádné plodiny k prodeji.</p>';
+                }
+            }
+
+            // Prodej plodiny
+            function sellCrop(cropId, quantity) {
+                const crop = crops.find(c => c.id === cropId);
+                const sellPrice = Math.round(crop.sellPrice * gameState.sellMultiplier);
+                const totalPrice = sellPrice * quantity;
+                
+                gameState.money += totalPrice;
+                delete gameState.inventory[cropId];
+                
+                updateUI();
+                renderMarket();
+                showSaveIndicator(`Prodáno: ${quantity}x ${crop.name} za ${totalPrice} Kč`);
+            }
+
+            // Vykreslení vylepšení
+            function renderUpgrades() {
+                const upgradeItemsElement = document.getElementById('upgrade-items');
+                upgradeItemsElement.innerHTML = '';
+                
+                upgrades.forEach(upgrade => {
+                    const purchased = gameState.upgrades.includes(upgrade.id);
+                    const canAfford = gameState.money >= upgrade.cost && !purchased;
+                    
+                    const upgradeElement = document.createElement('div');
+                    upgradeElement.className = `upgrade-item ${purchased ? 'purchased' : ''}`;
+                    upgradeElement.innerHTML = `
+                        <div class="upgrade-icon">${upgrade.icon}</div>
+                        <div class="upgrade-name">${upgrade.name}</div>
+                        <div class="upgrade-description">${upgrade.description}</div>
+                        ${upgrade.effect === 'growthBoost' ? `<div class="upgrade-stats">+${(upgrade.value * 100)}% rychlost růstu</div>` : ''}
+                        ${upgrade.effect === 'sellBoost' ? `<div class="upgrade-stats">+${(upgrade.value * 100)}% cena prodeje</div>` : ''}
+                        <div class="upgrade-cost">${purchased ? 'ZAKOUPENO' : `${upgrade.cost} Kč`}</div>
+                        ${!purchased ? `<button class="buy-upgrade" style="margin-top: 5px;" ${canAfford ? '' : 'disabled'}>Koupit</button>` : ''}
+                    `;
+                    
+                    if (!purchased) {
+                        const buyButton = upgradeElement.querySelector('.buy-upgrade');
+                        buyButton.addEventListener('click', () => buyUpgrade(upgrade.id));
+                    }
+                    
+                    upgradeItemsElement.appendChild(upgradeElement);
+                });
+            }
+
+            // Nákup vylepšení
+            function buyUpgrade(upgradeId) {
+                const upgrade = upgrades.find(u => u.id === upgradeId);
+                if (gameState.money >= upgrade.cost && !gameState.upgrades.includes(upgradeId)) {
+                    gameState.money -= upgrade.cost;
+                    gameState.upgrades.push(upgradeId);
+                    
+                    // Aplikace efektu vylepšení
+                    applyUpgradeEffect(upgrade);
+                    
+                    updateUI();
+                    renderUpgrades();
+                    showSaveIndicator(`Zakoupeno: ${upgrade.name}`);
+                }
+            }
+
+            // Aplikace efektu vylepšení
+            function applyUpgradeEffect(upgrade) {
+                if (upgrade.effect === 'growthBoost') {
+                    // Přidání bonusu k rychlosti růstu
+                    gameState.growthMultiplier += upgrade.value;
+                    showSaveIndicator(`Rychlost růstu zvýšena o ${upgrade.value * 100}%!`);
+                } else if (upgrade.effect === 'sellBoost') {
+                    // Přidání bonusu k prodejní ceně
+                    gameState.sellMultiplier += upgrade.value;
+                    showSaveIndicator(`Cena prodeje zvýšena o ${upgrade.value * 100}%!`);
+                }
+                
+                // Přidání XP za nákup vylepšení
+                addXP(50);
+            }
+
+            // Vykreslení ekonomických aktivit
+            function renderEconomy() {
+                const economyItemsElement = document.getElementById('economy-items');
+                economyItemsElement.innerHTML = '';
+                
+                economyItems.forEach(economyItem => {
+                    const purchased = gameState.economy.includes(economyItem.id);
+                    const canAfford = gameState.money >= economyItem.cost && !purchased;
+                    
+                    const itemElement = document.createElement('div');
+                    itemElement.className = `economy-item ${purchased ? 'purchased' : ''}`;
+                    itemElement.innerHTML = `
+                        <div class="economy-icon">${economyItem.icon}</div>
+                        <div class="economy-name">${economyItem.name}</div>
+                        <div class="economy-description">${economyItem.description}</div>
+                        ${economyItem.income > 0 ? `<div class="economy-income">+${economyItem.income} Kč/den</div>` : ''}
+                        <div class="economy-cost">${purchased ? 'ZAKOUPENO' : `${economyItem.cost} Kč`}</div>
+                        ${!purchased ? `<button class="buy-economy" style="margin-top: 5px;" ${canAfford ? '' : 'disabled'}>${economyItem.income > 0 ? 'Investovat' : 'Koupit'}</button>` : ''}
+                    `;
+                    
+                    if (!purchased) {
+                        const buyButton = itemElement.querySelector('.buy-economy');
+                        buyButton.addEventListener('click', () => buyEconomy(economyItem.id));
+                    }
+                    
+                    economyItemsElement.appendChild(itemElement);
+                });
+            }
+
+            // Nákup ekonomické aktivity
+            function buyEconomy(economyId) {
+                const economyItem = economyItems.find(e => e.id === economyId);
+                if (gameState.money >= economyItem.cost && !gameState.economy.includes(economyId)) {
+                    gameState.money -= economyItem.cost;
+                    gameState.economy.push(economyId);
+                    
+                    // Speciální efekt pro Investiční portfolio
+                    if (economyId === 7) {
+                        gameState.maxSaveSlots = MAX_SAVE_SLOTS;
+                        showSaveIndicator('Odemykáno 5 save slotů!');
+                    }
+                    
+                    // Speciální efekt pro Reset farmy
+                    if (economyId === 8) {
+                        resetConfirmModal.style.display = 'flex';
+                        return;
+                    }
+                    
+                    addXP(economyItem.xp);
+                    updateUI();
+                    renderEconomy();
+                    showSaveIndicator(`Zakoupeno: ${economyItem.name}`);
+                }
+            }
+
+            // Vykreslení save slotů
+            function renderSaveSlots() {
+                const saveSlotsElement = document.getElementById('save-slots');
+                saveSlotsElement.innerHTML = '';
+                
+                for (let i = 1; i <= gameState.maxSaveSlots; i++) {
+                    const saveKey = SAVE_KEY_PREFIX + i;
+                    const savedGame = localStorage.getItem(saveKey);
+                    let slotInfo = 'Prázdný slot';
+                    
+                    if (savedGame) {
+                        try {
+                            const gameData = JSON.parse(savedGame);
+                            slotInfo = `Level ${gameData.level}, Den ${gameData.day}, ${gameData.money} Kč`;
+                        } catch (e) {
+                            slotInfo = 'Poškozený save';
+                        }
+                    }
+                    
+                    const slotElement = document.createElement('div');
+                    slotElement.className = `save-slot ${savedGame ? '' : 'empty'} ${gameState.currentSaveSlot === i ? 'selected' : ''}`;
+                    slotElement.innerHTML = `
+                        <div class="upgrade-name">Slot ${i}</div>
+                        <div class="save-slot-info">${slotInfo}</div>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button class="save-to-slot" data-slot="${i}">Uložit</button>
+                            <button class="load-from-slot" data-slot="${i}" ${savedGame ? '' : 'disabled'}>Načíst</button>
+                            <button class="delete-slot" data-slot="${i}" ${savedGame ? '' : 'disabled'}>Smazat</button>
+                        </div>
+                    `;
+                    
+                    const saveButton = slotElement.querySelector('.save-to-slot');
+                    const loadButton = slotElement.querySelector('.load-from-slot');
+                    const deleteButton = slotElement.querySelector('.delete-slot');
+                    
+                    saveButton.addEventListener('click', () => saveToSlot(i));
+                    loadButton.addEventListener('click', () => loadFromSlot(i));
+                    deleteButton.addEventListener('click', () => deleteSlot(i));
+                    
+                    saveSlotsElement.appendChild(slotElement);
+                }
+                
+                // Zobrazení informace o maximálním počtu slotů
+                if (gameState.maxSaveSlots < MAX_SAVE_SLOTS) {
+                    const infoElement = document.createElement('div');
+                    infoElement.className = 'farm-expansion';
+                    infoElement.innerHTML = `<i class="fas fa-info-circle"></i> Můžeš odemknout až ${MAX_SAVE_SLOTS} save slotů koupí "Investičního portfolia" v ekonomických investicích!`;
+                    saveSlotsElement.appendChild(infoElement);
+                }
+            }
+
+            // Uložení do slotu
+            function saveToSlot(slot) {
+                gameState.currentSaveSlot = slot;
+                localStorage.setItem(CURRENT_SAVE_SLOT_KEY, slot.toString());
+                saveGame();
+                renderSaveSlots();
+                showSaveIndicator(`Uloženo do slotu ${slot}!`);
+            }
+
+            // Načtení ze slotu
+            function loadFromSlot(slot) {
+                const saveKey = SAVE_KEY_PREFIX + slot;
+                const savedGame = localStorage.getItem(saveKey);
+                
+                if (savedGame) {
+                    try {
+                        const parsedGame = JSON.parse(savedGame);
+                        gameState = parsedGame;
+                        gameState.currentSaveSlot = slot;
+                        localStorage.setItem(CURRENT_SAVE_SLOT_KEY, slot.toString());
+                        
+                        // Zajištění, že nové vlastnosti existují
+                        if (gameState.growthMultiplier === undefined) gameState.growthMultiplier = 1.0;
+                        if (gameState.lastAutoDay === undefined) gameState.lastAutoDay = Date.now();
+                        if (gameState.sellMultiplier === undefined) gameState.sellMultiplier = 1.0;
+                        if (gameState.economy === undefined) gameState.economy = [];
+                        if (gameState.maxSaveSlots === undefined) gameState.maxSaveSlots = 3;
+                        
+                        updateUI();
+                        renderFarm();
+                        renderCrops();
+                        renderAnimals();
+                        updateSeason();
+                        checkUnlocks();
+                        saveModal.style.display = 'none';
+                        showSaveIndicator(`Načteno ze slotu ${slot}!`);
+                    } catch (e) {
+                        console.error('Chyba při načítání hry:', e);
+                        showSaveIndicator('Chyba při načítání!', true);
+                    }
+                }
+            }
+
+            // Smazání slotu
+            function deleteSlot(slot) {
+                if (confirm(`Opravdu chceš smazat uložení ve slotu ${slot}?`)) {
+                    const saveKey = SAVE_KEY_PREFIX + slot;
+                    localStorage.removeItem(saveKey);
+                    renderSaveSlots();
+                    showSaveIndicator(`Slot ${slot} smazán!`);
+                }
+            }
+
+            // Aktualizace UI
+            function updateUI() {
+                moneyElement.textContent = gameState.money;
+                levelElement.textContent = gameState.level;
+                dayElement.textContent = gameState.day;
+                farmSizeElement.textContent = gameState.farmSize;
+                
+                // XP progress
+                const xpNeeded = gameState.level * 100;
+                const xpPercentage = (gameState.xp / xpNeeded) * 100;
+                xpProgressElement.style.width = `${xpPercentage}%`;
+                xpTextElement.textContent = `${gameState.xp}/${xpNeeded} XP`;
+                
+                // Aktualizace ročního období
+                updateSeason();
+            }
+
+            // Automatické ukládání
+            function autoSave() {
+                gameState.lastPlayed = Date.now();
+                saveGame();
+            }
+
+            // Uložení hry
+            function saveGame() {
+                const saveKey = SAVE_KEY_PREFIX + gameState.currentSaveSlot;
+                localStorage.setItem(saveKey, JSON.stringify(gameState));
+            }
+
+            // Zobrazení indikátoru uložení
+            function showSaveIndicator(message, isError = false) {
+                saveIndicator.textContent = message;
+                saveIndicator.style.background = isError ? 'rgba(244, 67, 54, 0.9)' : 'rgba(76, 175, 80, 0.9)';
+                saveIndicator.classList.add('show');
+                
+                setTimeout(() => {
+                    saveIndicator.classList.remove('show');
+                }, 3000);
+            }
+
+            // Spuštění hry
+            initGame();
+        });
+    </script>
+</body>
+</html>
