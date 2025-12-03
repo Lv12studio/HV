@@ -1927,8 +1927,8 @@
                 
                 // Ostatní dny - NORMÁLNÍ odměny (zjednodušené)
                 const normalRewards = [
-                    { type: 'money', min: 100, max: 500, weight: 50 },
-                    { type: 'xp', min: 50, max: 200, weight: 30 },
+                    { type: 'money', min: 100, max: 1500, weight: 50 },
+                    { type: 'xp', min: 50, max: 2000, weight: 30 },
                     { type: 'common_crop', weight: 20 }
                 ];
                 
@@ -1987,14 +1987,6 @@
                             applyUpgradeEffect(upgrade);
                         }
                     });
-                    
-                    // 5. Rozšíření farmy na maximum
-                    if (gameState.farmSize < 30) {
-                        const expansion = 30 - gameState.farmSize;
-                        gameState.farmSize = 30;
-                        const newPlots = Array(expansion).fill().map(() => ({ state: 'empty', progress: 0 }));
-                        gameState.farm = [...gameState.farm, ...newPlots];
-                    }
                     
                     // 6. Speciální vánoční plodina
                     if (!gameState.inventory[99]) {
