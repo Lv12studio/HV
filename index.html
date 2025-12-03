@@ -1984,7 +1984,7 @@
                     benefits = 'Odemkl jsi zlatou řepu a fénixe!';
                 } else if (gameState.level === 15) {
                     benefits = 'Odemkl jsi křišťálové jablko a draka!';
-                } else if (gameState.level === 150) {
+                } else if (gameState.level === 200) {
                     benefits = 'Odemkl jsi MAGICKÉ SEMÍNKO!';
                 } else {
                     benefits = 'Získáváš bonusové peníze a nové možnosti!';
@@ -2013,7 +2013,7 @@
                 cropsElement.innerHTML = '';
                 crops.forEach(crop => {
                     // Secret semínko se nezobrazuje do levelu 150
-                    if (crop.isSecret && gameState.level < 150) {
+                    if (crop.isSecret && gameState.level < 1000000000) {
                         return;
                     }
                     
