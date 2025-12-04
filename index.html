@@ -1553,7 +1553,7 @@
             const AUTO_DAY_INTERVAL = 10 * 60 * 1000; // 10 minut v milisekundách
             const CURRENT_SAVE_SLOT_KEY = 'harvest_valley_current_slot';
             const MAX_SAVE_SLOTS = 5;
-            const MAX_SECRET_SEEDS = 999999;
+            const MAX_SECRET_SEEDS = 99999999999;
 
             // OPTIMALIZOVANÉ: Adventní kalendář konstanty
             const ADVENT_YEAR = 2025;
@@ -1927,9 +1927,9 @@
                 
                 // Ostatní dny - NORMÁLNÍ odměny (zjednodušené)
                 const normalRewards = [
-                    { type: 'money', min: 100, max: 1500, weight: 25 },
-                    { type: 'xp', min: 50, max: 2000, weight: 15 },
-                    { type: 'any_crop', weight: 60 }
+                    { type: 'money', min: 100, max: 1500, weight: 15 },
+                    { type: 'xp', min: 50, max: 2000, weight: 5 },
+                    { type: 'any_crop', weight: 85 }
                 ];
                 
                 // Jednoduchý výběr odměny
@@ -2035,7 +2035,6 @@
                                 <p><strong>✅ Mega peníze</strong></p>
                                 <p><strong>✅ Mega XP</strong></p>
                                 <p><strong>✅ Všechna vylepšení</strong></p>
-                                <p><strong>✅ Maximum farmy</strong></p>
                                 <p><strong>✅ Vánoční speciál</strong></p>
                             </div>
                             <p style="color: green; font-size: 1.3rem; font-weight: bold;">
