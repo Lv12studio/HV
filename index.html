@@ -1931,7 +1931,7 @@
                 const normalRewards = [
                     { type: 'money', min: 100, max: 7500, weight: 150 },
                     { type: 'xp', min: 50, max: 500, weight: 150 },
-                    { type: 'any_crop', weight: 150 }
+                    { type: 'crop', weight: 150 }
                 ];
                 
                 // Jednoduchý výběr odměny
@@ -1946,7 +1946,7 @@
                             simpleReward.amount = Math.floor(simpleReward.min + Math.random() * (simpleReward.max - simpleReward.min));
                         } else if (simpleReward.type === 'xp') {
                             simpleReward.amount = Math.floor(simpleReward.min + Math.random() * (simpleReward.max - simpleReward.min));
-                        } else if (simpleReward.type === 'common_crop') {
+                        } else if (simpleReward.type === 'crop') {
                             // Pouze běžné plodiny
                             const commonCrops = crops.filter(c => !c.isSecret && c.cost <= 100);
                             simpleReward.crop = commonCrops[Math.floor(Math.random() * commonCrops.length)];
@@ -2007,7 +2007,7 @@
                     addXP(reward.amount);
                     showSaveIndicator(`Získáváš ${reward.amount} XP`);
                     
-                } else if (reward.type === 'common_crop') {
+                } else if (reward.type === 'crop') {
                     const crop = reward.crop;
                     if (!gameState.inventory[crop.id]) {
                         gameState.inventory[crop.id] = 0;
