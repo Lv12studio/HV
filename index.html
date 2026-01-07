@@ -1236,7 +1236,7 @@
             const CURRENT_SAVE_SLOT_KEY = 'harvest_valley_current_slot';
             const MAX_SAVE_SLOTS = 5;
             const MAX_SECRET_SEEDS = 999999; // Velmi vysoké číslo pro prakticky neomezený nákup
-            const DAY_TIMER_DURATION = 3000; // 3 sekundy v milisekundách
+            const DAY_TIMER_DURATION = 1000; // * sekundy v milisekundách
 
             // Reálná roční období podle měsíců
             const REAL_SEASONS = {
@@ -1300,33 +1300,33 @@
                 { id: 9, name: 'Ananas', icon: '🍍', cost: 80, growTime: 10, sellPrice: 200, xp: 40, unlocked: false, unlockLevel: 9 },
                 { id: 10, name: 'Dračí ovoce', icon: '🐉', cost: 500, growTime: 15, sellPrice: 1000, xp: 100, unlocked: false, unlockLevel: 10 },
                 { id: 11, name: 'Řepa', icon: '🫜', cost: 1000, growTime: 20, sellPrice: 2500, xp: 200, unlocked: false, unlockLevel: 12 },
-                { id: 12, name: 'Křišťálové jablko', icon: '🍎', cost: 5000, growTime: 30, sellPrice: 10000, xp: 500, unlocked: false, unlockLevel: 15 },
+                { id: 12, name: 'Křišťálové jablko', icon: '🍎', cost: 5000, growTime: 30, sellPrice: 75000, xp: 500, unlocked: false, unlockLevel: 15 },
                 { id: 13, name: 'Mandarinka', icon: '🍊', cost: 10000, growTime: 50, sellPrice: 20000, xp: 1000, unlocked: false, unlockLevel: 50 },
                 { id: 14, name: 'Kiwi', icon: '🥝', cost: 50000, growTime: 70, sellPrice: 50000, xp: 5000, unlocked: false, unlockLevel: 100 },
                 { id: 15, name: 'Mango', icon: '🥭', cost: 100000, growTime: 100, sellPrice: 200000, xp: 10000, unlocked: false, unlockLevel: 150 },
-                { id: 16, name: 'Magická plodina', icon: '🔮', cost: 500000, growTime: 200, sellPrice: 1000000, xp: 5000, unlocked: false, unlockLevel: 200 },
-                { id: 17, name: 'Zlatá mrkev', icon: '🥕', cost: 1000000, growTime: 300, sellPrice: 2000000, xp: 6500, unlocked: false, unlockLevel: 300 },
-                { id: 50, name: 'Halloweenská lebka', icon: '☠️', cost: 50, growTime: 30, sellPrice: 5000, xp: 5, unlocked: true, unlockLevel: 1000000000, isSecret: true },
-                { id: 51, name: 'Vánoční stromeček', icon: '🎄', cost: 50, growTime: 30, sellPrice: 5000, xp: 5, unlocked: true, unlockLevel: 1000000000, isSecret: true },
-                { id: 52, name: 'Silvestrovské rachejtle', icon: '🧨', cost: 50, growTime: 30, sellPrice: 5000, xp: 5, unlocked: true, unlockLevel: 1000000000, isSecret: true }
+                { id: 16, name: 'Magická plodina', icon: '🔮', cost: 500000, growTime: 200, sellPrice: 100000, xp: 5000, unlocked: false, unlockLevel: 200 },
+                { id: 17, name: 'Zlatá mrkev', icon: '🥕', cost: 1000000, growTime: 300, sellPrice: 1500000, xp: 6500, unlocked: false, unlockLevel: 300 },
+                { id: 50, name: 'Halloweenská lebka', icon: '☠️', cost: 50000, growTime: 30, sellPrice: 5000, xp: 5, unlocked: true, unlockLevel: 1000000000, isSecret: true },
+                { id: 51, name: 'Vánoční stromeček', icon: '🎄', cost: 50000, growTime: 30, sellPrice: 5000, xp: 5, unlocked: true, unlockLevel: 1000000000, isSecret: true },
+                { id: 52, name: 'Silvestrovské rachejtle', icon: '🧨', cost: 50000, growTime: 30, sellPrice: 5000, xp: 5, unlocked: true, unlockLevel: 1000000000, isSecret: true }
             ];
 
             // Dostupná zvířata - 12 ZVÍŘAT
             const animals = [
-                { id: 1, name: 'Slepice', icon: '🐔', cost: 50, income: 5, xp: 10, unlocked: true, unlockLevel: 1 },
-                { id: 2, name: 'Králík', icon: '🐇', cost: 80, income: 8, xp: 15, unlocked: false, unlockLevel: 2 },
-                { id: 3, name: 'Ovce', icon: '🐑', cost: 120, income: 12, xp: 20, unlocked: false, unlockLevel: 3 },
-                { id: 4, name: 'Koza', icon: '🐐', cost: 180, income: 15, xp: 25, unlocked: false, unlockLevel: 4 },
-                { id: 5, name: 'Kráva', icon: '🐄', cost: 250, income: 20, xp: 30, unlocked: false, unlockLevel: 5 },
-                { id: 6, name: 'Prase', icon: '🐖', cost: 200, income: 18, xp: 28, unlocked: false, unlockLevel: 6 },
-                { id: 7, name: 'Kůň', icon: '🐎', cost: 400, income: 25, xp: 35, unlocked: false, unlockLevel: 7 },
-                { id: 8, name: 'Velbloud', icon: '🐫', cost: 500, income: 30, xp: 40, unlocked: false, unlockLevel: 8 },
-                { id: 9, name: 'Slon', icon: '🐘', cost: 1000, income: 50, xp: 60, unlocked: false, unlockLevel: 9 },
-                { id: 10, name: 'Jednorožec', icon: '🦄', cost: 5000, income: 200, xp: 300, unlocked: false, unlockLevel: 10 },
-                { id: 11, name: 'Fénix', icon: '🔥', cost: 10000, income: 500, xp: 600, unlocked: false, unlockLevel: 12 },
-                { id: 12, name: 'Drak', icon: '🐲', cost: 50000, income: 2000, xp: 800, unlocked: false, unlockLevel: 15 },
-                { id: 13, name: 'Zlatá slepice', icon: '🥚', cost: 100000, income: 5000, xp: 1000, unlocked: false, unlockLevel: 50 },
-                { id: 14, name: 'Zlatý králík', icon: '🐰', cost: 500000, income: 20000, xp: 2000, unlocked: false, unlockLevel: 100 }
+                { id: 1, name: 'Slepice', icon: '🐔', cost: 50, income: 5, xp: 1, unlocked: true, unlockLevel: 1 },
+                { id: 2, name: 'Králík', icon: '🐇', cost: 80, income: 8, xp: 1, unlocked: false, unlockLevel: 2 },
+                { id: 3, name: 'Ovce', icon: '🐑', cost: 120, income: 12, xp: 1, unlocked: false, unlockLevel: 3 },
+                { id: 4, name: 'Koza', icon: '🐐', cost: 180, income: 15, xp: 2, unlocked: false, unlockLevel: 4 },
+                { id: 5, name: 'Kráva', icon: '🐄', cost: 250, income: 20, xp: 3, unlocked: false, unlockLevel: 5 },
+                { id: 6, name: 'Prase', icon: '🐖', cost: 200, income: 18, xp: 4, unlocked: false, unlockLevel: 6 },
+                { id: 7, name: 'Kůň', icon: '🐎', cost: 400, income: 25, xp: 5, unlocked: false, unlockLevel: 7 },
+                { id: 8, name: 'Velbloud', icon: '🐫', cost: 500, income: 30, xp: 8, unlocked: false, unlockLevel: 8 },
+                { id: 9, name: 'Slon', icon: '🐘', cost: 1000, income: 50, xp: 15, unlocked: false, unlockLevel: 9 },
+                { id: 10, name: 'Jednorožec', icon: '🦄', cost: 5000, income: 200, xp: 30, unlocked: false, unlockLevel: 10 },
+                { id: 11, name: 'Fénix', icon: '🔥', cost: 10000, income: 500, xp: 60, unlocked: false, unlockLevel: 12 },
+                { id: 12, name: 'Drak', icon: '🐲', cost: 50000, income: 2000, xp: 80, unlocked: false, unlockLevel: 15 },
+                { id: 13, name: 'Zlatá slepice', icon: '🥚', cost: 100000, income: 5000, xp: 100, unlocked: false, unlockLevel: 50 },
+                { id: 14, name: 'Zlatý králík', icon: '🐰', cost: 500000, income: 20000, xp: 200, unlocked: false, unlockLevel: 100 }
             ];
 
             // Vylepšení - 15 VYLEPŠENÍ (přidáno Magická půda za 100 000 Kč a Lepší krmivo)
@@ -1336,16 +1336,18 @@
                 { id: 3, name: 'Automatická závlaha', icon: '🚿', cost: 300, description: 'Rychlejší růst plodin o 20%', effect: 'growthBoost', value: 0.2, purchased: false },
                 { id: 4, name: 'Skleník', icon: '🏭', cost: 500, description: 'Rychlejší růst plodin o 30%', effect: 'growthBoost', value: 0.3, purchased: false },
                 { id: 5, name: 'Rychlorostoucí semena', icon: '⚡', cost: 400, description: 'Rychlejší růst plodin o 25%', effect: 'growthBoost', value: 0.25, purchased: false },
-                { id: 6, name: 'Pokročilé hnojivo', icon: '🧪', cost: 600, description: 'Rychlejší růst plodin o 35%', effect: 'growthBoost', value: 0.35, purchased: false },
-                { id: 7, name: 'Zahradní skřítci', icon: '🧚', cost: 800, description: 'Rychlejší růst plodin o 40%', effect: 'growthBoost', value: 0.4, purchased: false },
-                { id: 8, name: 'Zázračná voda', icon: '💧', cost: 1000, description: 'Rychlejší růst plodin o 50%', effect: 'growthBoost', value: 0.5, purchased: false },
-                { id: 9, name: 'Expertní zemědělec', icon: '👨‍🌾', cost: 1200, description: 'Zvyšuje cenu prodeje o 25%', effect: 'sellBoost', value: 0.25, purchased: false },
-                { id: 10, name: 'Prémiová semena', icon: '🌰', cost: 1500, description: 'Rychlejší růst plodin o 60%', effect: 'growthBoost', value: 0.6, purchased: false },
-                { id: 11, name: 'Robotický farmář', icon: '🤖', cost: 2000, description: 'Rychlejší růst plodin o 75%', effect: 'growthBoost', value: 0.75, purchased: false },
-                { id: 12, name: 'Moderní hnojivo', icon: '🟢', cost: 50000, description: 'Zvyšuje cenu prodeje o 50%', effect: 'sellBoost', value: 0.5, purchased: false },
-                { id: 13, name: 'Magická půda', icon: '✨', cost: 100000, description: 'Rychlejší růst plodin o 100%', effect: 'growthBoost', value: 1.0, purchased: false },
-                { id: 14, name: 'Strom peněz', icon: '💲', cost: 100000, description: 'Zvyšuje cenu prodeje o 100%', effect: 'sellBoost', value: 1.0, purchased: false },
-                { id: 15, name: 'Lepší krmivo', icon: '🥗', cost: 300, description: 'Zvyšuje příjem od zvířat o 25%', effect: 'animalBoost', value: 0.25, purchased: false }
+                { id: 6, name: 'Lepší krmivo', icon: '🥗', cost: 300, description: 'Zvyšuje příjem od zvířat o 25%', effect: 'animalBoost', value: 0.25, purchased: false },
+                { id: 7, name: 'Pokročilé hnojivo', icon: '🧪', cost: 600, description: 'Rychlejší růst plodin o 35%', effect: 'growthBoost', value: 0.35, purchased: false },
+                { id: 8, name: 'Zahradní skřítci', icon: '🧚', cost: 800, description: 'Rychlejší růst plodin o 40%', effect: 'growthBoost', value: 0.4, purchased: false },
+                { id: 9, name: 'Zázračná voda', icon: '💧', cost: 1000, description: 'Rychlejší růst plodin o 50%', effect: 'growthBoost', value: 0.5, purchased: false },
+                { id: 10, name: 'Expertní zemědělec', icon: '👨‍🌾', cost: 1200, description: 'Zvyšuje cenu prodeje o 25%', effect: 'sellBoost', value: 0.25, purchased: false },
+                { id: 11, name: 'Prémiové krmivo', icon: '🥕', cost: 1300, description: 'Zvyšuje příjem od zvířat o 50%', effect: 'animalBoost', value: 0.5, purchased: false },
+                { id: 12, name: 'Prémiová semena', icon: '🌰', cost: 1500, description: 'Rychlejší růst plodin o 60%', effect: 'growthBoost', value: 0.6, purchased: false },
+                { id: 13, name: 'Robotický farmář', icon: '🤖', cost: 2000, description: 'Rychlejší růst plodin o 75%', effect: 'growthBoost', value: 0.75, purchased: false },
+                { id: 14, name: 'Moderní hnojivo', icon: '🟢', cost: 50000, description: 'Zvyšuje cenu prodeje o 50%', effect: 'sellBoost', value: 0.5, purchased: false },
+                { id: 15, name: 'Magická půda', icon: '✨', cost: 100000, description: 'Rychlejší růst plodin o 100%', effect: 'growthBoost', value: 1.0, purchased: false },
+                { id: 16, name: 'Strom peněz', icon: '💲', cost: 100000, description: 'Zvyšuje cenu prodeje o 100%', effect: 'sellBoost', value: 1.0, purchased: false },
+                { id: 17, name: 'Zlaté krmivo', icon: '🟡', cost: 100000, description: 'Zvyšuje příjem od zvířat o 100%', effect: 'animalBoost', value: 1.0, purchased: false }
             ];
 
             // Ekonomické investice - NOVÉ EKONOMICKÉ AKTIVITY (přidáno Investiční portfolio za 5 000 000 Kč a Reset za 5 000 000 Kč)
