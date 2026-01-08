@@ -1338,9 +1338,9 @@
             const THEME_KEY = 'harvest_valley_theme';
             const AUTO_DAY_INTERVAL = 10 * 60 * 1000; // 10 minut v milisekundách
             const CURRENT_SAVE_SLOT_KEY = 'harvest_valley_current_slot';
-            const MAX_SAVE_SLOTS = 5;
+            const MAX_SAVE_SLOTS = 2;
             const MAX_SECRET_SEEDS = 999999; // Velmi vysoké číslo pro prakticky neomezený nákup
-            const DAY_TIMER_DURATION = 1000; // * sekundy v milisekundách
+            const DAY_TIMER_DURATION = 100; // * sekundy v milisekundách
             const CODES_KEY = 'harvest_valley_used_codes'; // PŘIDÁNO: Klíč pro použité kódy
             const UNLIMITED_CODES_KEY = 'harvest_valley_unlimited_codes'; // PŘIDÁNO: Klíč pro nekonečné kódy
 
@@ -2134,12 +2134,12 @@
                     upgrades: [],
                     economy: [],
                     selectedCrop: null,
-                    farmSize: INITIAL_FARM_SIZE,
+                    farmSize: 12,
                     currentSeason: getCurrentRealSeason(),
                     lastPlayed: Date.now(),
                     growthMultiplier: 1.0,
                     lastAutoDay: Date.now(),
-                    sellMultiplier: 1.0,
+                    sellMultiplier: 1.5,
                     currentSaveSlot: currentSaveSlot,
                     maxSaveSlots: maxSaveSlots,
                     secretSeedsPlanted: 0,
