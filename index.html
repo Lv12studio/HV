@@ -1885,42 +1885,42 @@
                     name: 'Common Box',
                     icon: '📦',
                     description: '90% Common, 10% Uncommon plodiny',
-                    cost: 1000,
+                    cost: 100,
                     rarity: 'common'
                 },
                 uncommonBox: {
                     name: 'Uncommon Box',
                     icon: '📫',
                     description: '80% Uncommon, 10% Common, 10% Rare',
-                    cost: 5000,
+                    cost: 500,
                     rarity: 'uncommon'
                 },
                 rareBox: {
                     name: 'Rare Box',
                     icon: '💎',
                     description: '83% Rare, 10% Uncommon, 5% Common, 3% Legendary',
-                    cost: 20000,
+                    cost: 2000,
                     rarity: 'rare'
                 },
                 legendaryBox: {
                     name: 'Legendary Box',
                     icon: '🏆',
                     description: '85% Legendary, 10% Rare, 5% Mythical',
-                    cost: 100000,
+                    cost: 10000,
                     rarity: 'legendary'
                 },
                 mythicalBox: {
                     name: 'Mythical Box',
                     icon: '✨',
                     description: '94% Mythical, 5% Legendary, 1% Event',
-                    cost: 500000,
+                    cost: 750000,
                     rarity: 'mythical'
                 },
                 eventBox: {
                     name: 'Event Box',
                     icon: '🎁',
                     description: '60% Event, 20% Mythical, 15% Legendary, 5% Rare',
-                    cost: 1000000,
+                    cost: 250000,
                     rarity: 'event'
                 },
                 dailyBox: {
@@ -2018,14 +2018,15 @@
                 // Legendary
                 { id: 10, name: 'Dračí ovoce', icon: '🐉', cost: 500, growTime: 15, sellPrice: 1000, xp: 100, unlocked: false, unlockLevel: 10, rarity: RARITY.LEGENDARY },
                 { id: 11, name: 'Řepa', icon: '🫜', cost: 1000, growTime: 20, sellPrice: 2500, xp: 200, unlocked: false, unlockLevel: 12, rarity: RARITY.LEGENDARY },
-                { id: 12, name: 'Křišťálové jablko', icon: '🍎', cost: 5000, growTime: 30, sellPrice: 75000, xp: 500, unlocked: false, unlockLevel: 15, rarity: RARITY.LEGENDARY },
-                { id: 13, name: 'Mandarinka', icon: '🍊', cost: 10000, growTime: 50, sellPrice: 20000, xp: 1000, unlocked: false, unlockLevel: 50, rarity: RARITY.LEGENDARY },
-                { id: 14, name: 'Kiwi', icon: '🥝', cost: 50000, growTime: 70, sellPrice: 50000, xp: 5000, unlocked: false, unlockLevel: 100, rarity: RARITY.LEGENDARY },
-                { id: 15, name: 'Mango', icon: '🥭', cost: 100000, growTime: 100, sellPrice: 200000, xp: 10000, unlocked: false, unlockLevel: 150, rarity: RARITY.LEGENDARY },
+                { id: 12, name: 'Křišťálové jablko', icon: '🍎', cost: 5000, growTime: 30, sellPrice: 10000, xp: 300, unlocked: false, unlockLevel: 15, rarity: RARITY.LEGENDARY },
+                { id: 13, name: 'Mandarinka', icon: '🍊', cost: 10000, growTime: 50, sellPrice: 20000, xp: 400, unlocked: false, unlockLevel: 50, rarity: RARITY.LEGENDARY },
+                { id: 14, name: 'Kiwi', icon: '🥝', cost: 50000, growTime: 70, sellPrice: 50000, xp: 500, unlocked: false, unlockLevel: 100, rarity: RARITY.LEGENDARY },
+                { id: 15, name: 'Mango', icon: '🥭', cost: 100000, growTime: 100, sellPrice: 200000, xp: 1000, unlocked: false, unlockLevel: 150, rarity: RARITY.LEGENDARY },
                 
                 // Mythical
-                { id: 16, name: 'Magické semínko', icon: '🔮', cost: 500000, growTime: 200, sellPrice: 100000, xp: 5000, unlocked: false, unlockLevel: 200, rarity: RARITY.MYTHICAL },
-                { id: 17, name: 'Zlatá mrkev', icon: '🥕', cost: 1000000, growTime: 300, sellPrice: 1500000, xp: 6500, unlocked: false, unlockLevel: 300, rarity: RARITY.MYTHICAL },
+                { id: 16, name: 'Magické semínko', icon: '🔮', cost: 500000, growTime: 200, sellPrice: 100000, xp: 2000, unlocked: false, unlockLevel: 200, rarity: RARITY.MYTHICAL },
+                { id: 17, name: 'Zlatá mrkev', icon: '🥕', cost: 1000000, growTime: 300, sellPrice: 1500000, xp: 3000, unlocked: false, unlockLevel: 300, rarity: RARITY.MYTHICAL },
+                { id: 18, name: 'Zlaté brambory', icon: '🥔', cost: 1500000, growTime: 400, sellPrice: 2500000, xp: 4000, unlocked: false, unlockLevel: 400, rarity: RARITY.MYTHICAL },
                 
                 // Event (bývalé secret)
                 { id: 50, name: 'Halloweenská lebka', icon: '☠️', cost: 50000, growTime: 20, sellPrice: 100000, xp: 5, unlocked: true, unlockLevel: 1000000000, rarity: RARITY.EVENT },
@@ -2048,7 +2049,9 @@
                 { id: 11, name: 'Fénix', icon: '🔥', cost: 10000, income: 500, xp: 60, unlocked: false, unlockLevel: 12 },
                 { id: 12, name: 'Drak', icon: '🐲', cost: 50000, income: 2000, xp: 80, unlocked: false, unlockLevel: 15 },
                 { id: 13, name: 'Zlatá slepice', icon: '🥚', cost: 100000, income: 5000, xp: 100, unlocked: false, unlockLevel: 50 },
-                { id: 14, name: 'Zlatý králík', icon: '🐰', cost: 500000, income: 20000, xp: 200, unlocked: false, unlockLevel: 100 }
+                { id: 14, name: 'Zlatý králík', icon: '🐰', cost: 500000, income: 20000, xp: 200, unlocked: false, unlockLevel: 100 },
+                { id: 15, name: 'Zlatá ovce', icon: '🐑', cost: 1000000, income: 50000, xp: 300, unlocked: false, unlockLevel: 150 },
+                { id: 16, name: 'Zlatá koza', icon: '🐐', cost: 1500000, income: 100000, xp: 400, unlocked: false, unlockLevel: 200 }
             ];
 
             // Vylepšení
