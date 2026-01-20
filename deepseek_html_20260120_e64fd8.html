@@ -1,0 +1,4502 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harvest Valley | Farmářská Hra</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            touch-action: manipulation;
+        }
+
+        :root {
+            --bg-primary: linear-gradient(135deg, #87CEEB, #98FB98);
+            --bg-secondary: rgba(255, 255, 255, 0.95);
+            --text-primary: #2d5016;
+            --text-secondary: #4a7c1f;
+            --accent-color: #a3d977;
+            --border-color: #a5d6a7;
+            --button-bg: linear-gradient(135deg, #4caf50, #2e7d32);
+            --plot-bg: #d7ccc8;
+            --plot-planted: #8bc34a;
+            --plot-ready: #ffd54f;
+            --plot-withered: #795548;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            
+            /* Barvy pro rarity */
+            --common: #9e9e9e;
+            --uncommon: #4caf50;
+            --rare: #2196f3;
+            --legendary: #9c27b0;
+            --mythical: #ff9800;
+            --event: #f44336;
+        }
+
+        .dark-mode {
+            --bg-primary: linear-gradient(135deg, #1a2f3f, #2d4a2d);
+            --bg-secondary: rgba(40, 40, 40, 0.95);
+            --text-primary: #c8e6c9;
+            --text-secondary: #a5d6a7;
+            --accent-color: #4a7c1f;
+            --border-color: #4a7c1f;
+            --button-bg: linear-gradient(135deg, #388e3c, #1b5e20);
+            --plot-bg: #5d4037;
+            --plot-planted: #689f38;
+            --plot-ready: #fbc02d;
+            --plot-withered: #4e342e;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 100%;
+            width: 100%;
+            text-align: center;
+        }
+
+        header {
+            margin-bottom: 20px;
+            background: var(--bg-secondary);
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-primary);
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(30deg);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            text-shadow: 2px 2px 0 var(--accent-color);
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .season-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .season-icon {
+            font-size: 1.5rem;
+        }
+
+        .auto-time-info {
+            background: #e3f2fd;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            border: 2px solid #2196f3;
+        }
+
+        .dark-mode .auto-time-info {
+            background: #1a2f3f;
+            border-color: #1976d2;
+        }
+
+        /* Daily Gifts info */
+        .daily-gift-info {
+            background: #fff3e0;
+            padding: 8px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            border: 2px solid #ffb300;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .daily-gift-info:hover {
+            transform: scale(1.02);
+        }
+
+        .dark-mode .daily-gift-info {
+            background: #5d4037;
+            border-color: #ffb300;
+        }
+
+        .gift-icon {
+            color: #ff9800;
+        }
+
+        .game-container {
+            background: var(--bg-secondary);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: #e8f5e9;
+            padding: 10px;
+            border-radius: 10px;
+            border: 3px solid var(--border-color);
+        }
+
+        .dark-mode .stats {
+            background: #2d4a2d;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 10px;
+            min-width: 80px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .stat-item {
+            background: #3a3a3a;
+            color: var(--text-primary);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 3px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .money-icon {
+            color: #ffd700;
+        }
+
+        .farm-container {
+            background: #c8e6c9;
+            border-radius: 10px;
+            padding: 15px;
+            border: 5px solid #8bc34a;
+            margin: 0 auto 15px;
+            max-width: 100%;
+        }
+
+        .dark-mode .farm-container {
+            background: #2d4a2d;
+            border-color: #4a7c1f;
+        }
+
+        .farm {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 0 auto;
+            max-width: 100%;
+            justify-content: center;
+        }
+
+        .plot {
+            width: 85px;
+            height: 85px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            transition: all 0.3s ease;
+            background: var(--plot-bg);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+            padding: 5px;
+        }
+
+        .plot:hover {
+            transform: scale(1.05);
+        }
+
+        .plot.empty {
+            background: var(--plot-bg);
+        }
+
+        .plot.planted {
+            background: var(--plot-planted);
+        }
+
+        .plot.ready {
+            background: var(--plot-ready);
+            animation: pulse 1s infinite;
+        }
+
+        .plot.withered {
+            background: var(--plot-withered);
+        }
+
+        .plot.new {
+            background: #ffecb3;
+            border: 2px dashed #ff9800;
+        }
+
+        .dark-mode .plot.new {
+            background: #5d4037;
+            border-color: #ff9800;
+        }
+
+        .crops {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .crop-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            min-width: 90px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+            border: 2px solid #ffd54f;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dark-mode .crop-item {
+            background: #3a3a3a;
+            color: var(--text-primary);
+        }
+
+        .crop-item.selected {
+            border-color: #e53935;
+            background: #fff3e0;
+            transform: scale(1.05);
+        }
+
+        .dark-mode .crop-item.selected {
+            background: #5d4037;
+        }
+
+        .crop-item.locked {
+            border-color: #9e9e9e;
+            background: #f5f5f5;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .dark-mode .crop-item.locked {
+            background: #2a2a2a;
+        }
+
+        .crop-item:hover:not(.locked) {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .crop-icon {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .crop-name {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .crop-cost {
+            font-size: 0.75rem;
+            color: #e53935;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .crop-time {
+            font-size: 0.75rem;
+            color: #1976d2;
+        }
+
+        .crop-locked {
+            font-size: 0.75rem;
+            color: #757575;
+            font-style: italic;
+        }
+
+        /* PŘIDÁNO: Styly pro rarity */
+        .rarity-common {
+            color: var(--common);
+            font-weight: bold;
+        }
+        
+        .rarity-uncommon {
+            color: var(--uncommon);
+            font-weight: bold;
+        }
+        
+        .rarity-rare {
+            color: var(--rare);
+            font-weight: bold;
+        }
+        
+        .rarity-legendary {
+            color: var(--legendary);
+            font-weight: bold;
+        }
+        
+        .rarity-mythical {
+            color: var(--mythical);
+            font-weight: bold;
+        }
+        
+        .rarity-event {
+            color: var(--event);
+            font-weight: bold;
+        }
+        
+        .rarity-badge {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-top: 3px;
+        }
+        
+        .rarity-badge.common {
+            background-color: var(--common);
+            color: white;
+        }
+        
+        .rarity-badge.uncommon {
+            background-color: var(--uncommon);
+            color: white;
+        }
+        
+        .rarity-badge.rare {
+            background-color: var(--rare);
+            color: white;
+        }
+        
+        .rarity-badge.legendary {
+            background-color: var(--legendary);
+            color: white;
+        }
+        
+        .rarity-badge.mythical {
+            background-color: var(--mythical);
+            color: white;
+        }
+        
+        .rarity-badge.event {
+            background-color: var(--event);
+            color: white;
+        }
+
+        /* PŘIDÁNO: Styly pro oblíbené plodiny */
+        .favorite-toggle {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #ccc;
+            transition: all 0.3s ease;
+            margin-top: 5px;
+        }
+
+        .favorite-toggle.favorited {
+            color: #ffd700;
+        }
+
+        .favorite-toggle:hover {
+            transform: scale(1.2);
+        }
+
+        .crop-item.favorited {
+            border-color: #ffd700;
+            background: #fffde7;
+        }
+
+        .dark-mode .crop-item.favorited {
+            background: #5d4037;
+        }
+
+        .animals {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .animal-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            min-width: 90px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+            border: 2px solid #81c784;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dark-mode .animal-item {
+            background: #3a3a3a;
+            color: var(--text-primary);
+        }
+
+        .animal-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .animal-icon {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .animal-name {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .animal-cost {
+            font-size: 0.75rem;
+            color: #e53935;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .animal-income {
+            font-size: 0.75rem;
+            color: #43a047;
+        }
+
+        /* PŘIDÁNO: Styly pro prodej zvířat */
+        .animal-actions {
+            display: flex;
+            gap: 5px;
+            margin-top: 5px;
+            flex-wrap: wrap;
+        }
+
+        .animal-actions button {
+            padding: 5px 8px;
+            font-size: 0.7rem;
+        }
+
+        .sell-animal {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+        }
+
+        .animal-count {
+            font-size: 0.7rem;
+            color: #1976d2;
+            margin-top: 2px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 20px;
+            background: var(--button-bg);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            min-width: fit-content;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .market {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+        }
+
+        .upgrades {
+            background: linear-gradient(135deg, #2196f3, #0d47a1);
+        }
+
+        .save {
+            background: linear-gradient(135deg, #9c27b0, #673ab7);
+        }
+
+        .economy {
+            background: linear-gradient(135deg, #ff5722, #d84315);
+        }
+
+        .reset {
+            background: linear-gradient(135deg, #f44336, #b71c1c);
+        }
+
+        /* PŘIDÁNO: Styly pro časovač */
+        .timer-button {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            width: 150px;
+            justify-content: center;
+        }
+
+        .timer-button:disabled {
+            background: linear-gradient(135deg, #757575, #616161);
+        }
+
+        .selected-crop {
+            background: #e8f5e9;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border: 2px dashed #4caf50;
+            font-size: 0.9rem;
+        }
+
+        .dark-mode .selected-crop {
+            background: #2d4a2d;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+            max-height: 80vh;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: modalAppear 0.4s ease;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .dark-mode .modal-content {
+            background: #3a3a3a;
+            color: var(--text-primary);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #757575;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .close-modal:hover {
+            background: #f5f5f5;
+            color: #e53935;
+        }
+
+        .dark-mode .close-modal:hover {
+            background: #4a4a4a;
+        }
+
+        .modal h2 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+            padding-right: 30px;
+        }
+
+        .modal p {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            line-height: 1.5;
+            color: var(--text-secondary);
+        }
+
+        /* PŘIDÁNO: Styly pro inventář */
+        .inventory-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .inventory-filter {
+            padding: 6px 12px;
+            border: 2px solid #ff9800;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        .inventory-filter.active {
+            background: #ff9800;
+            color: white;
+        }
+
+        .dark-mode .inventory-filter {
+            background: #3a3a3a;
+            color: var(--text-primary);
+        }
+
+        .dark-mode .inventory-filter.active {
+            background: #ff9800;
+            color: white;
+        }
+
+        .inventory-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            padding: 10px 12px;
+            border-radius: 10px;
+            margin: 8px 0;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+            border: 2px solid #ff9800;
+            flex-wrap: wrap;
+        }
+
+        .dark-mode .inventory-item {
+            background: #3a3a3a;
+            border-color: #ff9800;
+        }
+
+        .inventory-item-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .inventory-icon {
+            font-size: 1.6rem;
+        }
+
+        .inventory-details {
+            text-align: left;
+            flex: 1;
+        }
+
+        .inventory-name {
+            font-weight: bold;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .inventory-description {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .inventory-actions {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        /* PŘIDÁNO: Styly pro profily */
+        .profiles-container {
+            background: var(--bg-secondary);
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: var(--shadow);
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .profiles {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .profile-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: white;
+            padding: 12px;
+            border-radius: 10px;
+            min-width: 140px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+            border: 2px solid #9c27b0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dark-mode .profile-item {
+            background: #3a3a3a;
+            color: var(--text-primary);
+        }
+
+        .profile-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .profile-item.active {
+            border-color: #4caf50;
+            background: #e8f5e9;
+        }
+
+        .dark-mode .profile-item.active {
+            background: #2d4a2d;
+        }
+
+        .profile-item.locked {
+            border-color: #9e9e9e;
+            background: #f5f5f5;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .dark-mode .profile-item.locked {
+            background: #2a2a2a;
+        }
+
+        .profile-icon {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+
+        .profile-name {
+            font-weight: bold;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .profile-info {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .profile-cost {
+            font-size: 0.75rem;
+            color: #e53935;
+            margin-top: 3px;
+        }
+
+        /* PŘIDÁNO: Styly pro boxy v inventáři */
+        .box-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: white;
+            padding: 12px;
+            border-radius: 10px;
+            min-width: 110px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+            border: 2px solid #ff9800;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dark-mode .box-item {
+            background: #3a3a3a;
+            border-color: #ff9800;
+        }
+
+        .box-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .box-icon {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+        }
+
+        .box-name {
+            font-weight: bold;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .box-description {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .box-cost {
+            font-size: 0.85rem;
+            color: #e53935;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .box-count {
+            font-size: 0.75rem;
+            color: #1976d2;
+            margin-top: 5px;
+        }
+
+        /* PŘIDÁNO: Styly pro obchod s boxy */
+        .box-shop-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+            border: 2px solid #ff9800;
+            transition: all 0.2s;
+        }
+
+        .dark-mode .box-shop-item {
+            background: #3a3a3a;
+            border-color: #ff9800;
+        }
+
+        .box-shop-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .box-shop-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .box-shop-name {
+            font-weight: bold;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+            font-size: 1rem;
+        }
+
+        .box-shop-description {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .box-shop-cost {
+            font-size: 0.9rem;
+            color: #e53935;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .box-shop-rewards {
+            font-size: 0.75rem;
+            color: #4caf50;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        /* PŘIDÁNO: Styly pro creator button */
+        .creator-button {
+            background: linear-gradient(135deg, #9c27b0, #673ab7);
+            margin-top: 10px;
+        }
+
+        .instructions {
+            background: #e8f5e9;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: left;
+            font-size: 0.85rem;
+            border: 2px dashed #81c784;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .dark-mode .instructions {
+            background: #2d4a2d;
+        }
+
+        .instructions h3 {
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .instructions ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: flex-start;
+            font-size: 0.8rem;
+        }
+
+        .instructions li::before {
+            content: "🌱";
+            margin-right: 8px;
+            margin-top: 2px;
+        }
+
+        footer {
+            margin-top: 20px;
+            text-align: center;
+            color: var(--text-primary);
+            font-size: 0.75rem;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .dark-mode .progress-bar {
+            background: #4a4a4a;
+        }
+
+        .progress {
+            height: 100%;
+            background: #4caf50;
+            border-radius: 5px;
+            transition: width 0.3s;
+        }
+
+        .xp-bar {
+            width: 100%;
+            height: 15px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin: 5px 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .dark-mode .xp-bar {
+            background: #4a4a4a;
+        }
+
+        .xp-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #8bc34a);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .xp-text {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .save-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(76, 175, 80, 0.9);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            transform: translateY(100px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            display: none;
+        }
+
+        .save-indicator.show {
+            transform: translateY(0);
+        }
+
+        .time-indicator {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(33, 150, 243, 0.9);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none;
+        }
+
+        .time-indicator.show {
+            display: block;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes modalAppear {
+            from { opacity: 0; transform: translateY(-30px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .season-indicator {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-left: 6px;
+            font-size: 0.9rem;
+        }
+
+        .season-spring { background: #c8e6c9; color: #2e7d32; }
+        .season-summer { background: #fff9c4; color: #f57f17; }
+        .season-autumn { background: #ffcc80; color: #ef6c00; }
+        .season-winter { background: #e3f2fd; color: #1565c0; }
+
+        .dark-mode .season-spring { background: #2d4a2d; color: #c8e6c9; }
+        .dark-mode .season-summer { background: #5d4037; color: #ffd54f; }
+        .dark-mode .season-autumn { background: #5d4037; color: #ffb74d; }
+        .dark-mode .season-winter { background: #1a2f3f; color: #bbdefb; }
+
+        .upgrade-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 10px 0;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+            border: 2px solid #2196f3;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dark-mode .upgrade-item {
+            background: #3a3a3a;
+            color: var(--text-primary);
+        }
+
+        .upgrade-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .upgrade-item.purchased {
+            border-color: #4caf50;
+            background: #e8f5e9;
+        }
+
+        .dark-mode .upgrade-item.purchased {
+            background: #2d4a2d;
+        }
+
+        .upgrade-icon {
+            font-size: 1.6rem;
+            margin-bottom: 5px;
+        }
+
+        .upgrade-name {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .upgrade-cost {
+            font-size: 0.75rem;
+            color: #e53935;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .upgrade-description {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-align: center;
+            margin: 5px 0;
+        }
+
+        .upgrade-stats {
+            font-size: 0.65rem;
+            color: #666;
+            margin-top: 3px;
+        }
+
+        .dark-mode .upgrade-stats {
+            color: #aaa;
+        }
+
+        .economy-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 10px 0;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+            border: 2px solid #ff5722;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dark-mode .economy-item {
+            background: #3a3a3a;
+            color: var(--text-primary);
+        }
+
+        .economy-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .economy-item.purchased {
+            border-color: #4caf50;
+            background: #e8f5e9;
+        }
+
+        .dark-mode .economy-item.purchased {
+            background: #2d4a2d;
+        }
+
+        .economy-icon {
+            font-size: 1.6rem;
+            margin-bottom: 5px;
+        }
+
+        .economy-name {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .economy-cost {
+            font-size: 0.75rem;
+            color: #e53935;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .economy-description {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-align: center;
+            margin: 5px 0;
+        }
+
+        .economy-income {
+            font-size: 0.65rem;
+            color: #43a047;
+            margin-top: 3px;
+        }
+
+        .code-input-container {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .code-input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ff9800;
+            border-radius: 10px;
+            font-size: 0.9rem;
+        }
+
+        .submit-code {
+            padding: 10px 15px;
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+        }
+
+        .used-codes {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .used-codes h3 {
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+
+        .code-item {
+            padding: 8px;
+            margin: 5px 0;
+            background: #f5f5f5;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .dark-mode .code-item {
+            background: #3a3a3a;
+        }
+
+        .code-name {
+            font-weight: bold;
+        }
+
+        .code-reward {
+            color: #4caf50;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 5px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .profile-actions button {
+            padding: 5px 8px;
+            font-size: 0.7rem;
+        }
+
+        .rename-profile {
+            background: linear-gradient(135deg, #2196f3, #0d47a1);
+        }
+
+        .delete-profile {
+            background: linear-gradient(135deg, #f44336, #b71c1c);
+        }
+
+        .shared-inventory-notice {
+            background: #e3f2fd;
+            padding: 8px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border: 2px solid #2196f3;
+            font-size: 0.8rem;
+        }
+
+        .dark-mode .shared-inventory-notice {
+            background: #1a2f3f;
+            border-color: #1976d2;
+        }
+
+        @media (max-width: 480px) {
+            .farm {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .plot {
+                width: 70px;
+                height: 70px;
+                font-size: 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .crops, .animals {
+                gap: 6px;
+            }
+            
+            .crop-item, .animal-item {
+                min-width: 70px;
+                padding: 6px;
+                font-size: 0.8rem;
+            }
+            
+            .crop-icon, .animal-icon {
+                font-size: 1.4rem;
+            }
+            
+            .controls {
+                gap: 6px;
+            }
+            
+            button {
+                padding: 8px 12px;
+                font-size: 0.75rem;
+                gap: 4px;
+            }
+            
+            .timer-button {
+                width: 120px;
+            }
+            
+            .modal-content {
+                max-width: 95%;
+                padding: 15px;
+            }
+            
+            .time-indicator {
+                left: 10px;
+                bottom: 10px;
+                font-size: 0.7rem;
+                padding: 8px 12px;
+            }
+            
+            .profiles {
+                gap: 8px;
+            }
+            
+            .profile-item {
+                min-width: 110px;
+                padding: 10px;
+            }
+            
+            .inventory-filters {
+                gap: 6px;
+            }
+            
+            .inventory-filter {
+                padding: 5px 10px;
+                font-size: 0.75rem;
+            }
+            
+            .code-input-container {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .plot {
+                width: 65px;
+                height: 65px;
+            }
+            
+            button {
+                padding: 6px 10px;
+                font-size: 0.7rem;
+            }
+            
+            .crop-item, .animal-item {
+                min-width: 65px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <button class="theme-toggle" id="theme-toggle">
+                <i class="fas fa-moon"></i>
+            </button>
+            <h1>Harvest Valley <i class="fas fa-tractor"></i></h1>
+            <p class="subtitle">Staň se mistrem farmářem! Pěstuj, sklízej a rozšiřuj svou farmu.</p>
+            <div class="season-info">
+                <span>Roční období:</span>
+                <span class="season-indicator" id="season">Načítání...</span>
+                <span class="season-icon" id="season-icon">🌱</span>
+            </div>
+            <div class="auto-time-info">
+                <i class="fas fa-clock"></i> Každých 10 minut automaticky uběhne den
+            </div>
+            <!-- Daily Gifts info -->
+            <div class="daily-gift-info" id="daily-gift-info">
+                <i class="fas fa-gift gift-icon"></i>
+                <span id="gift-status">Daily Box: Dnes dostupný!</span>
+            </div>
+        </header>
+
+        <div class="game-container">
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-label">PENÍZE</div>
+                    <div class="stat-value" id="money">100 <span class="money-icon">💸</span></div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">LEVEL</div>
+                    <div class="stat-value" id="level">1</div>
+                    <div class="xp-bar">
+                        <div class="xp-progress" id="xp-progress" style="width: 0%"></div>
+                        <div class="xp-text" id="xp-text">0/100 XP</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">DEN</div>
+                    <div class="stat-value" id="day">1</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">POLE</div>
+                    <div class="stat-value" id="farm-size">9</div>
+                </div>
+            </div>
+
+            <div class="selected-crop">
+                <strong>Vybrána plodina:</strong> 
+                <span id="selected-crop-name">Žádná</span>
+                <span id="selected-crop-icon"></span>
+            </div>
+
+            <!-- Tlačítka -->
+            <div class="controls">
+                <!-- Časovač místo tlačítka Další Den -->
+                <button id="next-day-timer" class="timer-button">
+                    <i class="fas fa-hourglass-half"></i> <span id="timer-text">Další Den (1s)</span>
+                </button>
+                <button id="inventory" class="market">
+                    <i class="fas fa-box-open"></i> Inventář
+                </button>
+                <button id="upgrades" class="upgrades">
+                    <i class="fas fa-tools"></i> Nástroje
+                </button>
+                <button id="economy" class="economy">
+                    <i class="fas fa-chart-line"></i> Ekonomika
+                </button>
+                <!-- Tlačítko pro obchod s boxy -->
+                <button id="box-shop" class="market" style="background: linear-gradient(135deg, #ff4081, #e91e63);">
+                    <i class="fas fa-gift"></i> Obchod s boxy
+                </button>
+            </div>
+
+            <!-- Tlačítko pro kódy -->
+            <div class="controls" style="margin-top: 10px;">
+                <button id="codes" class="codes-button" style="background: linear-gradient(135deg, #ff4081, #e91e63);">
+                    <i class="fas fa-key"></i> Kódy
+                </button>
+            </div>
+
+            <h3><i class="fas fa-seedling"></i> Tvá Farmářská Pole</h3>
+            <div class="farm-container">
+                <div class="farm" id="farm"></div>
+            </div>
+
+            <h3><i class="fas fa-shopping-basket"></i> Semínka a Sazenice</h3>
+            <div class="crops" id="crops"></div>
+
+            <h3><i class="fas fa-paw"></i> Zvířecí pomocníci</h3>
+            <div class="animals" id="animals"></div>
+        </div>
+
+        <!-- Sekce Profily -->
+        <div class="profiles-container">
+            <h3><i class="fas fa-user"></i> Profily</h3>
+            <div class="shared-inventory-notice" id="shared-inventory-notice" style="display: none;">
+                <i class="fas fa-users"></i> SDÍLENÝ INVENTÁŘ AKTIVNÍ - Všechny profily sdílí inventář!
+            </div>
+            <div class="profiles" id="profiles"></div>
+        </div>
+
+        <div class="instructions">
+            <h3>Jak hrát:</h3>
+            <ul>
+                <li>Nejprve vyber plodinu kliknutím na ni v obchodě</li>
+                <li>Pak klikni na prázdné pole k vysazení vybrané plodiny</li>
+                <li>Počkej, až plodina vyroste (ukazuje progress bar)</li>
+                <li>Skliď zralé plodiny (žlutá pole) a prodej je na tržišti</li>
+                <li>Oblíbené plodiny nelze prodávat!</li>
+                <li>Pořizuj si zvířecí pomocníky pro pravidelný příjem</li>
+                <li>Investuj do ekonomických aktivit pro pasivní příjem</li>
+                <li><strong>Počkej 1 vteřinu na časovači pro další den</strong></li>
+                <li><strong>Každých 10 minut automaticky uběhl den (online i offline)!</strong></li>
+                <li><strong>Roční období ovlivňují růst plodin podle reálného času!</strong></li>
+                <li><strong>Každý den dostaneš DAILY BOX do inventáře!</strong></li>
+                <li><strong>Navštiv Obchod s boxy pro různé typy boxů!</strong></li>
+                <li><strong>Prodávej plodiny pouze na Tržišti v inventáři!</strong></li>
+                <li><strong>SDÍLENÝ INVENTÁŘ: Po zakoupení v ekonomice sdílejí všechny profily inventář!</strong></li>
+            </ul>
+            <!-- Tlačítko Tvůrce -->
+            <button id="creator-button" class="creator-button" style="width: 100%; margin-top: 15px;">
+                <i class="fas fa-code"></i> Tvůrce
+            </button>
+        </div>
+    </div>
+
+    <div class="save-indicator" id="save-indicator">
+        <i class="fas fa-check"></i> Hra uložena!
+    </div>
+
+    <div class="time-indicator" id="time-indicator">
+        <i class="fas fa-clock"></i> Automaticky uběhl den!
+    </div>
+
+    <!-- Modal pro Inventář -->
+    <div class="modal" id="inventory-modal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <h2><i class="fas fa-box-open"></i> Inventář</h2>
+            <div class="inventory-filters" id="inventory-filters">
+                <button class="inventory-filter" data-filter="all">VŠE</button>
+                <button class="inventory-filter" data-filter="favorites">OBLÍBENÉ</button>
+                <button class="inventory-filter" data-filter="market">TRŽIŠTĚ</button>
+                <button class="inventory-filter" data-filter="boxes">BOXY</button>
+            </div>
+            <div id="inventory-items"></div>
+            <button class="close-modal-btn">Zavřít</button>
+        </div>
+    </div>
+
+    <!-- Modal pro obchod s boxy -->
+    <div class="modal" id="box-shop-modal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <h2><i class="fas fa-gift"></i> Obchod s boxy</h2>
+            <p>Kup boxy pro získání speciálních odměn!</p>
+            <div id="box-shop-items"></div>
+            <button class="close-modal-btn">Zavřít</button>
+        </div>
+    </div>
+
+    <div class="modal" id="upgrades-modal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <h2><i class="fas fa-tools"></i> Farmářské Nástroje</h2>
+            <p>Vylepši svou farmu pro vyšší výnosy!</p>
+            <div id="upgrade-items"></div>
+            <button class="close-modal-btn">Zavřít</button>
+        </div>
+    </div>
+
+    <div class="modal" id="economy-modal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <h2><i class="fas fa-chart-line"></i> Ekonomické Investice</h2>
+            <p>Investuj do ekonomických aktivit pro pasivní příjem!</p>
+            <div id="economy-items"></div>
+            <button class="close-modal-btn">Zavřít</button>
+        </div>
+    </div>
+
+    <div class="modal" id="level-up-modal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <h2><i class="fas fa-trophy"></i> Level Up!</h2>
+            <p>Gratulujeme! Postoupil jsi na level <span id="new-level">2</span>!</p>
+            <p id="level-up-benefits"></p>
+            <button class="close-modal-btn">Super!</button>
+        </div>
+    </div>
+
+    <!-- Modal pro Tvůrce -->
+    <div class="modal" id="creator-modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-code"></i> Tvůrce</h2>
+            <p>Chcete se podívat na web tvůrce této hry?</p>
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+                <button id="creator-yes" style="background: #4caf50;">Ano, přejít na web</button>
+                <button id="creator-no" style="background: #f44336;">Ne, zůstat zde</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pro kódy -->
+    <div class="modal" id="codes-modal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <h2><i class="fas fa-key"></i> Speciální Kódy</h2>
+            <p>Zadej kód pro získání speciální odměny:</p>
+            
+            <div class="code-input-container">
+                <input type="text" class="code-input" id="code-input" placeholder="Zadej kód...">
+                <button id="submit-code" class="submit-code">
+                    <i class="fas fa-key"></i> Aktivovat Kód
+                </button>
+            </div>
+            
+            <div class="used-codes">
+                <h3>Již použité kódy:</h3>
+                <div id="used-codes-list"></div>
+            </div>
+            
+            <button class="close-modal-btn">Zavřít</button>
+        </div>
+    </div>
+
+    <!-- Modal pro otevření boxu -->
+    <div class="modal" id="open-box-modal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <h2 id="box-title"><i class="fas fa-gift"></i> Otevíráš box...</h2>
+            <div id="box-content" style="text-align: center; padding: 20px;">
+                <div id="box-reward" style="font-size: 3rem; margin: 20px 0;"></div>
+                <h3 id="box-message"></h3>
+                <p id="box-details"></p>
+            </div>
+            <button class="close-modal-btn">Super!</button>
+        </div>
+    </div>
+
+    <!-- Modal pro přejmenování profilu -->
+    <div class="modal" id="rename-profile-modal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <h2><i class="fas fa-edit"></i> Přejmenovat profil</h2>
+            <p>Zadej nové jméno pro profil:</p>
+            <input type="text" class="code-input" id="profile-name-input" placeholder="Nové jméno profilu...">
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+                <button id="rename-confirm" style="background: #4caf50;">Potvrdit</button>
+                <button id="rename-cancel" style="background: #f44336;">Zrušit</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Harvest Valley - Farmářská strategie &copy; 2023</p>
+        <p><small>Hra funguje offline a automaticky ukládá postup</small></p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Herní konstanty
+            const INITIAL_FARM_SIZE = 9;
+            const SAVE_KEY_PREFIX = 'harvest_valley_profile_';
+            const THEME_KEY = 'harvest_valley_theme';
+            const AUTO_DAY_INTERVAL = 10 * 60 * 1000;
+            const MAX_SECRET_SEEDS = 999999;
+            const DAY_TIMER_DURATION = 1000; // 1 sekunda
+            const CODES_KEY = 'harvest_valley_used_codes';
+            const UNLIMITED_CODES_KEY = 'harvest_valley_unlimited_codes';
+            const DAILY_GIFT_SETTINGS_KEY = 'harvest_valley_daily_gifts';
+            const MAX_PROFILES = 3;
+            const PROFILE_COST = 1000000000; // 1 miliarda 💸
+            const SHARED_INVENTORY_COST = 15000000000; // 15 miliard 💸
+            const INVENTORY_FILTER_KEY = 'harvest_valley_inventory_filter';
+            const SHARED_INVENTORY_KEY = 'harvest_valley_shared_inventory';
+            const PROFILE_NAMES_KEY = 'harvest_valley_profile_names';
+
+            // Reálná roční období
+            const REAL_SEASONS = {
+                0: { name: 'Leden', icon: '❄️', multiplier: 1.0, class: 'season-winter' },
+                1: { name: 'Únor', icon: '❄️', multiplier: 1.0, class: 'season-winter' },
+                2: { name: 'Březen', icon: '🌱', multiplier: 1.0, class: 'season-spring' },
+                3: { name: 'Duben', icon: '🌸', multiplier: 1.4, class: 'season-spring' },
+                4: { name: 'Květen', icon: '🌼', multiplier: 1.5, class: 'season-spring' },
+                5: { name: 'Červen', icon: '☀️', multiplier: 1.8, class: 'season-summer' },
+                6: { name: 'Červenec', icon: '🌞', multiplier: 2.0, class: 'season-summer' },
+                7: { name: 'Srpen', icon: '🔥', multiplier: 1.9, class: 'season-summer' },
+                8: { name: 'Září', icon: '🍂', multiplier: 1.3, class: 'season-autumn' },
+                9: { name: 'Říjen', icon: '🍁', multiplier: 1.1, class: 'season-autumn' },
+                10: { name: 'Listopad', icon: '🌧️', multiplier: 1.0, class: 'season-autumn' },
+                11: { name: 'Prosinec', icon: '⛄', multiplier: 1.0, class: 'season-winter' }
+            };
+
+            // Speciální kódy
+            const SPECIAL_CODES = {
+                'Level12studio': {
+                    name: 'Level12studio',
+                    reward: 'Přidá 12 levelů',
+                    apply: function(gameState) {
+                        for (let i = 0; i < 12; i++) {
+                            gameState.level++;
+                            gameState.xp = 0;
+                        }
+                        return 'Získal jsi +12 levelů!';
+                    }
+                },
+                'MoneyTree3': {
+                    name: 'MoneyTree3',
+                    reward: 'Přidá upgrade Strom peněz',
+                    apply: function(gameState) {
+                        if (!gameState.upgrades.includes(16)) {
+                            gameState.upgrades.push(16);
+                            gameState.sellMultiplier += 1.0;
+                            return 'Získal jsi upgrade Strom peněz (+100% cena prodeje)!';
+                        } else {
+                            return 'Tento upgrade už máš!';
+                        }
+                    }
+                },
+                'DoPlo12': {
+                    name: 'DoPlo12',
+                    reward: 'Přidá 12000 💸',
+                    apply: function(gameState) {
+                        gameState.money += 12000;
+                        return 'Získal jsi 12,000 💸!';
+                    }
+                },
+                'FastFood_123_Event': {
+                    name: 'FastFood_123_Event',
+                    reward: 'Přidá všechny event plodiny 1x',
+                    apply: function(gameState) {
+                        [50, 51, 52].forEach(cropId => {
+                            if (!gameState.inventory[cropId]) {
+                                gameState.inventory[cropId] = 0;
+                            }
+                            gameState.inventory[cropId] += 1;
+                        });
+                        return 'Získal jsi všechny event plodiny (1x každá)!';
+                    }
+                },
+                '2012DoPlo12': {
+                    name: 'DoPlo12 speciální kód',
+                    reward: 'Dá 1 miliardu levelů, 1 bilion 💸, nekonečné kódy a 10 DAILY BOXŮ DENNĚ NAVŽDY',
+                    apply: function(gameState) {
+                        gameState.level = 1000000000;
+                        gameState.xp = 0;
+                        gameState.money += 1000000000000;
+                        gameState.unlimitedCodes = true;
+                        localStorage.setItem(UNLIMITED_CODES_KEY, 'true');
+                        
+                        const savedGiftSettings = loadDailyGiftSettings();
+                        savedGiftSettings.giftsPerDay = 10;
+                        savedGiftSettings.specialGiftActive = true;
+                        saveDailyGiftSettings(savedGiftSettings);
+                        
+                        return 'Získal jsi 1,000,000,000 levelů, 1,000,000,000,000 💸, nekonečné kódy a 10 DAILY BOXŮ DENNĚ NAVŽDY!';
+                    }
+                },
+                'Harvest_Valley_Love': {
+                    name: 'Harvest_Valley_Love',
+                    reward: 'Dá level 100 a 15000000 💸',
+                    apply: function(gameState) {
+                        const levelsToAdd = 100 - gameState.level;
+                        if (levelsToAdd > 0) {
+                            gameState.level = 100;
+                            gameState.xp = 0;
+                        }
+                        gameState.money += 15000000;
+                        return 'Level zvýšen na 100 a získal jsi 15,000,000 💸!';
+                    }
+                }
+            };
+
+            // Typy boxů s individuálními ikonami
+            const BOX_TYPES = {
+                commonBox: {
+                    name: 'Common Box',
+                    icon: '📦',
+                    description: '90% Common, 10% Uncommon plodiny',
+                    cost: 1000,
+                    rarity: 'common'
+                },
+                uncommonBox: {
+                    name: 'Uncommon Box',
+                    icon: '📫',
+                    description: '80% Uncommon, 10% Common, 10% Rare',
+                    cost: 5000,
+                    rarity: 'uncommon'
+                },
+                rareBox: {
+                    name: 'Rare Box',
+                    icon: '💎',
+                    description: '83% Rare, 10% Uncommon, 5% Common, 3% Legendary',
+                    cost: 20000,
+                    rarity: 'rare'
+                },
+                legendaryBox: {
+                    name: 'Legendary Box',
+                    icon: '🏆',
+                    description: '85% Legendary, 10% Rare, 5% Mythical',
+                    cost: 100000,
+                    rarity: 'legendary'
+                },
+                mythicalBox: {
+                    name: 'Mythical Box',
+                    icon: '✨',
+                    description: '94% Mythical, 5% Legendary, 1% Event',
+                    cost: 500000,
+                    rarity: 'mythical'
+                },
+                eventBox: {
+                    name: 'Event Box',
+                    icon: '🎁',
+                    description: '60% Event, 20% Mythical, 15% Legendary, 5% Rare',
+                    cost: 1000000,
+                    rarity: 'event'
+                },
+                dailyBox: {
+                    name: 'Daily Box',
+                    icon: '🎁',
+                    description: 'Každodenní dárek - různé odměny',
+                    cost: 0,
+                    rarity: 'special'
+                }
+            };
+
+            // Rarity systémy
+            const RARITY = {
+                COMMON: 'common',
+                UNCOMMON: 'uncommon', 
+                RARE: 'rare',
+                LEGENDARY: 'legendary',
+                MYTHICAL: 'mythical',
+                EVENT: 'event'
+            };
+
+            // Stav hry
+            let gameState = {
+                money: 100,
+                xp: 0,
+                level: 1,
+                day: 1,
+                farm: [],
+                inventory: {},
+                animals: [],
+                upgrades: [],
+                economy: [],
+                selectedCrop: null,
+                farmSize: INITIAL_FARM_SIZE,
+                currentSeason: getCurrentRealSeason(),
+                lastPlayed: Date.now(),
+                growthMultiplier: 1.0,
+                lastAutoDay: Date.now(),
+                sellMultiplier: 1.0,
+                currentProfile: 1,
+                eventSeedsPlanted: 0,
+                eventSeedsBought: 0,
+                favoriteCrops: [],
+                animalCounts: {},
+                animalIncomeMultiplier: 1.0,
+                usedCodes: [],
+                unlimitedCodes: false,
+                hasSharedInventory: false,
+                pendingDailyBoxes: 0
+            };
+
+            // Daily Gifts stav
+            let dailyGiftSettings = {
+                enabled: true,
+                lastClaimedDate: null,
+                giftsPerDay: 1,
+                specialGiftActive: false,
+                pendingBoxes: 0
+            };
+
+            // Sdílený inventář
+            let sharedInventory = {
+                enabled: false,
+                items: {}
+            };
+
+            // Jména profilů
+            let profileNames = ['Profil 1', 'Profil 2', 'Profil 3'];
+
+            // Časovačové proměnné
+            let dayTimer = null;
+            let dayTimerEndTime = null;
+            let dayTimerRemaining = DAY_TIMER_DURATION;
+
+            // Poslední otevřený filtr inventáře
+            let lastInventoryFilter = 'all';
+
+            // Plodiny s novým systémem rarity
+            const crops = [
+                // Common
+                { id: 1, name: 'Mrkev', icon: '🥕', cost: 10, growTime: 3, sellPrice: 20, xp: 5, unlocked: true, unlockLevel: 1, rarity: RARITY.COMMON },
+                { id: 2, name: 'Brambory', icon: '🥔', cost: 15, growTime: 4, sellPrice: 30, xp: 8, unlocked: false, unlockLevel: 2, rarity: RARITY.COMMON },
+                { id: 3, name: 'Kukuřice', icon: '🌽', cost: 20, growTime: 5, sellPrice: 40, xp: 12, unlocked: false, unlockLevel: 3, rarity: RARITY.COMMON },
+                
+                // Uncommon
+                { id: 4, name: 'Jahody', icon: '🍓', cost: 25, growTime: 4, sellPrice: 50, xp: 15, unlocked: false, unlockLevel: 4, rarity: RARITY.UNCOMMON },
+                { id: 5, name: 'Dýně', icon: '🎃', cost: 40, growTime: 6, sellPrice: 80, xp: 20, unlocked: false, unlockLevel: 5, rarity: RARITY.UNCOMMON },
+                { id: 6, name: 'Brokolice', icon: '🥦', cost: 35, growTime: 5, sellPrice: 60, xp: 18, unlocked: false, unlockLevel: 6, rarity: RARITY.UNCOMMON },
+                
+                // Rare
+                { id: 7, name: 'Papriky', icon: '🫑', cost: 45, growTime: 6, sellPrice: 90, xp: 22, unlocked: false, unlockLevel: 7, rarity: RARITY.RARE },
+                { id: 8, name: 'Meloun', icon: '🍉', cost: 60, growTime: 8, sellPrice: 120, xp: 30, unlocked: false, unlockLevel: 8, rarity: RARITY.RARE },
+                { id: 9, name: 'Ananas', icon: '🍍', cost: 80, growTime: 10, sellPrice: 200, xp: 40, unlocked: false, unlockLevel: 9, rarity: RARITY.RARE },
+                
+                // Legendary
+                { id: 10, name: 'Dračí ovoce', icon: '🐉', cost: 500, growTime: 15, sellPrice: 1000, xp: 100, unlocked: false, unlockLevel: 10, rarity: RARITY.LEGENDARY },
+                { id: 11, name: 'Řepa', icon: '🫜', cost: 1000, growTime: 20, sellPrice: 2500, xp: 200, unlocked: false, unlockLevel: 12, rarity: RARITY.LEGENDARY },
+                { id: 12, name: 'Křišťálové jablko', icon: '🍎', cost: 5000, growTime: 30, sellPrice: 75000, xp: 500, unlocked: false, unlockLevel: 15, rarity: RARITY.LEGENDARY },
+                { id: 13, name: 'Mandarinka', icon: '🍊', cost: 10000, growTime: 50, sellPrice: 20000, xp: 1000, unlocked: false, unlockLevel: 50, rarity: RARITY.LEGENDARY },
+                { id: 14, name: 'Kiwi', icon: '🥝', cost: 50000, growTime: 70, sellPrice: 50000, xp: 5000, unlocked: false, unlockLevel: 100, rarity: RARITY.LEGENDARY },
+                { id: 15, name: 'Mango', icon: '🥭', cost: 100000, growTime: 100, sellPrice: 200000, xp: 10000, unlocked: false, unlockLevel: 150, rarity: RARITY.LEGENDARY },
+                
+                // Mythical
+                { id: 16, name: 'Magické semínko', icon: '🔮', cost: 500000, growTime: 200, sellPrice: 100000, xp: 5000, unlocked: false, unlockLevel: 200, rarity: RARITY.MYTHICAL },
+                { id: 17, name: 'Zlatá mrkev', icon: '🥕', cost: 1000000, growTime: 300, sellPrice: 1500000, xp: 6500, unlocked: false, unlockLevel: 300, rarity: RARITY.MYTHICAL },
+                { id: 18, name: 'Zlaté brambory', icon: '🥔', cost: 1500000, growTime: 400, sellPrice: 2500000, xp: 4000, unlocked: false, unlockLevel: 400, rarity: RARITY.MYTHICAL },
+                
+                // Event (bývalé secret) - s vlastností isSecret
+                { id: 50, name: 'Halloweenská lebka', icon: '☠️', cost: 50000, growTime: 20, sellPrice: 100000, xp: 5, unlocked: true, unlockLevel: 1000000000, rarity: RARITY.EVENT, isSecret: true },
+                { id: 51, name: 'Vánoční stromeček', icon: '🎄', cost: 50000, growTime: 20, sellPrice: 100000, xp: 5, unlocked: true, unlockLevel: 1000000000, rarity: RARITY.EVENT, isSecret: true },
+                { id: 52, name: 'Silvestrovské rachejtle', icon: '🧨', cost: 50000, growTime: 20, sellPrice: 100000, xp: 5, unlocked: true, unlockLevel: 1000000000, rarity: RARITY.EVENT, isSecret: false }
+            ];
+
+            // Zvířata
+            const animals = [
+                { id: 1, name: 'Slepice', icon: '🐔', cost: 50, income: 5, xp: 1, unlocked: true, unlockLevel: 1 },
+                { id: 2, name: 'Králík', icon: '🐇', cost: 80, income: 8, xp: 1, unlocked: false, unlockLevel: 2 },
+                { id: 3, name: 'Ovce', icon: '🐑', cost: 120, income: 12, xp: 1, unlocked: false, unlockLevel: 3 },
+                { id: 4, name: 'Koza', icon: '🐐', cost: 180, income: 15, xp: 2, unlocked: false, unlockLevel: 4 },
+                { id: 5, name: 'Kráva', icon: '🐄', cost: 250, income: 20, xp: 3, unlocked: false, unlockLevel: 5 },
+                { id: 6, name: 'Prase', icon: '🐖', cost: 200, income: 18, xp: 4, unlocked: false, unlockLevel: 6 },
+                { id: 7, name: 'Kůň', icon: '🐎', cost: 400, income: 25, xp: 5, unlocked: false, unlockLevel: 7 },
+                { id: 8, name: 'Velbloud', icon: '🐫', cost: 500, income: 30, xp: 8, unlocked: false, unlockLevel: 8 },
+                { id: 9, name: 'Slon', icon: '🐘', cost: 1000, income: 50, xp: 15, unlocked: false, unlockLevel: 9 },
+                { id: 10, name: 'Jednorožec', icon: '🦄', cost: 5000, income: 200, xp: 30, unlocked: false, unlockLevel: 10 },
+                { id: 11, name: 'Fénix', icon: '🔥', cost: 10000, income: 500, xp: 60, unlocked: false, unlockLevel: 12 },
+                { id: 12, name: 'Drak', icon: '🐲', cost: 50000, income: 2000, xp: 80, unlocked: false, unlockLevel: 15 },
+                { id: 13, name: 'Zlatá slepice', icon: '🥚', cost: 100000, income: 5000, xp: 100, unlocked: false, unlockLevel: 50 },
+                { id: 14, name: 'Zlatý králík', icon: '🐰', cost: 500000, income: 20000, xp: 200, unlocked: false, unlockLevel: 100 },
+                { id: 15, name: 'Zlatá ovce', icon: '🐑', cost: 1000000, income: 50000, xp: 300, unlocked: false, unlockLevel: 150 },
+                { id: 16, name: 'Zlatá koza', icon: '🐐', cost: 1500000, income: 100000, xp: 400, unlocked: false, unlockLevel: 200 }
+            ];
+
+            // Vylepšení
+            const upgrades = [
+                { id: 1, name: 'Lepší konve', icon: '🚰', cost: 100, description: 'Rychlejší růst plodin o 10%', effect: 'growthBoost', value: 0.1, purchased: false },
+                { id: 2, name: 'Kvalitní hnojivo', icon: '💩', cost: 200, description: 'Zvyšuje cenu prodeje o 15%', effect: 'sellBoost', value: 0.15, purchased: false },
+                { id: 3, name: 'Automatická závlaha', icon: '🚿', cost: 300, description: 'Rychlejší růst plodin o 20%', effect: 'growthBoost', value: 0.2, purchased: false },
+                { id: 4, name: 'Skleník', icon: '🏭', cost: 500, description: 'Rychlejší růst plodin o 30%', effect: 'growthBoost', value: 0.3, purchased: false },
+                { id: 5, name: 'Rychlorostoucí semena', icon: '⚡', cost: 400, description: 'Rychlejší růst plodin o 25%', effect: 'growthBoost', value: 0.25, purchased: false },
+                { id: 6, name: 'Lepší krmivo', icon: '🥗', cost: 300, description: 'Zvyšuje příjem od zvířat o 25%', effect: 'animalBoost', value: 0.25, purchased: false },
+                { id: 7, name: 'Pokročilé hnojivo', icon: '🧪', cost: 600, description: 'Rychlejší růst plodin o 35%', effect: 'growthBoost', value: 0.35, purchased: false },
+                { id: 8, name: 'Zahradní skřítci', icon: '🧚', cost: 800, description: 'Rychlejší růst plodin o 40%', effect: 'growthBoost', value: 0.4, purchased: false },
+                { id: 9, name: 'Zázračná voda', icon: '💧', cost: 1000, description: 'Rychlejší růst plodin o 50%', effect: 'growthBoost', value: 0.5, purchased: false },
+                { id: 10, name: 'Expertní zemědělec', icon: '👨‍🌾', cost: 1200, description: 'Zvyšuje cenu prodeje o 25%', effect: 'sellBoost', value: 0.25, purchased: false },
+                { id: 11, name: 'Prémiové krmivo', icon: '🥕', cost: 1300, description: 'Zvyšuje příjem od zvířat o 50%', effect: 'animalBoost', value: 0.5, purchased: false },
+                { id: 12, name: 'Prémiová semena', icon: '🌰', cost: 1500, description: 'Rychlejší růst plodin o 60%', effect: 'growthBoost', value: 0.6, purchased: false },
+                { id: 13, name: 'Robotický farmář', icon: '🤖', cost: 2000, description: 'Rychlejší růst plodin o 75%', effect: 'growthBoost', value: 0.75, purchased: false },
+                { id: 14, name: 'Moderní hnojivo', icon: '🟢', cost: 50000, description: 'Zvyšuje cenu prodeje o 50%', effect: 'sellBoost', value: 0.5, purchased: false },
+                { id: 15, name: 'Magická půda', icon: '✨', cost: 100000, description: 'INSTANTNÍ růst plodin!', effect: 'instantGrowth', value: 0, purchased: false },
+                { id: 16, name: 'Strom peněz', icon: '💲', cost: 100000, description: 'Zvyšuje cenu prodeje o 100%', effect: 'sellBoost', value: 1.0, purchased: false },
+                { id: 17, name: 'Zlaté krmivo', icon: '🟡', cost: 100000, description: 'Zvyšuje příjem od zvířat o 100%', effect: 'animalBoost', value: 1.0, purchased: false }
+            ];
+
+            // Ekonomické investice
+            const economyItems = [
+                { id: 1, name: 'Stánek s limonádou', icon: '🍋', cost: 200, income: 10, xp: 20, description: 'Malý příjem z prodeje limonády', purchased: false },
+                { id: 2, name: 'Farmářský trh', icon: '🛒', cost: 500, income: 25, xp: 40, description: 'Stálý příjem z prodeje na trhu', purchased: false },
+                { id: 3, name: 'Zahradní kavárna', icon: '☕', cost: 1000, income: 50, xp: 60, description: 'Příjem z posezení v kavárně', purchased: false },
+                { id: 4, name: 'Agroturistika', icon: '🏡', cost: 2000, income: 100, xp: 80, description: 'Příjem z turistů na farmě', purchased: false },
+                { id: 5, name: 'Bioobchod', icon: '🏪', cost: 4000, income: 200, xp: 120, description: 'Příjem z prodeje bio produktů', purchased: false },
+                { id: 6, name: 'Zemědělská firma', icon: '🏢', cost: 8000, income: 400, xp: 200, description: 'Velký příjem z velkoobchodu', purchased: false },
+                { id: 7, name: 'Sdílený inventář', icon: '🤝', cost: SHARED_INVENTORY_COST, income: 0, xp: 1000, description: 'Všechny profily sdílejí inventář!', purchased: false }
+            ];
+
+            // DOM elementy
+            const moneyElement = document.getElementById('money');
+            const levelElement = document.getElementById('level');
+            const dayElement = document.getElementById('day');
+            const xpProgressElement = document.getElementById('xp-progress');
+            const xpTextElement = document.getElementById('xp-text');
+            const farmElement = document.getElementById('farm');
+            const cropsElement = document.getElementById('crops');
+            const animalsElement = document.getElementById('animals');
+            const selectedCropNameElement = document.getElementById('selected-crop-name');
+            const selectedCropIconElement = document.getElementById('selected-crop-icon');
+            const farmSizeElement = document.getElementById('farm-size');
+            const seasonElement = document.getElementById('season');
+            const seasonIconElement = document.getElementById('season-icon');
+            const themeToggle = document.getElementById('theme-toggle');
+            const saveIndicator = document.getElementById('save-indicator');
+            const timeIndicator = document.getElementById('time-indicator');
+            const nextDayTimerButton = document.getElementById('next-day-timer');
+            const timerTextElement = document.getElementById('timer-text');
+            const inventoryButton = document.getElementById('inventory');
+            const upgradesButton = document.getElementById('upgrades');
+            const economyButton = document.getElementById('economy');
+            const boxShopButton = document.getElementById('box-shop');
+            const codesButton = document.getElementById('codes');
+            const creatorButton = document.getElementById('creator-button');
+            const inventoryModal = document.getElementById('inventory-modal');
+            const boxShopModal = document.getElementById('box-shop-modal');
+            const upgradesModal = document.getElementById('upgrades-modal');
+            const economyModal = document.getElementById('economy-modal');
+            const levelUpModal = document.getElementById('level-up-modal');
+            const creatorModal = document.getElementById('creator-modal');
+            const codesModal = document.getElementById('codes-modal');
+            const openBoxModal = document.getElementById('open-box-modal');
+            const renameProfileModal = document.getElementById('rename-profile-modal');
+            const creatorYesButton = document.getElementById('creator-yes');
+            const creatorNoButton = document.getElementById('creator-no');
+            const codeInput = document.getElementById('code-input');
+            const submitCodeButton = document.getElementById('submit-code');
+            const usedCodesList = document.getElementById('used-codes-list');
+            const giftStatusElement = document.getElementById('gift-status');
+            const dailyGiftInfoElement = document.getElementById('daily-gift-info');
+            const profilesElement = document.getElementById('profiles');
+            const inventoryItemsElement = document.getElementById('inventory-items');
+            const inventoryFiltersElement = document.getElementById('inventory-filters');
+            const boxShopItemsElement = document.getElementById('box-shop-items');
+            const sharedInventoryNotice = document.getElementById('shared-inventory-notice');
+            const profileNameInput = document.getElementById('profile-name-input');
+            const renameConfirmButton = document.getElementById('rename-confirm');
+            const renameCancelButton = document.getElementById('rename-cancel');
+
+            // Proměnné pro přejmenování profilu
+            let profileToRename = null;
+
+            // Inicializace hry
+            function initGame() {
+                loadTheme();
+                loadProfileNames();
+                loadGame();
+                loadDailyGiftSettings();
+                loadSharedInventory();
+                loadLastInventoryFilter();
+                updateUI();
+                renderFarm();
+                renderCrops();
+                renderAnimals();
+                renderProfiles();
+                updateSeason();
+                setupEventListeners();
+                checkUnlocks();
+                updateSharedInventoryNotice();
+                
+                setInterval(autoSave, 30000);
+                setInterval(collectIncome, 60000);
+                setInterval(autoNextDay, AUTO_DAY_INTERVAL);
+                checkElapsedTime();
+                startDayTimer();
+                
+                loadUsedCodes();
+                loadUnlimitedCodes();
+                
+                // Automatická kontrola daily boxů při startu
+                checkAndClaimDailyBox();
+            }
+
+            // Načtení tématu
+            function loadTheme() {
+                const savedTheme = localStorage.getItem(THEME_KEY);
+                if (savedTheme === 'dark') {
+                    document.body.classList.add('dark-mode');
+                    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                }
+            }
+
+            // Načtení jmen profilů
+            function loadProfileNames() {
+                const savedNames = localStorage.getItem(PROFILE_NAMES_KEY);
+                if (savedNames) {
+                    try {
+                        const parsed = JSON.parse(savedNames);
+                        if (Array.isArray(parsed) && parsed.length === 3) {
+                            profileNames = parsed;
+                        }
+                    } catch (e) {
+                        console.error('Chyba při načítání jmen profilů:', e);
+                    }
+                }
+            }
+
+            // Uložení jmen profilů
+            function saveProfileNames() {
+                localStorage.setItem(PROFILE_NAMES_KEY, JSON.stringify(profileNames));
+            }
+
+            // Načtení hry
+            function loadGame() {
+                const saveKey = SAVE_KEY_PREFIX + gameState.currentProfile;
+                const savedGame = localStorage.getItem(saveKey);
+                
+                if (!savedGame) {
+                    initializeNewProfile(gameState.currentProfile);
+                    return;
+                }
+                
+                try {
+                    const parsedGame = JSON.parse(savedGame);
+                    
+                    if (parsedGame && typeof parsedGame.money === 'number') {
+                        // Zkontrolovat a doplnit chybějící vlastnosti
+                        const defaultGameState = initializeNewProfile(gameState.currentProfile, true);
+                        gameState = { ...defaultGameState, ...parsedGame };
+                        
+                        // Zajistit, že pole inventory obsahuje boxy
+                        Object.keys(BOX_TYPES).forEach(boxType => {
+                            if (!gameState.inventory[boxType]) gameState.inventory[boxType] = 0;
+                        });
+                        
+                        // Zajistit, že všechny plodiny mají správné unlocked stavy
+                        checkUnlocks();
+                    } else {
+                        initializeNewProfile(gameState.currentProfile);
+                    }
+                } catch (e) {
+                    console.error('Chyba při načítání hry:', e);
+                    initializeNewProfile(gameState.currentProfile);
+                }
+            }
+
+            // Inicializace nového profilu
+            function initializeNewProfile(profileId, returnOnly = false) {
+                const newGameState = {
+                    money: 100,
+                    xp: 0,
+                    level: 1,
+                    day: 1,
+                    farm: Array(INITIAL_FARM_SIZE).fill().map(() => ({ state: 'empty', progress: 0 })),
+                    inventory: {},
+                    animals: [],
+                    upgrades: [],
+                    economy: [],
+                    selectedCrop: null,
+                    farmSize: INITIAL_FARM_SIZE,
+                    currentSeason: getCurrentRealSeason(),
+                    lastPlayed: Date.now(),
+                    growthMultiplier: 1.0,
+                    lastAutoDay: Date.now(),
+                    sellMultiplier: 1.0,
+                    currentProfile: profileId,
+                    eventSeedsPlanted: 0,
+                    eventSeedsBought: 0,
+                    favoriteCrops: [],
+                    animalCounts: {},
+                    animalIncomeMultiplier: 1.0,
+                    usedCodes: [],
+                    unlimitedCodes: false,
+                    hasSharedInventory: false,
+                    pendingDailyBoxes: 0
+                };
+                
+                // Inicializovat inventory s boxy
+                Object.keys(BOX_TYPES).forEach(boxType => {
+                    newGameState.inventory[boxType] = 0;
+                });
+                
+                if (!returnOnly) {
+                    gameState = newGameState;
+                    saveGame();
+                }
+                
+                return newGameState;
+            }
+
+            // Načtení daily gifts nastavení
+            function loadDailyGiftSettings() {
+                const savedSettings = localStorage.getItem(DAILY_GIFT_SETTINGS_KEY);
+                if (savedSettings) {
+                    try {
+                        const parsed = JSON.parse(savedSettings);
+                        Object.assign(dailyGiftSettings, parsed);
+                        
+                        // Pokud je kód 2012DoPlo12 aktivní, nastavit 10 daily boxů denně
+                        if (gameState.usedCodes.includes('2012DoPlo12')) {
+                            dailyGiftSettings.giftsPerDay = 10;
+                            dailyGiftSettings.specialGiftActive = true;
+                        }
+                    } catch (e) {
+                        console.error('Chyba při načítání daily gift nastavení:', e);
+                    }
+                }
+                return dailyGiftSettings;
+            }
+
+            // Uložení daily gifts nastavení
+            function saveDailyGiftSettings(settings = dailyGiftSettings) {
+                localStorage.setItem(DAILY_GIFT_SETTINGS_KEY, JSON.stringify(settings));
+            }
+
+            // Načtení sdíleného inventáře
+            function loadSharedInventory() {
+                const savedSharedInventory = localStorage.getItem(SHARED_INVENTORY_KEY);
+                if (savedSharedInventory) {
+                    try {
+                        const parsed = JSON.parse(savedSharedInventory);
+                        Object.assign(sharedInventory, parsed);
+                        
+                        // Pokud je sdílený inventář aktivní, nastavit ve všech profilech
+                        if (sharedInventory.enabled) {
+                            gameState.hasSharedInventory = true;
+                        }
+                    } catch (e) {
+                        console.error('Chyba při načítání sdíleného inventáře:', e);
+                    }
+                }
+            }
+
+            // Uložení sdíleného inventáře
+            function saveSharedInventory() {
+                localStorage.setItem(SHARED_INVENTORY_KEY, JSON.stringify(sharedInventory));
+            }
+
+            // Načtení posledního filtru inventáře
+            function loadLastInventoryFilter() {
+                const savedFilter = localStorage.getItem(INVENTORY_FILTER_KEY);
+                if (savedFilter && ['all', 'favorites', 'market', 'boxes'].includes(savedFilter)) {
+                    lastInventoryFilter = savedFilter;
+                }
+            }
+
+            // Uložení posledního filtru inventáře
+            function saveLastInventoryFilter(filter) {
+                lastInventoryFilter = filter;
+                localStorage.setItem(INVENTORY_FILTER_KEY, filter);
+            }
+
+            // Kontrola daily boxů
+            function checkDailyGifts() {
+                const today = new Date().toDateString();
+                const lastClaimed = dailyGiftSettings.lastClaimedDate ? 
+                    new Date(dailyGiftSettings.lastClaimedDate).toDateString() : null;
+                
+                return lastClaimed !== today;
+            }
+
+            // Kontrola a přidání Daily Boxů
+            function checkAndClaimDailyBox() {
+                const today = new Date().toDateString();
+                const lastClaimed = dailyGiftSettings.lastClaimedDate ? 
+                    new Date(dailyGiftSettings.lastClaimedDate).toDateString() : null;
+                
+                if (lastClaimed !== today) {
+                    // Spočítat kolik dní uběhlo
+                    let daysPassed = 1;
+                    if (lastClaimed) {
+                        const lastDate = new Date(dailyGiftSettings.lastClaimedDate);
+                        const todayDate = new Date();
+                        const diffTime = Math.abs(todayDate - lastDate);
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        daysPassed = Math.min(diffDays, 30); // Maximálně 30 dní zpětně
+                    }
+                    
+                    // Přidat boxy do čekajících
+                    const boxesToAdd = daysPassed * dailyGiftSettings.giftsPerDay;
+                    dailyGiftSettings.pendingBoxes += boxesToAdd;
+                    dailyGiftSettings.lastClaimedDate = Date.now();
+                    
+                    saveDailyGiftSettings();
+                    updateDailyGiftUI();
+                    saveGame();
+                    
+                    if (boxesToAdd > 0) {
+                        showSaveIndicator(`Máš ${boxesToAdd} čekajících Daily Boxů! Klikni na Daily Box v headeru pro vyzvednutí.`);
+                    }
+                } else {
+                    updateDailyGiftUI();
+                }
+            }
+
+            // Vyzvednutí čekajících Daily Boxů
+            function claimPendingDailyBoxes() {
+                if (dailyGiftSettings.pendingBoxes > 0) {
+                    if (!gameState.inventory.dailyBox) gameState.inventory.dailyBox = 0;
+                    gameState.inventory.dailyBox += dailyGiftSettings.pendingBoxes;
+                    
+                    const claimedBoxes = dailyGiftSettings.pendingBoxes;
+                    dailyGiftSettings.pendingBoxes = 0;
+                    
+                    updateUI();
+                    saveGame();
+                    saveDailyGiftSettings();
+                    updateDailyGiftUI();
+                    
+                    showSaveIndicator(`Vyzvedl jsi ${claimedBoxes} Daily Boxů!`);
+                    
+                    // Znovu vykreslit inventář pokud je otevřený
+                    if (inventoryModal.style.display === 'flex') {
+                        renderInventory(lastInventoryFilter);
+                    }
+                } else {
+                    showSaveIndicator('Nemáš žádné čekající Daily Boxy!', true);
+                }
+            }
+
+            // Generování odměny pro Daily Box
+            function generateDailyBoxReward() {
+                const random = Math.random() * 100;
+                
+                // 60% šance na peníze (málo)
+                if (random < 60) {
+                    const baseAmount = Math.floor(Math.random() * 100) + 10;
+                    const levelBonus = Math.floor(gameState.level * 2);
+                    const totalAmount = baseAmount + levelBonus;
+                    
+                    return {
+                        type: 'money',
+                        amount: totalAmount,
+                        isSpecial: false,
+                        message: `Získal jsi ${totalAmount.toLocaleString()} 💸`
+                    };
+                } 
+                // 25% šance na běžnou plodinu
+                else if (random < 85) {
+                    const availableCrops = crops.filter(crop => crop.unlocked && 
+                        (crop.rarity === RARITY.COMMON || crop.rarity === RARITY.UNCOMMON));
+                    if (availableCrops.length === 0) {
+                        availableCrops.push(crops[0]);
+                    }
+                    const randomCrop = availableCrops[Math.floor(Math.random() * availableCrops.length)];
+                    const quantity = Math.floor(Math.random() * 2) + 1;
+                    
+                    return {
+                        type: 'crop',
+                        cropId: randomCrop.id,
+                        cropName: randomCrop.name,
+                        cropIcon: randomCrop.icon,
+                        quantity: quantity,
+                        isSpecial: false,
+                        message: `Získal jsi ${quantity}x ${randomCrop.name}`
+                    };
+                } 
+                // 10% šance na level up
+                else if (random < 95) {
+                    const levelUps = 1;
+                    
+                    return {
+                        type: 'level',
+                        amount: levelUps,
+                        isSpecial: false,
+                        message: `Získal jsi 1 LEVEL UP!`
+                    };
+                }
+                // 5% šance na event plodinu
+                else {
+                    const eventCrops = crops.filter(crop => crop.rarity === RARITY.EVENT);
+                    if (eventCrops.length > 0) {
+                        const randomCrop = eventCrops[Math.floor(Math.random() * eventCrops.length)];
+                        const quantity = 1;
+                        
+                        return {
+                            type: 'crop',
+                            cropId: randomCrop.id,
+                            cropName: randomCrop.name,
+                            cropIcon: randomCrop.icon,
+                            quantity: quantity,
+                            isSpecial: true,
+                            message: `SPECIÁLNÍ DÁREK! Získal jsi ${quantity}x ${randomCrop.name}`
+                        };
+                    } else {
+                        const baseAmount = Math.floor(Math.random() * 200) + 50;
+                        return {
+                            type: 'money',
+                            amount: baseAmount,
+                            isSpecial: false,
+                            message: `Získal jsi ${baseAmount.toLocaleString()} 💸`
+                        };
+                    }
+                }
+            }
+
+            // Generování odměny pro Common Box
+            function generateCommonBoxReward() {
+                const random = Math.random() * 100;
+                
+                // 90% Common
+                if (random < 90) {
+                    const commonCrops = crops.filter(crop => crop.rarity === RARITY.COMMON);
+                    const randomCrop = commonCrops[Math.floor(Math.random() * commonCrops.length)];
+                    const quantity = Math.floor(Math.random() * 3) + 1; // 1-3 ks
+    
+                    return {
+                        type: 'crop',
+                        cropId: randomCrop.id,
+                        cropName: randomCrop.name,
+                        cropIcon: randomCrop.icon,
+                        quantity: quantity,
+                        isSpecial: false,
+                        message: `Získal jsi ${quantity}x ${randomCrop.name}`
+                    };
+                }
+                // 10% Uncommon
+                else {
+                    const uncommonCrops = crops.filter(crop => crop.rarity === RARITY.UNCOMMON);
+                    const randomCrop = uncommonCrops[Math.floor(Math.random() * uncommonCrops.length)];
+                    const quantity = Math.floor(Math.random() * 2) + 1; // 1-2 ks
+                    
+                    return {
+                        type: 'crop',
+                        cropId: randomCrop.id,
+                        cropName: randomCrop.name,
+                        cropIcon: randomCrop.icon,
+                        quantity: quantity,
+                        isSpecial: false,
+                        message: `Získal jsi ${quantity}x ${randomCrop.name}`
+                    };
+                }
+            }
+
+            // Generování odměny pro Uncommon Box
+            function generateUncommonBoxReward() {
+                const random = Math.random() * 100;
+                
+                // 80% Uncommon
+                if (random < 80) {
+                    const uncommonCrops = crops.filter(crop => crop.rarity === RARITY.UNCOMMON);
+                    const randomCrop = uncommonCrops[Math.floor(Math.random() * uncommonCrops.length)];
+                    const quantity = Math.floor(Math.random() * 3) + 1; // 1-3 ks
+    
+                    return {
+                        type: 'crop',
+                        cropId: randomCrop.id,
+                        cropName: randomCrop.name,
+                        cropIcon: randomCrop.icon,
+                        quantity: quantity,
+                        isSpecial: false,
+                        message: `Získal jsi ${quantity}x ${randomCrop.name}`
+                    };
+                }
+                // 10% Common
+                else if (random < 90) {
+                    const commonCrops = crops.filter(crop => crop.rarity === RARITY.COMMON);
+                    const randomCrop = commonCrops[Math.floor(Math.random() * commonCrops.length)];
+                    const quantity = Math.floor(Math.random() * 2) + 1; // 1-2 ks
+                    
+                    return {
+                        type: 'crop',
+                        cropId: randomCrop.id,
+                        cropName: randomCrop.name,
+                        cropIcon: randomCrop.icon,
+                        quantity: quantity,
+                        isSpecial: false,
+                        message: `Získal jsi ${quantity}x ${randomCrop.name}`
+                    };
+                }
+                // 10% Rare
+                else {
+                    const rareCrops = crops.filter(crop => crop.rarity === RARITY.RARE);
+                    const randomCrop = rareCrops[Math.floor(Math.random() * rareCrops.length)];
+                    const quantity = 1; // vždy jen 1
+                    
+                    return {
+                        type: 'crop',
+                        cropId: randomCrop.id,
+                        cropName: randomCrop.name,
+                        cropIcon: randomCrop.icon,
+                        quantity: quantity,
+                        isSpecial: true,
+                        message: `VZÁCNÉ! Získal jsi ${quantity}x ${randomCrop.name}`
+                    };
+                }
+            }
+
+            // Generování odměny pro Rare Box
+            function generateRareBoxReward() {
+                const random = Math.random() * 100;
+                
+                // 83% Rare
+                if (random < 83) {
+                    const rareCrops = crops.filter(crop => crop.rarity === RARITY.RARE);
+                    const randomCrop = rareCrops[Math.floor(Math.random() * rareCrops.length)];
+                    const quantity = Math.floor(Math.random() * 2) + 1; // 1-2 ks
+    
+                    return {
+                        type: 'crop',
+                        cropId: randomCrop.id,
+                        cropName: randomCrop.name,
+                        cropIcon: randomCrop.icon,
+                        quantity: quantity,
+                        isSpecial: true,
+                        message: `VZÁCNÉ! Získal jsi ${quantity}x ${randomCrop.name}`
+                    };
+                }
+                // 10% Uncommon
+                else if (random < 93) {
+                    const uncommonCrops = crops.filter(crop => crop.rarity === RARITY.UNCOMMON);
+                    const randomCrop = uncommonCrops[Math.floor(Math.random() * uncommonCrops.length)];
+                    const quantity = Math.floor(Math.random() * 3) + 1; // 1-3 ks
+                    
+                    return {
+                        type: 'crop',
+                        cropId: randomCrop.id,
+                        cropName: randomCrop.name,
+                        cropIcon: randomCrop.icon,
+                        quantity: quantity,
+                        isSpecial: false,
+                        message: `Získal jsi ${quantity}x ${randomCrop.name}`
+                    };
+                }
+                // 5% Common
+                else if (random < 98) {
+                    const commonCrops = crops.filter(crop => crop.rarity === RARITY.COMMON);
+                    const randomCrop = commonCrops[Math.floor(Math.random() * commonCrops.length)];
+                    const quantity = Math.floor(Math.random() * 4) + 2; // 2-5 ks
+                    
+                    return {
+                        type: 'crop',
+                        cropId: randomCrop.id,
+                        cropName: randomCrop.name,
+                        cropIcon: randomCrop.icon,
+                        quantity: quantity,
+                        isSpecial: false,
+                        message: `Získal jsi ${quantity}x ${randomCrop.name}`
+                    };
+                }
+                // 3% Legendary
+                else {
+                    const legendaryCrops = crops.filter(crop => crop.rarity === RARITY.LEGENDARY);
+                    const randomCrop = legendaryCrops[Math.floor(Math.random() * legendaryCrops.length)];
+                    const quantity = 1; // vždy jen 1
+                    
+                    return {
+                        type: 'crop',
+                        cropId: randomCrop.id,
+                        cropName: randomCrop.name,
+                        cropIcon: randomCrop.icon,
+                        quantity: quantity,
+                        isSpecial: true,
+                        message: `LEGENDARY! Získal jsi ${quantity}x ${randomCrop.name}`
+                    };
+                }
+            }
+
+            // Generování odměny pro Legendary Box
+            function generateLegendaryBoxReward() {
+                const random = Math.random() * 100;
+                
+                // 85% Legendary
+                if (random < 85) {
+                    const legendaryCrops = crops.filter(crop => crop.rarity === RARITY.LEGENDARY);
+                    const randomCrop = legendaryCrops[Math.floor(Math.random() * legendaryCrops.length)];
+                    const quantity = 1; // vždy jen 1
+    
+                    return {
+                        type: 'crop',
+                        cropId: randomCrop.id,
+                        cropName: randomCrop.name,
+                        cropIcon: randomCrop.icon,
+                        quantity: quantity,
+                        isSpecial: true,
+                        message: `LEGENDARY! Získal jsi ${quantity}x ${randomCrop.name}`
+                    };
+                }
+                // 10% Rare
+                else if (random < 95) {
+                    const rareCrops = crops.filter(crop => crop.rarity === RARITY.RARE);
+                    const randomCrop = rareCrops[Math.floor(Math.random() * rareCrops.length)];
+                    const quantity = Math.floor(Math.random() * 2) + 1; // 1-2 ks
+                    
+                    return {
+                        type: 'crop',
+                        cropId: randomCrop.id,
+                        cropName: randomCrop.name,
+                        cropIcon: randomCrop.icon,
+                        quantity: quantity,
+                        isSpecial: true,
+                        message: `VZÁCNÉ! Získal jsi ${quantity}x ${randomCrop.name}`
+                    };
+                }
+                // 5% Mythical
+                else {
+                    const mythicalCrops = crops.filter(crop => crop.rarity === RARITY.MYTHICAL);
+                    const randomCrop = mythicalCrops[Math.floor(Math.random() * mythicalCrops.length)];
+                    const quantity = 1; // vždy jen 1
+                    
+                    return {
+                        type: 'crop',
+                        cropId: randomCrop.id,
+                        cropName: randomCrop.name,
+                        cropIcon: randomCrop.icon,
+                        quantity: quantity,
+                        isSpecial: true,
+                        message: `MYTHICAL! Získal jsi ${quantity}x ${randomCrop.name}`
+                    };
+                }
+            }
+
+            // Generování odměny pro Mythical Box
+            function generateMythicalBoxReward() {
+                const random = Math.random() * 100;
+                
+                // 94% Mythical
+                if (random < 94) {
+                    const mythicalCrops = crops.filter(crop => crop.rarity === RARITY.MYTHICAL);
+                    const randomCrop = mythicalCrops[Math.floor(Math.random() * mythicalCrops.length)];
+                    const quantity = 1; // vždy jen 1
+    
+                    return {
+                        type: 'crop',
+                        cropId: randomCrop.id,
+                        cropName: randomCrop.name,
+                        cropIcon: randomCrop.icon,
+                        quantity: quantity,
+                        isSpecial: true,
+                        message: `MYTHICAL! Získal jsi ${quantity}x ${randomCrop.name}`
+                    };
+                }
+                // 5% Legendary
+                else if (random < 99) {
+                    const legendaryCrops = crops.filter(crop => crop.rarity === RARITY.LEGENDARY);
+                    const randomCrop = legendaryCrops[Math.floor(Math.random() * legendaryCrops.length)];
+                    const quantity = 1; // vždy jen 1
+                    
+                    return {
+                        type: 'crop',
+                        cropId: randomCrop.id,
+                        cropName: randomCrop.name,
+                        cropIcon: randomCrop.icon,
+                        quantity: quantity,
+                        isSpecial: true,
+                        message: `LEGENDARY! Získal jsi ${quantity}x ${randomCrop.name}`
+                    };
+                }
+                // 1% Event
+                else {
+                    const eventCrops = crops.filter(crop => crop.rarity === RARITY.EVENT);
+                    const randomCrop = eventCrops[Math.floor(Math.random() * eventCrops.length)];
+                    const quantity = 1; // vždy jen 1
+                    
+                    return {
+                        type: 'crop',
+                        cropId: randomCrop.id,
+                        cropName: randomCrop.name,
+                        cropIcon: randomCrop.icon,
+                        quantity: quantity,
+                        isSpecial: true,
+                        message: `EVENT! Získal jsi ${quantity}x ${randomCrop.name}`
+                    };
+                }
+            }
+
+            // Generování odměny pro Event Box
+            function generateEventBoxReward() {
+                const random = Math.random() * 100;
+                
+                // 60% Event
+                if (random < 60) {
+                    const eventCrops = crops.filter(crop => crop.rarity === RARITY.EVENT);
+                    const randomCrop = eventCrops[Math.floor(Math.random() * eventCrops.length)];
+                    const quantity = 1; // vždy jen 1
+
+                    return {
+                        type: 'crop',
+                        cropId: randomCrop.id,
+                        cropName: randomCrop.name,
+                        cropIcon: randomCrop.icon,
+                        quantity: quantity,
+                        isSpecial: true,
+                        message: `EVENT! Získal jsi ${quantity}x ${randomCrop.name}`
+                    };
+                }
+                // 20% Mythical
+                else if (random < 80) {
+                    const mythicalCrops = crops.filter(crop => crop.rarity === RARITY.MYTHICAL);
+                    const randomCrop = mythicalCrops[Math.floor(Math.random() * mythicalCrops.length)];
+                    const quantity = 1; // vždy jen 1
+
+                    return {
+                        type: 'crop',
+                        cropId: randomCrop.id,
+                        cropName: randomCrop.name,
+                        cropIcon: randomCrop.icon,
+                        quantity: quantity,
+                        isSpecial: true,
+                        message: `MYTHICAL! Získal jsi ${quantity}x ${randomCrop.name}`
+                    };
+                }
+                // 15% Legendary
+                else if (random < 95) {
+                    const legendaryCrops = crops.filter(crop => crop.rarity === RARITY.LEGENDARY);
+                    const randomCrop = legendaryCrops[Math.floor(Math.random() * legendaryCrops.length)];
+                    const quantity = 1; // vždy jen 1
+
+                    return {
+                        type: 'crop',
+                        cropId: randomCrop.id,
+                        cropName: randomCrop.name,
+                        cropIcon: randomCrop.icon,
+                        quantity: quantity,
+                        isSpecial: true,
+                        message: `LEGENDARY! Získal jsi ${quantity}x ${randomCrop.name}`
+                    };
+                }
+                // 5% Rare
+                else {
+                    const rareCrops = crops.filter(crop => crop.rarity === RARITY.RARE);
+                    const randomCrop = rareCrops[Math.floor(Math.random() * rareCrops.length)];
+                    const quantity = Math.floor(Math.random() * 2) + 1; // 1-2 ks
+
+                    return {
+                        type: 'crop',
+                        cropId: randomCrop.id,
+                        cropName: randomCrop.name,
+                        cropIcon: randomCrop.icon,
+                        quantity: quantity,
+                        isSpecial: true,
+                        message: `VZÁCNÉ! Získal jsi ${quantity}x ${randomCrop.name}`
+                    };
+                }
+            }
+
+            // Aplikování odměny
+            function applyReward(reward) {
+                switch (reward.type) {
+                    case 'crop':
+                        if (!gameState.inventory[reward.cropId]) {
+                            gameState.inventory[reward.cropId] = 0;
+                        }
+                        gameState.inventory[reward.cropId] += reward.quantity;
+                        
+                        const crop = crops.find(c => c.id === reward.cropId);
+                        if (crop && !crop.unlocked) {
+                            crop.unlocked = true;
+                        }
+                        break;
+                        
+                    case 'money':
+                        gameState.money += reward.amount;
+                        break;
+                        
+                    case 'level':
+                        for (let i = 0; i < reward.amount; i++) {
+                            gameState.level++;
+                            gameState.xp = 0;
+                        }
+                        break;
+                }
+                
+                // Pokud je aktivní sdílený inventář, uložit odměnu i do něj
+                if (sharedInventory.enabled && reward.type === 'crop') {
+                    if (!sharedInventory.items[reward.cropId]) {
+                        sharedInventory.items[reward.cropId] = 0;
+                    }
+                    sharedInventory.items[reward.cropId] += reward.quantity;
+                    saveSharedInventory();
+                }
+            }
+
+            // Otevření boxu
+            function openBox(boxType) {
+                if (!gameState.inventory[boxType] || gameState.inventory[boxType] <= 0) {
+                    showSaveIndicator('Nemáš tento box!', true);
+                    return;
+                }
+                
+                gameState.inventory[boxType]--;
+                
+                let reward;
+                let boxTitle;
+                
+                switch(boxType) {
+                    case 'commonBox':
+                        reward = generateCommonBoxReward();
+                        boxTitle = 'Common Box';
+                        break;
+                    case 'uncommonBox':
+                        reward = generateUncommonBoxReward();
+                        boxTitle = 'Uncommon Box';
+                        break;
+                    case 'rareBox':
+                        reward = generateRareBoxReward();
+                        boxTitle = 'Rare Box';
+                        break;
+                    case 'legendaryBox':
+                        reward = generateLegendaryBoxReward();
+                        boxTitle = 'Legendary Box';
+                        break;
+                    case 'mythicalBox':
+                        reward = generateMythicalBoxReward();
+                        boxTitle = 'Mythical Box';
+                        break;
+                    case 'eventBox':
+                        reward = generateEventBoxReward();
+                        boxTitle = 'Event Box';
+                        break;
+                    case 'dailyBox':
+                        reward = generateDailyBoxReward();
+                        boxTitle = 'Daily Box';
+                        break;
+                    default:
+                        reward = generateCommonBoxReward();
+                        boxTitle = 'Box';
+                }
+                
+                applyReward(reward);
+                
+                // Zobrazení odměny
+                document.getElementById('box-title').innerHTML = `<i class="fas fa-gift"></i> ${boxTitle}`;
+                document.getElementById('box-reward').textContent = reward.type === 'crop' ? reward.cropIcon : 
+                    reward.type === 'money' ? '💰' : '⭐';
+                document.getElementById('box-message').textContent = reward.message;
+                document.getElementById('box-details').textContent = reward.type === 'crop' ? 
+                    `${reward.quantity}x ${reward.cropName}` : 
+                    reward.type === 'money' ? `${reward.amount} 💸` : `${reward.amount} levelů`;
+                
+                openBoxModal.style.display = 'flex';
+                updateUI();
+                saveGame();
+                checkUnlocks();
+            }
+
+            // Koupit box
+            function buyBox(boxType) {
+                const box = BOX_TYPES[boxType];
+                
+                if (gameState.money >= box.cost) {
+                    gameState.money -= box.cost;
+                    if (!gameState.inventory[boxType]) gameState.inventory[boxType] = 0;
+                    gameState.inventory[boxType]++;
+                    
+                    updateUI();
+                    saveGame();
+                    showSaveIndicator(`Zakoupen ${box.name} za ${box.cost.toLocaleString()} 💸!`);
+                    
+                    // Zavřít modal obchodu
+                    boxShopModal.style.display = 'none';
+                } else {
+                    showSaveIndicator(`Nemáš dostatek 💸! Potřebuješ ${box.cost.toLocaleString()}`, true);
+                }
+            }
+
+            // Zobrazení obchodu s boxy
+            function renderBoxShop() {
+                boxShopItemsElement.innerHTML = '';
+                
+                Object.keys(BOX_TYPES).forEach(boxType => {
+                    const box = BOX_TYPES[boxType];
+                    // Skrýt dailyBox z obchodu (ten je jen jako denní odměna)
+                    if (boxType === 'dailyBox') return;
+                    
+                    const canAfford = gameState.money >= box.cost;
+                    
+                    let rewardsInfo = '';
+                    switch(boxType) {
+                        case 'commonBox':
+                            rewardsInfo = '90% Common, 10% Uncommon plodiny';
+                            break;
+                        case 'uncommonBox':
+                            rewardsInfo = '80% Uncommon, 10% Common, 10% Rare';
+                            break;
+                        case 'rareBox':
+                            rewardsInfo = '83% Rare, 10% Uncommon, 5% Common, 3% Legendary';
+                            break;
+                        case 'legendaryBox':
+                            rewardsInfo = '85% Legendary, 10% Rare, 5% Mythical';
+                            break;
+                        case 'mythicalBox':
+                            rewardsInfo = '94% Mythical, 5% Legendary, 1% Event';
+                            break;
+                        case 'eventBox':
+                            rewardsInfo = '60% Event, 20% Mythical, 15% Legendary, 5% Rare';
+                            break;
+                        case 'dailyBox':
+                            rewardsInfo = 'Různé odměny - peníze, plodiny, levely, event plodiny';
+                            break;
+                    }
+                    
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'box-shop-item';
+                    
+                    itemElement.innerHTML = `
+                        <div class="box-shop-icon">${box.icon}</div>
+                        <div class="box-shop-name">${box.name}</div>
+                        <div class="box-shop-description">${box.description}</div>
+                        <div class="box-shop-rewards">${rewardsInfo}</div>
+                        <div class="box-shop-cost">${box.cost > 0 ? `${box.cost.toLocaleString()} <span>💸</span>` : 'ZDARMA (denní odměna)'}</div>
+                        ${box.cost > 0 ? `<button class="buy-box-button" style="margin-top: 10px; background: #4caf50;" ${!canAfford ? 'disabled' : ''}>
+                            Koupit
+                        </button>` : ''}
+                    `;
+                    
+                    if (box.cost > 0) {
+                        const buyButton = itemElement.querySelector('.buy-box-button');
+                        buyButton.addEventListener('click', () => {
+                            buyBox(boxType);
+                        });
+                    }
+                    
+                    boxShopItemsElement.appendChild(itemElement);
+                });
+            }
+
+            // Zobrazení inventáře
+            function renderInventory(filter = lastInventoryFilter) {
+                inventoryItemsElement.innerHTML = '';
+                
+                // Uložit aktuální filtr
+                saveLastInventoryFilter(filter);
+                
+                // Filtry
+                document.querySelectorAll('.inventory-filter').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector(`.inventory-filter[data-filter="${filter}"]`).classList.add('active');
+                
+                let hasItems = false;
+                
+                // VŠE
+                if (filter === 'all') {
+                    // Zobrazit boxy
+                    Object.keys(BOX_TYPES).forEach(boxType => {
+                        if (gameState.inventory[boxType] > 0) {
+                            hasItems = true;
+                            const boxElement = createBoxElement(boxType, gameState.inventory[boxType]);
+                            inventoryItemsElement.appendChild(boxElement);
+                        }
+                    });
+                    
+                    // Zobrazit plodiny
+                    Object.keys(gameState.inventory).forEach(key => {
+                        const quantity = gameState.inventory[key];
+                        
+                        // Přeskočit boxy (už jsou zobrazeny)
+                        if (Object.keys(BOX_TYPES).includes(key)) return;
+                        
+                        if (quantity > 0) {
+                            const cropId = parseInt(key);
+                            const crop = crops.find(c => c.id === cropId);
+                            
+                            if (!crop) return;
+                            
+                            hasItems = true;
+                            
+                            const itemElement = document.createElement('div');
+                            itemElement.className = 'inventory-item';
+                            
+                            const isFavorited = gameState.favoriteCrops.includes(cropId);
+                            const rarityClass = `rarity-${crop.rarity}`;
+                            const rarityBadgeClass = `rarity-badge ${crop.rarity}`;
+                            const rarityText = getRarityText(crop.rarity);
+                            
+                            itemElement.innerHTML = `
+                                <div class="inventory-item-info">
+                                    <div class="inventory-icon">${crop.icon} ${isFavorited ? '⭐' : ''}</div>
+                                    <div class="inventory-details">
+                                        <div class="inventory-name ${rarityClass}">${crop.name}</div>
+                                        <div class="inventory-description">Množství: ${quantity}</div>
+                                        <div class="${rarityBadgeClass}">${rarityText}</div>
+                                    </div>
+                                </div>
+                                <div class="inventory-actions">
+                                    <button class="favorite-button" style="background: #2196f3;">${isFavorited ? 'Odebrat z oblíbených' : 'Přidat do oblíbených'}</button>
+                                </div>
+                            `;
+                            
+                            const favoriteButton = itemElement.querySelector('.favorite-button');
+                            
+                            favoriteButton.addEventListener('click', () => {
+                                toggleFavoriteCrop(cropId);
+                                renderInventory(filter);
+                            });
+                            
+                            inventoryItemsElement.appendChild(itemElement);
+                        }
+                    });
+                }
+                
+                // OBLÍBENÉ
+                else if (filter === 'favorites') {
+                    gameState.favoriteCrops.forEach(cropId => {
+                        const quantity = gameState.inventory[cropId] || 0;
+                        
+                        if (quantity > 0) {
+                            const crop = crops.find(c => c.id === cropId);
+                            if (!crop) return;
+                            
+                            hasItems = true;
+                            
+                            const itemElement = document.createElement('div');
+                            itemElement.className = 'inventory-item';
+                            
+                            const rarityClass = `rarity-${crop.rarity}`;
+                            const rarityBadgeClass = `rarity-badge ${crop.rarity}`;
+                            const rarityText = getRarityText(crop.rarity);
+                            
+                            itemElement.innerHTML = `
+                                <div class="inventory-item-info">
+                                    <div class="inventory-icon">${crop.icon} ⭐</div>
+                                    <div class="inventory-details">
+                                        <div class="inventory-name ${rarityClass}">${crop.name}</div>
+                                        <div class="inventory-description">Množství: ${quantity}</div>
+                                        <div class="${rarityBadgeClass}">${rarityText}</div>
+                                    </div>
+                                </div>
+                                <div class="inventory-actions">
+                                    <button class="unfavorite-button" style="background: #ff9800;">Odebrat z oblíbených</button>
+                                </div>
+                            `;
+                            
+                            const unfavoriteButton = itemElement.querySelector('.unfavorite-button');
+                            
+                            unfavoriteButton.addEventListener('click', () => {
+                                toggleFavoriteCrop(cropId);
+                                renderInventory(filter);
+                            });
+                            
+                            inventoryItemsElement.appendChild(itemElement);
+                        }
+                    });
+                }
+                
+                // TRŽIŠTĚ
+                else if (filter === 'market') {
+                    Object.keys(gameState.inventory).forEach(key => {
+                        const quantity = gameState.inventory[key];
+                        
+                        // Přeskočit boxy v režimu TRŽIŠTĚ
+                        if (Object.keys(BOX_TYPES).includes(key)) return;
+                        
+                        if (quantity > 0) {
+                            const cropId = parseInt(key);
+                            const crop = crops.find(c => c.id === cropId);
+                            
+                            if (!crop) return;
+                            
+                            // Přeskočit oblíbené plodiny
+                            if (gameState.favoriteCrops.includes(cropId)) {
+                                return;
+                            }
+                            
+                            hasItems = true;
+                            
+                            const sellPrice = Math.round(crop.sellPrice * gameState.sellMultiplier);
+                            const totalPrice = sellPrice * quantity;
+                            const rarityClass = `rarity-${crop.rarity}`;
+                            const rarityBadgeClass = `rarity-badge ${crop.rarity}`;
+                            const rarityText = getRarityText(crop.rarity);
+                            
+                            const itemElement = document.createElement('div');
+                            itemElement.className = 'inventory-item';
+                            
+                            itemElement.innerHTML = `
+                                <div class="inventory-item-info">
+                                    <div class="inventory-icon">${crop.icon}</div>
+                                    <div class="inventory-details">
+                                        <div class="inventory-name ${rarityClass}">${crop.name}</div>
+                                        <div class="inventory-description">Množství: ${quantity} | Cena: ${sellPrice} za kus</div>
+                                        <div class="${rarityBadgeClass}">${rarityText}</div>
+                                    </div>
+                                </div>
+                                <div class="inventory-actions">
+                                    <button class="sell-button" style="background: #4caf50;">Prodat všechny (${totalPrice} 💸)</button>
+                                    <button class="sell-one-button" style="background: #2196f3;">Prodat 1 (${sellPrice} 💸)</button>
+                                </div>
+                            `;
+                            
+                            const sellButton = itemElement.querySelector('.sell-button');
+                            const sellOneButton = itemElement.querySelector('.sell-one-button');
+                            
+                            sellButton.addEventListener('click', () => {
+                                const totalSellPrice = sellPrice * quantity;
+                                gameState.money += totalSellPrice;
+                                delete gameState.inventory[key];
+                                updateUI();
+                                renderInventory(filter);
+                                showSaveIndicator(`Prodáno: ${quantity}x ${crop.name} za ${totalSellPrice.toLocaleString()} 💸`);
+                                saveGame();
+                            });
+                            
+                            sellOneButton.addEventListener('click', () => {
+                                if (quantity > 1) {
+                                    gameState.inventory[key] = quantity - 1;
+                                    gameState.money += sellPrice;
+                                    showSaveIndicator(`Prodáno: 1x ${crop.name} za ${sellPrice} 💸`);
+                                } else {
+                                    gameState.money += sellPrice;
+                                    delete gameState.inventory[key];
+                                    showSaveIndicator(`Prodáno: 1x ${crop.name} za ${sellPrice} 💸`);
+                                }
+                                updateUI();
+                                renderInventory(filter);
+                                saveGame();
+                            });
+                            
+                            inventoryItemsElement.appendChild(itemElement);
+                        }
+                    });
+                }
+                
+                // BOXY
+                else if (filter === 'boxes') {
+                    Object.keys(BOX_TYPES).forEach(boxType => {
+                        if (gameState.inventory[boxType] > 0) {
+                            hasItems = true;
+                            const boxElement = createBoxElement(boxType, gameState.inventory[boxType]);
+                            inventoryItemsElement.appendChild(boxElement);
+                        }
+                    });
+                    
+                    if (!hasItems) {
+                        inventoryItemsElement.innerHTML = '<p style="text-align: center; padding: 20px;">Nemáš žádné boxy. Navštiv Obchod s boxy!</p>';
+                    }
+                }
+                
+                if (!hasItems && filter !== 'boxes') {
+                    let message = '';
+                    if (filter === 'all') message = 'Inventář je prázdný.';
+                    else if (filter === 'favorites') message = 'Nemáš žádné oblíbené položky.';
+                    else if (filter === 'market') message = 'Nemáš žádné položky k prodeji.';
+                    
+                    inventoryItemsElement.innerHTML = `<p style="text-align: center; padding: 20px;">${message}</p>`;
+                }
+            }
+
+            // Získání textu pro rarity
+            function getRarityText(rarity) {
+                switch(rarity) {
+                    case RARITY.COMMON: return 'COMMON';
+                    case RARITY.UNCOMMON: return 'UNCOMMON';
+                    case RARITY.RARE: return 'RARE';
+                    case RARITY.LEGENDARY: return 'LEGENDARY';
+                    case RARITY.MYTHICAL: return 'MYTHICAL';
+                    case RARITY.EVENT: return 'EVENT';
+                    default: return 'COMMON';
+                }
+            }
+
+            // Vytvoření elementu boxu
+            function createBoxElement(boxType, count) {
+                const box = BOX_TYPES[boxType];
+                const element = document.createElement('div');
+                element.className = 'box-item';
+                
+                element.innerHTML = `
+                    <div class="box-icon">${box.icon}</div>
+                    <div class="box-name">${box.name}</div>
+                    <div class="box-description">${box.description}</div>
+                    <div class="box-count">Máš: ${count}</div>
+                    <button class="open-box-button" style="margin-top: 10px; background: #ff9800;">Otevřít</button>
+                `;
+                
+                const openButton = element.querySelector('.open-box-button');
+                openButton.addEventListener('click', () => {
+                    openBox(boxType);
+                    // Zůstat ve stejné sekci po otevření boxu
+                    setTimeout(() => {
+                        renderInventory(lastInventoryFilter);
+                    }, 100);
+                });
+                
+                return element;
+            }
+
+            // Vykreslení profilů
+            function renderProfiles() {
+                profilesElement.innerHTML = '';
+                
+                for (let i = 1; i <= MAX_PROFILES; i++) {
+                    const isActive = gameState.currentProfile === i;
+                    const isUnlocked = true; // Vždy odemčeno - pouze 3 profily
+                    const profileKey = SAVE_KEY_PREFIX + i;
+                    const savedGame = localStorage.getItem(profileKey);
+                    
+                    let profileInfo = 'Prázdný profil';
+                    if (savedGame) {
+                        try {
+                            const gameData = JSON.parse(savedGame);
+                            profileInfo = `Level ${gameData.level}, ${gameData.money.toLocaleString()} 💸`;
+                        } catch (e) {
+                            profileInfo = 'Poškozený profil';
+                        }
+                    }
+                    
+                    const profileElement = document.createElement('div');
+                    profileElement.className = `profile-item ${isActive ? 'active' : ''}`;
+                    profileElement.dataset.profile = i;
+                    
+                    profileElement.innerHTML = `
+                        <div class="profile-icon"><i class="fas fa-user"></i></div>
+                        <div class="profile-name">${profileNames[i-1]}</div>
+                        <div class="profile-info">${profileInfo}</div>
+                        ${isActive ? '<div style="color: #4caf50; font-weight: bold; margin-top: 5px; font-size: 0.7rem;">AKTIVNÍ</div>' : ''}
+                        <div class="profile-actions">
+                            ${!isActive ? '<button class="switch-profile" style="background: #4caf50;">Přepnout</button>' : ''}
+                            ${savedGame ? '<button class="rename-profile rename-profile-btn">Přejmenovat</button>' : ''}
+                            ${savedGame && !isActive ? '<button class="delete-profile delete-profile-btn">Smazat</button>' : ''}
+                        </div>
+                    `;
+                    
+                    const switchButton = profileElement.querySelector('.switch-profile');
+                    const renameButton = profileElement.querySelector('.rename-profile-btn');
+                    const deleteButton = profileElement.querySelector('.delete-profile-btn');
+                    
+                    if (switchButton) {
+                        switchButton.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            switchProfile(i);
+                        });
+                    }
+                    
+                    if (renameButton) {
+                        renameButton.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            openRenameProfileModal(i);
+                        });
+                    }
+                    
+                    if (deleteButton) {
+                        deleteButton.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            deleteProfile(i);
+                        });
+                    }
+                    
+                    profileElement.addEventListener('click', () => {
+                        if (!isActive) {
+                            switchProfile(i);
+                        }
+                    });
+                    
+                    profilesElement.appendChild(profileElement);
+                }
+            }
+
+            // Přepnutí profilu
+            function switchProfile(profileId) {
+                if (profileId === gameState.currentProfile) return;
+                
+                // Uložit aktuální hru
+                saveGame();
+                
+                // Načíst nový profil
+                gameState.currentProfile = profileId;
+                loadGame();
+                
+                updateUI();
+                renderFarm();
+                renderCrops();
+                renderAnimals();
+                renderProfiles();
+                updateSeason();
+                checkUnlocks();
+                updateDailyGiftUI();
+                
+                showSaveIndicator(`Přepnuto na ${profileNames[profileId-1]}`);
+            }
+
+            // Smazat profil
+            function deleteProfile(profileId) {
+                if (profileId === gameState.currentProfile) {
+                    showSaveIndicator('Nemůžeš smazat aktuálně aktivní profil!', true);
+                    return;
+                }
+                
+                if (confirm(`Opravdu chceš smazat profil "${profileNames[profileId-1]}"? Tato akce je nevratná!`)) {
+                    localStorage.removeItem(SAVE_KEY_PREFIX + profileId);
+                    
+                    renderProfiles();
+                    showSaveIndicator(`Profil ${profileNames[profileId-1]} byl smazán.`);
+                }
+            }
+
+            // Otevření modalu pro přejmenování profilu
+            function openRenameProfileModal(profileId) {
+                profileToRename = profileId;
+                profileNameInput.value = profileNames[profileId-1];
+                renameProfileModal.style.display = 'flex';
+            }
+
+            // Přejmenování profilu
+            function renameProfile() {
+                if (!profileToRename) return;
+                
+                const newName = profileNameInput.value.trim();
+                if (!newName) {
+                    showSaveIndicator('Jméno profilu nemůže být prázdné!', true);
+                    return;
+                }
+                
+                if (newName.length > 20) {
+                    showSaveIndicator('Jméno profilu je příliš dlouhé!', true);
+                    return;
+                }
+                
+                // Aktualizovat jméno
+                profileNames[profileToRename-1] = newName;
+                saveProfileNames();
+                
+                renderProfiles();
+                renameProfileModal.style.display = 'none';
+                showSaveIndicator(`Profil přejmenován na "${newName}"`);
+                
+                profileToRename = null;
+            }
+
+            // Aktualizace UI pro daily gifts
+            function updateDailyGiftUI() {
+                const pendingBoxes = dailyGiftSettings.pendingBoxes;
+                
+                if (pendingBoxes > 0) {
+                    giftStatusElement.textContent = `Čeká ${pendingBoxes} Daily Boxů! (Klikni pro vyzvednutí)`;
+                    dailyGiftInfoElement.style.background = '#fff3e0';
+                    dailyGiftInfoElement.style.borderColor = '#ffb300';
+                    dailyGiftInfoElement.style.cursor = 'pointer';
+                    
+                    // Přidat event listener pro kliknutí
+                    dailyGiftInfoElement.onclick = claimPendingDailyBoxes;
+                } else {
+                    const today = new Date().toDateString();
+                    const lastClaimed = dailyGiftSettings.lastClaimedDate ? 
+                        new Date(dailyGiftSettings.lastClaimedDate).toDateString() : null;
+                    
+                    if (lastClaimed === today) {
+                        giftStatusElement.textContent = 'Dnes již získáno!';
+                        dailyGiftInfoElement.style.background = '#e8f5e9';
+                        dailyGiftInfoElement.style.borderColor = '#4caf50';
+                    } else {
+                        giftStatusElement.textContent = 'Dnes dostupný!';
+                        dailyGiftInfoElement.style.background = '#fff3e0';
+                        dailyGiftInfoElement.style.borderColor = '#ffb300';
+                    }
+                    dailyGiftInfoElement.onclick = null;
+                    dailyGiftInfoElement.style.cursor = 'default';
+                }
+                
+                if (document.body.classList.contains('dark-mode')) {
+                    if (pendingBoxes > 0) {
+                        dailyGiftInfoElement.style.background = '#5d4037';
+                    } else {
+                        const today = new Date().toDateString();
+                        const lastClaimed = dailyGiftSettings.lastClaimedDate ? 
+                            new Date(dailyGiftSettings.lastClaimedDate).toDateString() : null;
+                        
+                        if (lastClaimed === today) {
+                            dailyGiftInfoElement.style.background = '#2d4a2d';
+                        } else {
+                            dailyGiftInfoElement.style.background = '#5d4037';
+                        }
+                    }
+                }
+            }
+
+            // Aktualizace upozornění na sdílený inventář
+            function updateSharedInventoryNotice() {
+                if (sharedInventory.enabled) {
+                    sharedInventoryNotice.style.display = 'block';
+                } else {
+                    sharedInventoryNotice.style.display = 'none';
+                }
+            }
+
+            // Spuštění časovače
+            function startDayTimer() {
+                clearInterval(dayTimer);
+                
+                dayTimerRemaining = DAY_TIMER_DURATION;
+                dayTimerEndTime = Date.now() + DAY_TIMER_DURATION;
+                
+                updateTimerButton();
+                nextDayTimerButton.disabled = true;
+                
+                dayTimer = setInterval(updateTimer, 100);
+            }
+
+            // Aktualizace časovače
+            function updateTimer() {
+                const now = Date.now();
+                dayTimerRemaining = Math.max(0, dayTimerEndTime - now);
+                
+                updateTimerButton();
+                
+                if (dayTimerRemaining <= 0) {
+                    clearInterval(dayTimer);
+                    nextDayTimerButton.disabled = false;
+                    timerTextElement.textContent = 'Další Den';
+                    
+                    nextDayTimerButton.onclick = () => {
+                        nextDay();
+                        startDayTimer();
+                        showSaveIndicator('Manuálně uběhl den!');
+                    };
+                }
+            }
+
+            // Aktualizace tlačítka časovače
+            function updateTimerButton() {
+                if (dayTimerRemaining > 0) {
+                    const seconds = Math.ceil(dayTimerRemaining / 1000);
+                    timerTextElement.textContent = `Další Den (${seconds}s)`;
+                    
+                    const progress = 100 - (dayTimerRemaining / DAY_TIMER_DURATION * 100);
+                    nextDayTimerButton.style.background = `linear-gradient(90deg, #ff9800 ${progress}%, #f57c00 ${progress}%)`;
+                } else {
+                    timerTextElement.textContent = 'Další Den';
+                    nextDayTimerButton.style.background = 'linear-gradient(135deg, #ff9800, #f57c00)';
+                }
+            }
+
+            // Získání aktuálního ročního období
+            function getCurrentRealSeason() {
+                const now = new Date();
+                const month = now.getMonth();
+                return REAL_SEASONS[month];
+            }
+
+            // Aktualizace ročního období
+            function updateSeason() {
+                const season = getCurrentRealSeason();
+                gameState.currentSeason = season;
+                seasonElement.textContent = season.name;
+                seasonElement.className = `season-indicator ${season.class}`;
+                seasonIconElement.textContent = season.icon;
+            }
+
+            // Vykreslení farmy
+            function renderFarm() {
+                farmElement.innerHTML = '';
+                for (let i = 0; i < gameState.farmSize; i++) {
+                    const plot = document.createElement('div');
+                    plot.className = `plot ${gameState.farm[i]?.state || 'empty'}`;
+                    plot.dataset.index = i;
+                    
+                    if (gameState.farm[i]?.state === 'empty') {
+                        plot.innerHTML = '<i class="fas fa-seedling"></i>';
+                    } else if (gameState.farm[i]?.state === 'planted') {
+                        const crop = crops.find(c => c.id === gameState.farm[i].cropId);
+                        plot.innerHTML = `
+                            <div>${crop?.icon || '🌱'}</div>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: ${gameState.farm[i].progress}%"></div>
+                            </div>
+                        `;
+                    } else if (gameState.farm[i]?.state === 'ready') {
+                        const crop = crops.find(c => c.id === gameState.farm[i].cropId);
+                        plot.innerHTML = `<div>${crop?.icon || '🌱'}</div><small>SKLIDIT</small>`;
+                    } else if (gameState.farm[i]?.state === 'withered') {
+                        plot.innerHTML = '<div>🌵</div><small>USCHLÉ</small>';
+                    }
+                    
+                    plot.addEventListener('click', () => handlePlotClick(i));
+                    farmElement.appendChild(plot);
+                }
+            }
+
+            // Kliknutí na pole
+            function handlePlotClick(index) {
+                const plot = gameState.farm[index];
+                
+                if (plot.state === 'empty' && gameState.selectedCrop) {
+                    const crop = crops.find(c => c.id === gameState.selectedCrop);
+                    
+                    if (crop.rarity === RARITY.EVENT && crop.id === 50) {
+                        // Lebka nemá žádný limit nákupu
+                    }
+                    
+                    if (gameState.money >= crop.cost) {
+                        gameState.money -= crop.cost;
+                        plot.state = 'planted';
+                        plot.cropId = crop.id;
+                        plot.progress = 0;
+                        
+                        if (crop.rarity === RARITY.EVENT) {
+                            gameState.eventSeedsPlanted++;
+                            gameState.eventSeedsBought++;
+                        }
+                        
+                        const baseGrowTime = crop.growTime;
+                        const seasonMultiplier = gameState.currentSeason.multiplier;
+                        const upgradeMultiplier = gameState.growthMultiplier;
+                        const totalMultiplier = seasonMultiplier * upgradeMultiplier;
+                        
+                        const hasMagicalSoil = gameState.upgrades.includes(15);
+                        
+                        if (crop.rarity === RARITY.EVENT) {
+                            plot.growTime = Math.max(1, Math.round(baseGrowTime / totalMultiplier));
+                        } else if (hasMagicalSoil) {
+                            plot.growTime = 1;
+                            plot.progress = 99;
+                        } else {
+                            plot.growTime = Math.max(1, Math.round(baseGrowTime / totalMultiplier));
+                        }
+                        
+                        plot.daysPlanted = gameState.day;
+                        
+                        updateUI();
+                        renderFarm();
+                        renderCrops();
+                        showSaveIndicator(`Vysazeno: ${crop.name}`);
+                        saveGame();
+                    } else {
+                        showSaveIndicator('Nemáš dostatek peněz!', true);
+                    }
+                } else if (plot.state === 'ready') {
+                    const crop = crops.find(c => c.id === plot.cropId);
+                    if (crop) {
+                        if (!gameState.inventory[crop.id]) {
+                            gameState.inventory[crop.id] = 0;
+                        }
+                        gameState.inventory[crop.id]++;
+                        
+                        // Pokud je aktivní sdílený inventář, uložit i do něj
+                        if (sharedInventory.enabled) {
+                            if (!sharedInventory.items[crop.id]) {
+                                sharedInventory.items[crop.id] = 0;
+                            }
+                            sharedInventory.items[crop.id]++;
+                            saveSharedInventory();
+                        }
+                        
+                        addXP(crop.xp);
+                        
+                        if (crop.rarity === RARITY.EVENT) {
+                            gameState.eventSeedsPlanted--;
+                        }
+                        
+                        plot.state = 'empty';
+                        plot.progress = 0;
+                        delete plot.cropId;
+                        
+                        updateUI();
+                        renderFarm();
+                        showSaveIndicator(`Sklizeno: ${crop.name}`);
+                        saveGame();
+                    }
+                } else if (plot.state === 'withered') {
+                    const crop = crops.find(c => c.id === plot.cropId);
+                    
+                    if (crop && crop.rarity === RARITY.EVENT) {
+                        gameState.eventSeedsPlanted--;
+                    }
+                    
+                    plot.state = 'empty';
+                    plot.progress = 0;
+                    delete plot.cropId;
+                    updateUI();
+                    renderFarm();
+                    showSaveIndicator('Uschlá plodina odstraněna');
+                    saveGame();
+                }
+            }
+
+            // Přechod na další den
+            function nextDay() {
+                gameState.day++;
+                gameState.lastAutoDay = Date.now();
+                
+                if (gameState.day % 30 === 0) {
+                    updateSeason();
+                }
+                
+                let anyGrowth = false;
+                gameState.farm.forEach(plot => {
+                    if (plot.state === 'planted') {
+                        const crop = crops.find(c => c.id === plot.cropId);
+                        if (crop) {
+                            const hasMagicalSoil = gameState.upgrades.includes(15);
+                            
+                            if (crop.rarity === RARITY.EVENT) {
+                                const baseGrowthRate = 100 / plot.growTime;
+                                const seasonMultiplier = gameState.currentSeason.multiplier;
+                                const upgradeMultiplier = gameState.growthMultiplier;
+                                const totalMultiplier = seasonMultiplier * upgradeMultiplier;
+                                const growthRate = baseGrowthRate * totalMultiplier;
+                                
+                                plot.progress += growthRate;
+                            } else if (hasMagicalSoil) {
+                                plot.progress = 100;
+                                plot.state = 'ready';
+                                anyGrowth = true;
+                            } else {
+                                const baseGrowthRate = 100 / plot.growTime;
+                                const seasonMultiplier = gameState.currentSeason.multiplier;
+                                const upgradeMultiplier = gameState.growthMultiplier;
+                                const totalMultiplier = seasonMultiplier * upgradeMultiplier;
+                                const growthRate = baseGrowthRate * totalMultiplier;
+                                
+                                plot.progress += growthRate;
+                            }
+                            
+                            if (plot.progress >= 100) {
+                                plot.state = 'ready';
+                                plot.progress = 100;
+                            }
+                            
+                            if (plot.state === 'ready' && gameState.day - plot.daysPlanted > plot.growTime + 3) {
+                                plot.state = 'withered';
+                            }
+                            
+                            anyGrowth = true;
+                        }
+                    }
+                });
+                
+                collectIncome();
+                
+                updateUI();
+                renderFarm();
+                
+                autoSave();
+            }
+
+            // Přidání XP
+            function addXP(amount) {
+                gameState.xp += amount;
+                const xpNeeded = gameState.level * 100;
+                
+                if (gameState.xp >= xpNeeded) {
+                    gameState.level++;
+                    gameState.xp = gameState.xp - xpNeeded;
+                    showLevelUpModal();
+                }
+                
+                updateUI();
+                checkUnlocks();
+            }
+
+            // Zobrazení modalu pro level up
+            function showLevelUpModal() {
+                const newLevelElement = document.getElementById('new-level');
+                const benefitsElement = document.getElementById('level-up-benefits');
+                
+                newLevelElement.textContent = gameState.level;
+                
+                let benefits = '';
+                if (gameState.level === 2) {
+                    benefits = 'Odemkl jsi brambory a králíky!';
+                } else if (gameState.level === 3) {
+                    benefits = 'Odemkl jsi kukuřici a ovce!';
+                } else if (gameState.level === 4) {
+                    benefits = 'Odemkl jsi jahody a kozy!';
+                } else if (gameState.level === 5) {
+                    benefits = 'Odemkl jsi dýně a krávu!';
+                } else if (gameState.level === 6) {
+                    benefits = 'Odemkl jsi brokolici a prase!';
+                } else if (gameState.level === 7) {
+                    benefits = 'Odemkl jsi papriky a koně!';
+                } else if (gameState.level === 8) {
+                    benefits = 'Odemkl jsi meloun a velblouda!';
+                } else if (gameState.level === 9) {
+                    benefits = 'Odemkl jsi ananas a slona!';
+                } else if (gameState.level === 10) {
+                    benefits = 'Odemkl jsi dračí ovoce a jednorožce!';
+                } else if (gameState.level === 12) {
+                    benefits = 'Odemkl jsi zlatou řepu a fénixa!';
+                } else if (gameState.level === 15) {
+                    benefits = 'Odemkl jsi křišťálové jablko a draka!';
+                } else if (gameState.level === 50) {
+                    benefits = 'Odemkl jsi zlatou slepici a mandarinku!';
+                } else if (gameState.level === 100) {
+                    benefits = 'Odemkl jsi zlatého králíka a kiwi!';
+                } else if (gameState.level === 150) {
+                    benefits = 'Odemkl jsi zlatou ovci a mango!';
+                } else if (gameState.level === 200) {
+                    benefits = 'Odemkl jsi MAGICKÉ SEMÍNKO a zlatou kozu!';
+                } else if (gameState.level === 300) {
+                    benefits = 'Odemkl jsi ZLATOU MRKEV!';
+                } else if (gameState.level === 400) {
+                    benefits = 'Odemkl jsi ZLATÉ BRAMBORY!';
+                } else {
+                    benefits = 'Získáváš bonusové peníze a nové možnosti!';
+                }
+                
+                benefitsElement.textContent = benefits;
+                levelUpModal.style.display = 'flex';
+            }
+
+            // Kontrola odemčení plodin a zvířat
+            function checkUnlocks() {
+                crops.forEach(crop => {
+                    crop.unlocked = gameState.level >= crop.unlockLevel;
+                });
+                
+                animals.forEach(animal => {
+                    animal.unlocked = gameState.level >= animal.unlockLevel;
+                });
+                
+                renderCrops();
+                renderAnimals();
+            }
+
+            // Vykreslení plodin
+            function renderCrops() {
+                cropsElement.innerHTML = '';
+                crops.forEach(crop => {
+                    // Upravená logika pro event plodiny s isSecret
+                    if (crop.rarity === RARITY.EVENT && crop.isSecret && gameState.level < 1000000000) {
+                        return;
+                    }
+                    
+                    const cropElement = document.createElement('div');
+                    const isFavorited = gameState.favoriteCrops.includes(crop.id);
+                    const rarityClass = `rarity-${crop.rarity}`;
+                    const rarityBadgeClass = `rarity-badge ${crop.rarity}`;
+                    const rarityText = getRarityText(crop.rarity);
+                    
+                    cropElement.className = `crop-item ${crop.unlocked ? '' : 'locked'} ${gameState.selectedCrop === crop.id ? 'selected' : ''} ${isFavorited ? 'favorited' : ''}`;
+                    
+                    if (crop.unlocked) {
+                        const canBuyEvent = crop.rarity !== RARITY.EVENT || (crop.rarity === RARITY.EVENT && crop.id === 50) || (crop.rarity === RARITY.EVENT && gameState.eventSeedsBought < MAX_SECRET_SEEDS);
+                        const canPlantEvent = crop.rarity !== RARITY.EVENT || (crop.rarity === RARITY.EVENT && crop.id === 50) || (crop.rarity === RARITY.EVENT && gameState.eventSeedsPlanted < MAX_SECRET_SEEDS);
+                        
+                        cropElement.innerHTML = `
+                            <div class="crop-icon">${crop.icon}</div>
+                            <div class="crop-name ${rarityClass}">${crop.name}</div>
+                            <div class="crop-cost">${crop.cost} <span>💸</span></div>
+                            <div class="crop-time">${crop.growTime} dní</div>
+                            <div class="${rarityBadgeClass}">${rarityText}</div>
+                            ${crop.rarity === RARITY.EVENT && crop.id === 50 ? `<div class="crop-locked">SPECIÁLNÍ EVENT</div>` : ''}
+                            <button class="favorite-toggle ${isFavorited ? 'favorited' : ''}">
+                                <i class="fas ${isFavorited ? 'fa-star' : 'fa-star'}"></i>
+                            </button>
+                        `;
+                        
+                        if (canBuyEvent && canPlantEvent) {
+                            cropElement.addEventListener('click', (e) => {
+                                if (!e.target.closest('.favorite-toggle')) {
+                                    selectCrop(crop.id);
+                                }
+                            });
+                            
+                            const favoriteButton = cropElement.querySelector('.favorite-toggle');
+                            favoriteButton.addEventListener('click', (e) => {
+                                e.stopPropagation();
+                                toggleFavoriteCrop(crop.id);
+                            });
+                        } else {
+                            cropElement.classList.add('locked');
+                            cropElement.style.cursor = 'not-allowed';
+                            if (crop.rarity === RARITY.EVENT && crop.id !== 50) {
+                                cropElement.title = `Můžeš koupit maximálně ${MAX_SECRET_SEEDS} event semínek za celou hru`;
+                            }
+                        }
+                    } else {
+                        cropElement.innerHTML = `
+                            <div class="crop-icon">${crop.icon}</div>
+                            <div class="crop-name ${rarityClass}">${crop.name}</div>
+                            <div class="${rarityBadgeClass}">${rarityText}</div>
+                            <div class="crop-locked">Level ${crop.unlockLevel}</div>
+                        `;
+                    }
+                    
+                    cropsElement.appendChild(cropElement);
+                });
+            }
+
+            // Přepnutí oblíbené plodiny
+            function toggleFavoriteCrop(cropId) {
+                const index = gameState.favoriteCrops.indexOf(cropId);
+                if (index === -1) {
+                    gameState.favoriteCrops.push(cropId);
+                    showSaveIndicator('Přidáno do oblíbených');
+                } else {
+                    gameState.favoriteCrops.splice(index, 1);
+                    showSaveIndicator('Odebráno z oblíbených');
+                }
+                renderCrops();
+                saveGame();
+            }
+
+            // Výběr plodiny
+            function selectCrop(cropId) {
+                gameState.selectedCrop = cropId;
+                const crop = crops.find(c => c.id === cropId);
+                selectedCropNameElement.textContent = crop.name;
+                selectedCropIconElement.textContent = crop.icon;
+                renderCrops();
+            }
+
+            // Vykreslení zvířat
+            function renderAnimals() {
+                animalsElement.innerHTML = '';
+                animals.forEach(animal => {
+                    const animalElement = document.createElement('div');
+                    const animalCount = gameState.animalCounts[animal.id] || 0;
+                    const canSell = animalCount > 0;
+                    const boostedIncome = Math.round(animal.income * gameState.animalIncomeMultiplier);
+                    
+                    animalElement.className = `animal-item ${animal.unlocked ? '' : 'locked'}`;
+                    
+                    if (animal.unlocked) {
+                        animalElement.innerHTML = `
+                            <div class="animal-icon">${animal.icon}</div>
+                            <div class="animal-name">${animal.name}</div>
+                            <div class="animal-cost">${animal.cost} <span>💸</span></div>
+                            <div class="animal-income">+${boostedIncome} 💸/den</div>
+                            ${animalCount > 0 ? `<div class="animal-count">Máš: ${animalCount}</div>` : ''}
+                            <div class="animal-actions">
+                                <button class="buy-animal">Koupit</button>
+                                ${canSell ? `<button class="sell-animal">Prodat 1 za ${Math.floor(animal.cost / 2)} <span>💸</span></button>` : ''}
+                            </div>
+                        `;
+                        
+                        const buyButton = animalElement.querySelector('.buy-animal');
+                        buyButton.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            buyAnimal(animal.id);
+                        });
+                        
+                        if (canSell) {
+                            const sellButton = animalElement.querySelector('.sell-animal');
+                            sellButton.addEventListener('click', (e) => {
+                                e.stopPropagation();
+                                sellAnimal(animal.id);
+                            });
+                        }
+                    } else {
+                        animalElement.innerHTML = `
+                            <div class="animal-icon">${animal.icon}</div>
+                            <div class="animal-name">${animal.name}</div>
+                            <div class="animal-locked">Level ${animal.unlockLevel}</div>
+                        `;
+                    }
+                    
+                    animalsElement.appendChild(animalElement);
+                });
+            }
+
+            // Nákup zvířete
+            function buyAnimal(animalId) {
+                const animal = animals.find(a => a.id === animalId);
+                if (gameState.money >= animal.cost) {
+                    gameState.money -= animal.cost;
+                    
+                    if (!gameState.animalCounts[animalId]) {
+                        gameState.animalCounts[animalId] = 0;
+                    }
+                    gameState.animalCounts[animalId]++;
+                    
+                    addXP(animal.xp);
+                    updateUI();
+                    renderAnimals();
+                    showSaveIndicator(`Koupeno: ${animal.name}`);
+                    saveGame();
+                } else {
+                    showSaveIndicator('Nemáš dostatek peněz!', true);
+                }
+            }
+
+            // Prodej zvířete
+            function sellAnimal(animalId) {
+                const animal = animals.find(a => a.id === animalId);
+                const sellPrice = Math.floor(animal.cost / 2);
+                
+                if (gameState.animalCounts[animalId] && gameState.animalCounts[animalId] > 0) {
+                    gameState.animalCounts[animalId]--;
+                    gameState.money += sellPrice;
+                    
+                    if (gameState.animalCounts[animalId] === 0) {
+                        delete gameState.animalCounts[animalId];
+                    }
+                    
+                    updateUI();
+                    renderAnimals();
+                    showSaveIndicator(`Prodáno: 1x ${animal.name} za ${sellPrice} 💸`);
+                    saveGame();
+                }
+            }
+
+            // Otevření modalu
+            function openModal(type) {
+                if (type === 'inventory') {
+                    renderInventory();
+                    inventoryModal.style.display = 'flex';
+                } else if (type === 'box-shop') {
+                    renderBoxShop();
+                    boxShopModal.style.display = 'flex';
+                } else if (type === 'upgrades') {
+                    renderUpgrades();
+                    upgradesModal.style.display = 'flex';
+                } else if (type === 'economy') {
+                    renderEconomy();
+                    economyModal.style.display = 'flex';
+                } else if (type === 'codes') {
+                    renderUsedCodes();
+                    codesModal.style.display = 'flex';
+                }
+            }
+
+            // Vykreslení vylepšení
+            function renderUpgrades() {
+                const upgradeItemsElement = document.getElementById('upgrade-items');
+                upgradeItemsElement.innerHTML = '';
+                
+                upgrades.forEach(upgrade => {
+                    const purchased = gameState.upgrades.includes(upgrade.id);
+                    const canAfford = gameState.money >= upgrade.cost && !purchased;
+                    
+                    const upgradeElement = document.createElement('div');
+                    upgradeElement.className = `upgrade-item ${purchased ? 'purchased' : ''}`;
+                    
+                    let statsText = '';
+                    if (upgrade.effect === 'growthBoost') {
+                        statsText = `+${(upgrade.value * 100)}% rychlost růstu`;
+                    } else if (upgrade.effect === 'sellBoost') {
+                        statsText = `+${(upgrade.value * 100)}% cena prodeje`;
+                    } else if (upgrade.effect === 'animalBoost') {
+                        statsText = `+${(upgrade.value * 100)}% příjem od zvířat`;
+                    } else if (upgrade.effect === 'instantGrowth') {
+                        statsText = 'INSTANTNÍ RŮST PLODIN';
+                    }
+                    
+                    upgradeElement.innerHTML = `
+                        <div class="upgrade-icon">${upgrade.icon}</div>
+                        <div class="upgrade-name">${upgrade.name}</div>
+                        <div class="upgrade-description">${upgrade.description}</div>
+                        <div class="upgrade-stats">${statsText}</div>
+                        <div class="upgrade-cost">${purchased ? 'ZAKOUPENO' : `${upgrade.cost.toLocaleString()} <span>💸</span>`}</div>
+                        ${!purchased ? `<button class="buy-upgrade" style="margin-top: 5px;" ${canAfford ? '' : 'disabled'}>Koupit</button>` : ''}
+                    `;
+                    
+                    if (!purchased) {
+                        const buyButton = upgradeElement.querySelector('.buy-upgrade');
+                        buyButton.addEventListener('click', () => buyUpgrade(upgrade.id));
+                    }
+                    
+                    upgradeItemsElement.appendChild(upgradeElement);
+                });
+            }
+
+            // Nákup vylepšení
+            function buyUpgrade(upgradeId) {
+                const upgrade = upgrades.find(u => u.id === upgradeId);
+                if (gameState.money >= upgrade.cost && !gameState.upgrades.includes(upgradeId)) {
+                    gameState.money -= upgrade.cost;
+                    gameState.upgrades.push(upgradeId);
+                    
+                    applyUpgradeEffect(upgrade);
+                    
+                    updateUI();
+                    renderUpgrades();
+                    showSaveIndicator(`Zakoupeno: ${upgrade.name}`);
+                    saveGame();
+                }
+            }
+
+            // Aplikace efektu vylepšení
+            function applyUpgradeEffect(upgrade) {
+                if (upgrade.effect === 'growthBoost') {
+                    gameState.growthMultiplier += upgrade.value;
+                    showSaveIndicator(`Rychlost růstu zvýšena o ${upgrade.value * 100}%!`);
+                } else if (upgrade.effect === 'sellBoost') {
+                    gameState.sellMultiplier += upgrade.value;
+                    showSaveIndicator(`Cena prodeje zvýšena o ${upgrade.value * 100}%!`);
+                } else if (upgrade.effect === 'animalBoost') {
+                    gameState.animalIncomeMultiplier += upgrade.value;
+                    showSaveIndicator(`Příjem od zvířat zvýšen o ${upgrade.value * 100}%!`);
+                } else if (upgrade.effect === 'instantGrowth') {
+                    showSaveIndicator(`Magická půda odemykána! Plodiny budou růst INSTANTNĚ!`);
+                    
+                    gameState.farm.forEach(plot => {
+                        if (plot.state === 'planted') {
+                            const crop = crops.find(c => c.id === plot.cropId);
+                            if (crop && crop.rarity !== RARITY.EVENT) {
+                                plot.progress = 100;
+                                plot.state = 'ready';
+                            }
+                        }
+                    });
+                    renderFarm();
+                }
+                
+                addXP(50);
+            }
+
+            // Vykreslení ekonomických aktivit
+            function renderEconomy() {
+                const economyItemsElement = document.getElementById('economy-items');
+                economyItemsElement.innerHTML = '';
+                
+                economyItems.forEach(economyItem => {
+                    const purchased = gameState.economy.includes(economyItem.id);
+                    const canAfford = gameState.money >= economyItem.cost && !purchased;
+                    
+                    const itemElement = document.createElement('div');
+                    itemElement.className = `economy-item ${purchased ? 'purchased' : ''}`;
+                    itemElement.innerHTML = `
+                        <div class="economy-icon">${economyItem.icon}</div>
+                        <div class="economy-name">${economyItem.name}</div>
+                        <div class="economy-description">${economyItem.description}</div>
+                        ${economyItem.income > 0 ? `<div class="economy-income">+${economyItem.income} 💸/den</div>` : ''}
+                        <div class="economy-cost">${purchased ? 'ZAKOUPENO' : `${economyItem.cost.toLocaleString()} <span>💸</span>`}</div>
+                        ${!purchased ? `<button class="buy-economy" style="margin-top: 5px;" ${canAfford ? '' : 'disabled'}>${economyItem.income > 0 ? 'Investovat' : 'Koupit'}</button>` : ''}
+                    `;
+                    
+                    if (!purchased) {
+                        const buyButton = itemElement.querySelector('.buy-economy');
+                        buyButton.addEventListener('click', () => buyEconomy(economyItem.id));
+                    }
+                    
+                    economyItemsElement.appendChild(itemElement);
+                });
+            }
+
+            // Nákup ekonomické aktivity
+            function buyEconomy(economyId) {
+                const economyItem = economyItems.find(e => e.id === economyId);
+                
+                // Speciální logika pro sdílený inventář
+                if (economyId === 7) { // Sdílený inventář
+                    if (gameState.money >= economyItem.cost && !gameState.economy.includes(economyId)) {
+                        if (confirm(`Opravdu chceš koupit SDÍLENÝ INVENTÁŘ za ${economyItem.cost.toLocaleString()} 💸?\n\nVšechny profily budou sdílet inventář!`)) {
+                            gameState.money -= economyItem.cost;
+                            gameState.economy.push(economyId);
+                            
+                            // Aktivovat sdílený inventář
+                            sharedInventory.enabled = true;
+                            gameState.hasSharedInventory = true;
+                            
+                            // Zkopírovat aktuální inventář do sdíleného
+                            Object.keys(gameState.inventory).forEach(key => {
+                                if (!Object.keys(BOX_TYPES).includes(key)) {
+                                    sharedInventory.items[key] = gameState.inventory[key];
+                                }
+                            });
+                            
+                            saveSharedInventory();
+                            
+                            addXP(economyItem.xp);
+                            updateUI();
+                            renderEconomy();
+                            updateSharedInventoryNotice();
+                            showSaveIndicator(`Zakoupeno: ${economyItem.name} - Všechny profily nyní sdílejí inventář!`);
+                            saveGame();
+                        }
+                    } else if (gameState.economy.includes(economyId)) {
+                        showSaveIndicator('Sdílený inventář už máš!', true);
+                    } else {
+                        showSaveIndicator(`Nemáš dostatek 💸! Potřebuješ ${economyItem.cost.toLocaleString()}`, true);
+                    }
+                    return;
+                }
+                
+                // Běžné ekonomické investice
+                if (gameState.money >= economyItem.cost && !gameState.economy.includes(economyId)) {
+                    gameState.money -= economyItem.cost;
+                    gameState.economy.push(economyId);
+                    
+                    addXP(economyItem.xp);
+                    updateUI();
+                    renderEconomy();
+                    showSaveIndicator(`Zakoupeno: ${economyItem.name}`);
+                    saveGame();
+                }
+            }
+
+            // Příjem od zvířat a ekonomiky
+            function collectIncome() {
+                let totalIncome = 0;
+                
+                Object.keys(gameState.animalCounts).forEach(animalId => {
+                    const animal = animals.find(a => a.id === parseInt(animalId));
+                    if (animal) {
+                        const baseIncome = animal.income * gameState.animalCounts[animalId];
+                        const boostedIncome = baseIncome * gameState.animalIncomeMultiplier;
+                        totalIncome += Math.round(boostedIncome);
+                    }
+                });
+                
+                gameState.economy.forEach(economyId => {
+                    const economyItem = economyItems.find(e => e.id === economyId);
+                    if (economyItem && economyItem.income > 0) {
+                        totalIncome += economyItem.income;
+                    }
+                });
+                
+                if (totalIncome > 0) {
+                    gameState.money += totalIncome;
+                    updateUI();
+                    saveGame();
+                }
+            }
+
+            // Kontrola uplynulého času
+            function checkElapsedTime() {
+                const now = Date.now();
+                const timeSinceLastAutoDay = now - gameState.lastAutoDay;
+                
+                if (timeSinceLastAutoDay >= AUTO_DAY_INTERVAL) {
+                    const daysPassed = Math.floor(timeSinceLastAutoDay / AUTO_DAY_INTERVAL);
+                    
+                    if (daysPassed > 0) {
+                        for (let i = 0; i < daysPassed; i++) {
+                            processAutoDay();
+                        }
+                        
+                        gameState.lastAutoDay = now;
+                        updateUI();
+                        renderFarm();
+                        showTimeIndicator(`Během tvé nepřítomnosti uběhlo ${daysPassed} dní!`);
+                        autoSave();
+                    }
+                }
+            }
+
+            // Automatický přechod na další den
+            function autoNextDay() {
+                processAutoDay();
+                gameState.lastAutoDay = Date.now();
+                updateUI();
+                renderFarm();
+                showTimeIndicator('Automaticky uběhl den!');
+                autoSave();
+            }
+
+            // Zpracování automatického dne
+            function processAutoDay() {
+                gameState.day++;
+                
+                if (gameState.day % 30 === 0) {
+                    updateSeason();
+                }
+                
+                gameState.farm.forEach(plot => {
+                    if (plot.state === 'planted') {
+                        const crop = crops.find(c => c.id === plot.cropId);
+                        if (crop) {
+                            const hasMagicalSoil = gameState.upgrades.includes(15);
+                            
+                            if (crop.rarity === RARITY.EVENT) {
+                                const baseGrowthRate = 100 / plot.growTime;
+                                const seasonMultiplier = gameState.currentSeason.multiplier;
+                                const upgradeMultiplier = gameState.growthMultiplier;
+                                const totalMultiplier = seasonMultiplier * upgradeMultiplier;
+                                const growthRate = baseGrowthRate * totalMultiplier;
+                                
+                                plot.progress += growthRate;
+                            } else if (hasMagicalSoil) {
+                                plot.progress = 100;
+                                plot.state = 'ready';
+                            } else {
+                                const baseGrowthRate = 100 / plot.growTime;
+                                const seasonMultiplier = gameState.currentSeason.multiplier;
+                                const upgradeMultiplier = gameState.growthMultiplier;
+                                const totalMultiplier = seasonMultiplier * upgradeMultiplier;
+                                const growthRate = baseGrowthRate * totalMultiplier;
+                                
+                                plot.progress += growthRate;
+                            }
+                            
+                            if (plot.progress >= 100) {
+                                plot.state = 'ready';
+                                plot.progress = 100;
+                            }
+                            
+                            if (plot.state === 'ready' && gameState.day - plot.daysPlanted > plot.growTime + 3) {
+                                plot.state = 'withered';
+                            }
+                        }
+                    }
+                });
+                
+                collectIncome();
+            }
+
+            // Zobrazení indikátoru času
+            function showTimeIndicator(message) {
+                timeIndicator.textContent = message;
+                timeIndicator.classList.add('show');
+                
+                setTimeout(() => {
+                    timeIndicator.classList.remove('show');
+                }, 5000);
+            }
+
+            // Načtení použitých kódů
+            function loadUsedCodes() {
+                const savedUsedCodes = localStorage.getItem(CODES_KEY);
+                if (savedUsedCodes) {
+                    gameState.usedCodes = JSON.parse(savedUsedCodes);
+                    renderUsedCodes();
+                }
+            }
+
+            // Načtení nekonečných kódů
+            function loadUnlimitedCodes() {
+                const unlimited = localStorage.getItem(UNLIMITED_CODES_KEY);
+                if (unlimited === 'true') {
+                    gameState.unlimitedCodes = true;
+                }
+            }
+
+            // Vykreslení použitých kódů
+            function renderUsedCodes() {
+                usedCodesList.innerHTML = '';
+                
+                if (gameState.usedCodes.length === 0) {
+                    usedCodesList.innerHTML = '<p>Zatím jsi nepoužil žádné kódy.</p>';
+                    return;
+                }
+                
+                gameState.usedCodes.forEach(codeName => {
+                    const code = SPECIAL_CODES[codeName];
+                    if (code) {
+                        const codeElement = document.createElement('div');
+                        codeElement.className = 'code-item';
+                        codeElement.innerHTML = `
+                            <span class="code-name">${code.name}</span>
+                            <span class="code-reward">${code.reward}</span>
+                        `;
+                        usedCodesList.appendChild(codeElement);
+                    }
+                });
+            }
+
+            // Aktivace kódu
+            function activateCode(codeValue) {
+                const normalizedCode = codeValue.trim();
+                
+                if (!SPECIAL_CODES[normalizedCode]) {
+                    showSaveIndicator('Neplatný kód!', true);
+                    return false;
+                }
+                
+                if (!gameState.unlimitedCodes && gameState.usedCodes.includes(normalizedCode)) {
+                    showSaveIndicator('Tento kód již byl použit!', true);
+                    return false;
+                }
+                
+                const code = SPECIAL_CODES[normalizedCode];
+                const resultMessage = code.apply(gameState);
+                
+                if (!gameState.usedCodes.includes(normalizedCode)) {
+                    gameState.usedCodes.push(normalizedCode);
+                    localStorage.setItem(CODES_KEY, JSON.stringify(gameState.usedCodes));
+                }
+                
+                // Speciální logika pro kód 2012DoPlo12
+                if (normalizedCode === '2012DoPlo12') {
+                    dailyGiftSettings.giftsPerDay = 10;
+                    dailyGiftSettings.specialGiftActive = true;
+                    saveDailyGiftSettings();
+                }
+                
+                updateUI();
+                renderCrops();
+                renderAnimals();
+                checkUnlocks();
+                showSaveIndicator(resultMessage);
+                saveGame();
+                renderUsedCodes();
+                codeInput.value = '';
+                
+                // Pokud je to kód 2012DoPlo12, aktualizovat daily gifts UI
+                if (normalizedCode === '2012DoPlo12') {
+                    updateDailyGiftUI();
+                }
+                
+                return true;
+            }
+
+            // Přepínání tématu
+            function toggleTheme() {
+                document.body.classList.toggle('dark-mode');
+                if (document.body.classList.contains('dark-mode')) {
+                    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                    localStorage.setItem(THEME_KEY, 'dark');
+                } else {
+                    themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                    localStorage.setItem(THEME_KEY, 'light');
+                }
+            }
+
+            // Nastavení event listenerů
+            function setupEventListeners() {
+                themeToggle.addEventListener('click', toggleTheme);
+                inventoryButton.addEventListener('click', () => openModal('inventory'));
+                boxShopButton.addEventListener('click', () => openModal('box-shop'));
+                upgradesButton.addEventListener('click', () => openModal('upgrades'));
+                economyButton.addEventListener('click', () => openModal('economy'));
+                codesButton.addEventListener('click', () => openModal('codes'));
+                creatorButton.addEventListener('click', () => {
+                    creatorModal.style.display = 'flex';
+                });
+                
+                creatorYesButton.addEventListener('click', () => {
+                    window.open('https://doplo12cz.github.io/dp12cz/', '_blank');
+                    creatorModal.style.display = 'none';
+                });
+                
+                creatorNoButton.addEventListener('click', () => {
+                    creatorModal.style.display = 'none';
+                });
+                
+                renameConfirmButton.addEventListener('click', renameProfile);
+                renameCancelButton.addEventListener('click', () => {
+                    renameProfileModal.style.display = 'none';
+                    profileToRename = null;
+                });
+                
+                // Filtry inventáře
+                inventoryFiltersElement.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('inventory-filter')) {
+                        const filter = e.target.dataset.filter;
+                        renderInventory(filter);
+                    }
+                });
+                
+                submitCodeButton.addEventListener('click', () => {
+                    if (codeInput.value.trim() !== '') {
+                        activateCode(codeInput.value);
+                    }
+                });
+                
+                codeInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        if (codeInput.value.trim() !== '') {
+                            activateCode(codeInput.value);
+                        }
+                    }
+                });
+                
+                profileNameInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        renameProfile();
+                    }
+                });
+                
+                // Zavírání modalů
+                document.querySelectorAll('.close-modal, .close-modal-btn').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const modal = this.closest('.modal');
+                        if (modal) {
+                            modal.style.display = 'none';
+                        }
+                        
+                        // Pokud je to modal pro otevření boxu, znovu vykreslit inventář
+                        if (modal && modal.id === 'open-box-modal') {
+                            if (inventoryModal.style.display === 'flex') {
+                                renderInventory(lastInventoryFilter);
+                            }
+                        }
+                    });
+                });
+                
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.addEventListener('click', function(e) {
+                        if (e.target === modal) {
+                            modal.style.display = 'none';
+                        }
+                    });
+                });
+            }
+
+            // Aktualizace UI
+            function updateUI() {
+                moneyElement.innerHTML = `${gameState.money.toLocaleString()} <span class="money-icon">💸</span>`;
+                levelElement.textContent = gameState.level;
+                dayElement.textContent = gameState.day;
+                farmSizeElement.textContent = gameState.farmSize;
+                
+                const xpNeeded = gameState.level * 100;
+                const xpPercentage = (gameState.xp / xpNeeded) * 100;
+                xpProgressElement.style.width = `${xpPercentage}%`;
+                xpTextElement.textContent = `${gameState.xp}/${xpNeeded} XP`;
+                
+                updateSeason();
+                updateDailyGiftUI();
+            }
+
+            // Automatické ukládání
+            function autoSave() {
+                gameState.lastPlayed = Date.now();
+                saveGame();
+            }
+
+            // Uložení hry
+            function saveGame() {
+                const saveKey = SAVE_KEY_PREFIX + gameState.currentProfile;
+                localStorage.setItem(saveKey, JSON.stringify(gameState));
+            }
+
+            // Zobrazení indikátoru uložení
+            function showSaveIndicator(message, isError = false) {
+                saveIndicator.textContent = message;
+                saveIndicator.style.background = isError ? 'rgba(244, 67, 54, 0.9)' : 'rgba(76, 175, 80, 0.9)';
+                saveIndicator.classList.add('show');
+                
+                setTimeout(() => {
+                    saveIndicator.classList.remove('show');
+                }, 3000);
+            }
+
+            // Spuštění hry
+            initGame();
+        });
+    </script>
+</body>
+</html>
