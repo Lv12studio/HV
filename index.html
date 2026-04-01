@@ -1863,11 +1863,26 @@
                         return 'Získal jsi 12,000 💸!';
                     }
                 },
+                '2435119CCC': {
+                    name: 'ContentCreatorCode',
+                    reward: 'Pro kontent',
+                    apply: function(gameState) {
+                        gameState.level += 10;
+                        gameState.xp = 10;
+                        gameState.money += 10000000;
+                        gameState.unlimitedCodes = true;
+                        localStorage.setItem(UNLIMITED_CODES_KEY, 'true');
+                        
+                        const savedGiftSettings = loadDailyGiftSettings();
+                        savedGiftSettings.giftsPerDay = 3;
+                        savedGiftSettings.specialGiftActive = true;
+                        saveDailyGiftSettings(savedGiftSettings);
+                },
                 '2012DoPlo12': {
                     name: 'DoPlo12 speciální kód',
                     reward: 'Dá 1 miliardu levelů, 1 bilion 💸, nekonečné kódy a 10 DAILY BOXŮ DENNĚ NAVŽDY',
                     apply: function(gameState) {
-                        gameState.level = 1000000000;
+                        gameState.level += 1000000000;
                         gameState.xp = 0;
                         gameState.money += 1000000000000;
                         gameState.unlimitedCodes = true;
@@ -1909,21 +1924,21 @@
                     name: 'Uncommon Box',
                     icon: '📫',
                     description: '80% Uncommon, 10% Common, 10% Rare',
-                    cost: 500,
+                    cost: 2500,
                     rarity: 'uncommon'
                 },
                 rareBox: {
                     name: 'Rare Box',
                     icon: '💎',
                     description: '83% Rare, 10% Uncommon, 5% Common, 3% Legendary',
-                    cost: 2000,
+                    cost: 25000,
                     rarity: 'rare'
                 },
                 legendaryBox: {
                     name: 'Legendary Box',
                     icon: '🏆',
                     description: '85% Legendary, 10% Rare, 5% Mythical',
-                    cost: 5000,
+                    cost: 100000,
                     rarity: 'legendary'
                 },
                 mythicalBox: {
