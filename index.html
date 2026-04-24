@@ -2746,7 +2746,7 @@
             function generateMythicalBoxReward() {
                 const random = Math.random() * 100;
                 
-                // 94% Mythical
+                // 85% Mythical
                 if (random < 94) {
                     const mythicalCrops = crops.filter(crop => crop.rarity === RARITY.MYTHICAL);
                     const randomCrop = mythicalCrops[Math.floor(Math.random() * mythicalCrops.length)];
@@ -2762,7 +2762,7 @@
                         message: `MYTHICAL! Získal jsi ${quantity}x ${randomCrop.name}`
                     };
                 }
-                // 5% Legendary
+                // 12% Legendary
                 else if (random < 99) {
                     const legendaryCrops = crops.filter(crop => crop.rarity === RARITY.LEGENDARY);
                     const randomCrop = legendaryCrops[Math.floor(Math.random() * legendaryCrops.length)];
@@ -2778,7 +2778,7 @@
                         message: `LEGENDARY! Získal jsi ${quantity}x ${randomCrop.name}`
                     };
                 }
-                // 1% Event
+                // 3% Event
                 else {
                     const eventCrops = crops.filter(crop => crop.rarity === RARITY.EVENT);
                     const randomCrop = eventCrops[Math.floor(Math.random() * eventCrops.length)];
@@ -2816,7 +2816,7 @@
                         message: `EVENT! Získal jsi ${quantity}x ${randomCrop.name}`
                     };
                 }
-                // 20% Mythical
+                // 3% Mythical
                 else if (random < 80) {
                     const mythicalCrops = crops.filter(crop => crop.rarity === RARITY.MYTHICAL);
                     const randomCrop = mythicalCrops[Math.floor(Math.random() * mythicalCrops.length)];
@@ -2832,7 +2832,7 @@
                         message: `MYTHICAL! Získal jsi ${quantity}x ${randomCrop.name}`
                     };
                 }
-                // 15% Legendary
+                // 25% Legendary
                 else if (random < 95) {
                     const legendaryCrops = crops.filter(crop => crop.rarity === RARITY.LEGENDARY);
                     const randomCrop = legendaryCrops[Math.floor(Math.random() * legendaryCrops.length)];
@@ -2848,7 +2848,7 @@
                         message: `LEGENDARY! Získal jsi ${quantity}x ${randomCrop.name}`
                     };
                 }
-                // 5% Rare
+                // 12% Rare
                 else {
                     const rareCrops = crops.filter(crop => crop.rarity === RARITY.RARE);
                     const randomCrop = rareCrops[Math.floor(Math.random() * rareCrops.length)];
