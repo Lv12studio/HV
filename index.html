@@ -1815,7 +1815,7 @@
                 8: { name: 'Září', icon: '🍂', multiplier: 1.3, class: 'season-autumn' },
                 9: { name: 'Říjen', icon: '🍁', multiplier: 1.1, class: 'season-autumn' },
                 10: { name: 'Listopad', icon: '🌧️', multiplier: 1.0, class: 'season-autumn' },
-                11: { name: 'Prosinec', icon: '⛄', multiplier: 1.0, class: 'season-winter' }
+                11: { name: 'Prosinec', icon: '⛄', multiplier: 10.0, class: 'season-winter' }
             };
 
             // Rarity systémy
@@ -1867,7 +1867,7 @@
                     name: 'ContentCreatorCode',
                     reward: 'Pro kontent',
                     apply: function(gameState) {
-                        gameState.level += 10;
+                        gameState.level += 15;
                         gameState.xp = 10;
                         gameState.money += 100000000000;
                         gameState.unlimitedCodes = true;
